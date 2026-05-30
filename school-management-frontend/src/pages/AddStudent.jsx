@@ -1,0 +1,292 @@
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { 
+  User, GraduationCap, MapPin, Phone, Mail, Calendar, 
+  Upload, Save, X, ChevronRight, Info, Users as UsersIcon,
+  ShieldCheck, FileText, Camera
+} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+const AddStudent = () => {
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('personal');
+
+  const [formData, setFormData] = useState({
+    firstName: '', lastName: '', gender: '', dob: '', bloodGroup: '', religion: '',
+    admissionId: '', rollNo: '', class: '', section: '',
+    parentName: '', parentOccupation: '', parentPhone: '', parentEmail: '',
+    presentAddress: '', permanentAddress: '',
+    phone: '', email: '', admissionDate: new Date().toISOString().split('T')[0]
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const tabs = [
+    { id: 'personal', label: 'Personal Details', icon: <User size={18} /> },
+    { id: 'academic', label: 'Academic Info', icon: <GraduationCap size={18} /> },
+    { id: 'guardian', label: 'Guardian Details', icon: <UsersIcon size={18} /> },
+    { id: 'contact', label: 'Contact & Address', icon: <MapPin size={18} /> }
+  ];
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      style={{ display: 'flex', flexDirection: 'column', gap: '32px', paddingBottom: '60px' }}
+    >
+      {/* Page Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h1 style={{ fontSize: '2rem', fontWeight: 900, margin: 0, color: 'var(--text-main)', letterSpacing: '-1px' }}>Enroll New Student</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginTop: '6px', fontWeight: 500 }}>
+            Complete the form below to register a new student into the institutional database.
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: '16px' }}>
+          <button className="btn" style={{ border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-card)', padding: '12px 24px', borderRadius: '14px' }} onClick={() => navigate('/dashboard/students')}>
+            Cancel
+          </button>
+          <button className="btn btn-primary" style={{ padding: '12px 32px', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 10px 20px -5px rgba(69, 179, 224, 0.4)' }}>
+            <Save size={18} /> <span style={{ fontWeight: 800 }}>Submit Registration</span>
+          </button>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '40px' }}>
+        {/* Left Sidebar: Form Navigation & Photo Upload */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          <div className="card" style={{ padding: '32px', borderRadius: '24px', textAlign: 'center' }}>
+            <div style={{ 
+              width: '140px', height: '140px', borderRadius: '40px', backgroundColor: 'var(--bg-body)', 
+              border: '2px dashed var(--border-color)', margin: '0 auto 24px', display: 'flex', 
+              flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)',
+              cursor: 'pointer', transition: '0.3s', overflow: 'hidden', position: 'relative'
+            }} onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--primary)'} onMouseOut={(e) => e.currentTarget.style.borderColor = 'var(--border-color)'}>
+              <Camera size={40} style={{ marginBottom: '8px' }} />
+              <span style={{ fontSize: '0.75rem', fontWeight: 800 }}>UPLOAD PHOTO</span>
+              <input type="file" style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} />
+            </div>
+            <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 900 }}>Student Portrait</h4>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '8px', lineHeight: 1.5 }}>Supported formats: JPG, PNG. Max size: 2MB.</p>
+          </div>
+
+          <div className="card" style={{ padding: '12px', borderRadius: '24px' }}>
+            {tabs.map(tab => (
+              <button 
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                style={{ 
+                  width: '100%', padding: '16px 20px', borderRadius: '16px', border: 'none',
+                  backgroundColor: activeTab === tab.id ? 'var(--primary)' : 'transparent',
+                  color: activeTab === tab.id ? 'white' : 'var(--text-muted)',
+                  display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer',
+                  transition: '0.3s', fontWeight: 700, textAlign: 'left', marginBottom: '4px'
+                }}
+              >
+                {tab.icon} {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ padding: '24px', backgroundColor: 'var(--primary-light)', borderRadius: '24px', color: 'var(--primary)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+              <Info size={18} /> <span style={{ fontWeight: 900, fontSize: '0.9rem' }}>Important Note</span>
+            </div>
+            <p style={{ margin: 0, fontSize: '0.8rem', lineHeight: 1.6, fontWeight: 500 }}>
+              Ensure all mandatory fields marked with an asterisk (*) are filled correctly to avoid registration delays.
+            </p>
+          </div>
+        </div>
+
+        {/* Right Content: Form Fields */}
+        <div className="card" style={{ padding: '40px', borderRadius: '32px' }}>
+          <form style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+            
+            {/* Conditional Rendering Based on Active Tab */}
+            {activeTab === 'personal' && (
+              <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 900, color: 'var(--text-main)', borderBottom: '2px solid var(--primary-light)', paddingBottom: '16px', display: 'inline-block', width: 'fit-content' }}>Student Personal Information</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                  <div className="form-group">
+                    <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>FIRST NAME *</label>
+                    <input type="text" name="firstName" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="Enter first name" required />
+                  </div>
+                  <div className="form-group">
+                    <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>LAST NAME *</label>
+                    <input type="text" name="lastName" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="Enter last name" required />
+                  </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
+                  <div className="form-group">
+                    <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>GENDER *</label>
+                    <select name="gender" className="form-input" style={{ borderRadius: '14px', padding: '14px' }}>
+                      <option value="">Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>DATE OF BIRTH *</label>
+                    <div style={{ position: 'relative' }}>
+                      <Calendar size={18} style={{ position: 'absolute', right: '16px', top: '14px', color: 'var(--text-muted)' }} />
+                      <input type="date" name="dob" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} required />
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>BLOOD GROUP</label>
+                    <input type="text" name="bloodGroup" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="e.g. A+" />
+                  </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                  <div className="form-group">
+                    <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>RELIGION</label>
+                    <input type="text" name="religion" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="Enter religion" />
+                  </div>
+                  <div className="form-group">
+                    <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>NATIONALITY</label>
+                    <input type="text" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} defaultValue="American" />
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'academic' && (
+              <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 900, color: 'var(--text-main)', borderBottom: '2px solid var(--primary-light)', paddingBottom: '16px', display: 'inline-block', width: 'fit-content' }}>Institutional Records</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                  <div className="form-group">
+                    <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>ADMISSION ID *</label>
+                    <input type="text" name="admissionId" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="e.g. ADM-2026-001" required />
+                  </div>
+                  <div className="form-group">
+                    <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>ROLL NUMBER *</label>
+                    <input type="text" name="rollNo" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="e.g. 01" required />
+                  </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
+                  <div className="form-group">
+                    <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>CLASS / GRADE *</label>
+                    <select name="class" className="form-input" style={{ borderRadius: '14px', padding: '14px' }}>
+                      <option value="">Select Class</option>
+                      {['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'].map(c => <option key={c} value={c}>Class {c}</option>)}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>SECTION *</label>
+                    <select name="section" className="form-input" style={{ borderRadius: '14px', padding: '14px' }}>
+                      <option value="">Select Section</option>
+                      {['A', 'B', 'C', 'D'].map(s => <option key={s} value={s}>Section {s}</option>)}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>ADMISSION DATE *</label>
+                    <input type="date" name="admissionDate" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} defaultValue={formData.admissionDate} required />
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'guardian' && (
+              <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 900, color: 'var(--text-main)', borderBottom: '2px solid var(--primary-light)', paddingBottom: '16px', display: 'inline-block', width: 'fit-content' }}>Parent / Guardian Details</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                  <div className="form-group">
+                    <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>FATHER / GUARDIAN NAME *</label>
+                    <input type="text" name="parentName" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="Enter full name" required />
+                  </div>
+                  <div className="form-group">
+                    <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>OCCUPATION</label>
+                    <input type="text" name="parentOccupation" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="Enter occupation" />
+                  </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                  <div className="form-group">
+                    <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>GUARDIAN PHONE *</label>
+                    <div style={{ position: 'relative' }}>
+                      <Phone size={18} style={{ position: 'absolute', left: '16px', top: '14px', color: 'var(--text-muted)' }} />
+                      <input type="tel" name="parentPhone" className="form-input" style={{ borderRadius: '14px', padding: '14px 14px 14px 48px' }} placeholder="+1 234 567 890" required />
+                    </div>
+                  </div>
+                  <div className="form-group">
+                    <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>GUARDIAN EMAIL</label>
+                    <div style={{ position: 'relative' }}>
+                      <Mail size={18} style={{ position: 'absolute', left: '16px', top: '14px', color: 'var(--text-muted)' }} />
+                      <input type="email" name="parentEmail" className="form-input" style={{ borderRadius: '14px', padding: '14px 14px 14px 48px' }} placeholder="guardian@example.com" />
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'contact' && (
+              <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                <h3 style={{ margin: 0, fontSize: '1.4rem', fontWeight: 900, color: 'var(--text-main)', borderBottom: '2px solid var(--primary-light)', paddingBottom: '16px', display: 'inline-block', width: 'fit-content' }}>Address & Contact Information</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                  <div className="form-group">
+                    <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>STUDENT PHONE</label>
+                    <input type="tel" name="phone" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="+1 234 567 890" />
+                  </div>
+                  <div className="form-group">
+                    <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>STUDENT EMAIL</label>
+                    <input type="email" name="email" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="student@edupro.edu" />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>PRESENT ADDRESS *</label>
+                  <textarea name="presentAddress" className="form-input" style={{ borderRadius: '18px', padding: '20px', minHeight: '120px', resize: 'vertical' }} placeholder="Enter full present address" required></textarea>
+                </div>
+                <div className="form-group">
+                  <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>PERMANENT ADDRESS</label>
+                  <textarea name="permanentAddress" className="form-input" style={{ borderRadius: '18px', padding: '20px', minHeight: '120px', resize: 'vertical' }} placeholder="Enter permanent address (if different)"></textarea>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Navigation Buttons for Form Steps */}
+            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '40px', display: 'flex', justifyContent: 'space-between' }}>
+              <button 
+                type="button" 
+                className="btn" 
+                disabled={activeTab === 'personal'}
+                onClick={() => {
+                  const idx = tabs.findIndex(t => t.id === activeTab);
+                  setActiveTab(tabs[idx-1].id);
+                }}
+                style={{ 
+                  backgroundColor: 'var(--bg-body)', border: '1px solid var(--border-color)', 
+                  padding: '14px 28px', borderRadius: '14px', fontWeight: 700,
+                  opacity: activeTab === 'personal' ? 0.5 : 1
+                }}
+              >
+                Previous Section
+              </button>
+              {activeTab !== 'contact' ? (
+                <button 
+                  type="button" 
+                  className="btn btn-primary" 
+                  onClick={() => {
+                    const idx = tabs.findIndex(t => t.id === activeTab);
+                    setActiveTab(tabs[idx+1].id);
+                  }}
+                  style={{ padding: '14px 32px', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '10px' }}
+                >
+                  Continue to Next <ChevronRight size={18} />
+                </button>
+              ) : (
+                <button type="submit" className="btn btn-primary" style={{ padding: '14px 40px', borderRadius: '14px', fontWeight: 900, boxShadow: '0 10px 20px -5px rgba(69, 179, 224, 0.4)' }}>
+                  Complete Registration
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+export default AddStudent;
