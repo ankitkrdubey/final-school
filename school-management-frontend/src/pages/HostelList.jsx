@@ -55,8 +55,8 @@ const HostelList = () => {
   const fetchHostels = async () => {
     try {
       const data = await HostelApi.getAll();
-      if (data.length === 0) {
-        setHostels([
+      if (!data || data.length === 0 || !data[0].name) {
+        const defaultList = [
           { 
             id: 'HST-001', name: 'Elite Boys Residency', type: 'Boys', 
             address: 'North Campus, Block A', rooms: 45, capacity: 180, 
@@ -75,12 +75,23 @@ const HostelList = () => {
             occupied: 15, warden: 'Dr. Robert Brown', contact: '+1 234 567 892',
             status: 'Active', rating: 4.7, color: '#10b981'
           }
-        ]);
+        ];
+        const stored = localStorage.getItem('hostel_buildings');
+        if (stored) {
+          setHostels(JSON.parse(stored));
+        } else {
+          setHostels(defaultList);
+          localStorage.setItem('hostel_buildings', JSON.stringify(defaultList));
+        }
       } else {
         setHostels(data);
       }
     } catch (error) {
       console.error('Error:', error);
+      const stored = localStorage.getItem('hostel_buildings');
+      if (stored) {
+        setHostels(JSON.parse(stored));
+      }
     } finally {
       setLoading(false);
     }
@@ -98,14 +109,16 @@ const HostelList = () => {
       rating: 5.0,
       color: colors[hostels.length % colors.length]
     };
-    setHostels([addedHostel, ...hostels]);
+    const updated = [addedHostel, ...hostels];
+    setHostels(updated);
+    localStorage.setItem('hostel_buildings', JSON.stringify(updated));
     setShowAddModal(false);
     setNewHostel({ name: '', type: 'Boys', address: '', rooms: '', capacity: '', warden: '', contact: '' });
   };
 
   const handleUpdateHostel = (e) => {
     e.preventDefault();
-    setHostels(hostels.map(h => h.id === editingHostel.id ? {
+    const updated = hostels.map(h => h.id === editingHostel.id ? {
       ...h,
       name: newHostel.name,
       type: newHostel.type,
@@ -114,7 +127,9 @@ const HostelList = () => {
       rooms: newHostel.rooms,
       warden: newHostel.warden,
       contact: newHostel.contact
-    } : h));
+    } : h);
+    setHostels(updated);
+    localStorage.setItem('hostel_buildings', JSON.stringify(updated));
     setEditingHostel(null);
     setNewHostel({ name: '', type: 'Boys', address: '', rooms: '', capacity: '', warden: '', contact: '' });
   };

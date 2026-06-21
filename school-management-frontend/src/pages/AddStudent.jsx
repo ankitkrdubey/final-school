@@ -1,27 +1,123 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   User, GraduationCap, MapPin, Phone, Mail, Calendar, 
   Upload, Save, X, ChevronRight, Info, Users as UsersIcon,
-  ShieldCheck, FileText, Camera
+  ShieldCheck, FileText, Camera, CloudUpload, CheckCircle2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { addStudent } from '../services/service';
+import { useToast, ToastRenderer } from '../hooks/useToast';
 
 const AddStudent = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('personal');
+  const [isSaving, setIsSaving] = useState(false);
+  const [savePhase, setSavePhase] = useState(0);
+  const { toast, showToast, hideToast } = useToast();
+
+  const savePhases = [
+    'Analyzing student academic records...',
+    'Validating enrollment criteria & class quotas...',
+    'Generating student identity credential locks...',
+    'Syncing student record with institutional ledger...'
+  ];
 
   const [formData, setFormData] = useState({
-    firstName: '', lastName: '', gender: '', dob: '', bloodGroup: '', religion: '',
-    admissionId: '', rollNo: '', class: '', section: '',
+    firstName: '', lastName: '', gender: 'Male', dob: '', bloodGroup: 'O+', religion: '',
+    admissionId: '', rollNo: '', class: '10', section: 'A',
     parentName: '', parentOccupation: '', parentPhone: '', parentEmail: '',
     presentAddress: '', permanentAddress: '',
-    phone: '', email: '', admissionDate: new Date().toISOString().split('T')[0]
+    phone: '', email: '', avatar: '',
+    admissionDate: new Date().toISOString().split('T')[0]
   });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        showToast('File size exceeds the 2MB limit. Please select a smaller photo.', 'error', 'Error');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, avatar: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSaving(true);
+    setSavePhase(0);
+
+    const interval = setInterval(() => {
+      setSavePhase(prev => {
+        if (prev < savePhases.length - 1) {
+          return prev + 1;
+        } else {
+          clearInterval(interval);
+          return prev;
+        }
+      });
+    }, 600);
+
+    const newStudentObj = {
+      student_id: formData.admissionId || `STU${Math.floor(1000 + Math.random() * 9000)}`,
+      name: `${formData.firstName} ${formData.lastName}`.trim(),
+      email: formData.email,
+      phone: formData.phone,
+      class_id: formData.class,
+      section: formData.section,
+      rollNo: formData.rollNo || '01',
+      admission_date: formData.admissionDate,
+      gender: formData.gender,
+      status: 'Active',
+      avatar: formData.avatar,
+      dob: formData.dob,
+      bloodGroup: formData.bloodGroup,
+      religion: formData.religion,
+      parentName: formData.parentName,
+      parentOccupation: formData.parentOccupation,
+      parentPhone: formData.parentPhone,
+      parentEmail: formData.parentEmail,
+      presentAddress: formData.presentAddress,
+      permanentAddress: formData.permanentAddress || formData.presentAddress
+    };
+
+    // Attempt API creation
+    let apiSuccess = false;
+    try {
+      await addStudent(newStudentObj);
+      apiSuccess = true;
+    } catch (apiErr) {
+      console.warn("Backend API sync offline/failed, using fallback cache storage");
+    }
+
+    // Save to local storage cache
+    const stored = localStorage.getItem('students');
+    let list = stored ? JSON.parse(stored) : [];
+    list.push(newStudentObj);
+    localStorage.setItem('students', JSON.stringify(list));
+
+    setTimeout(() => {
+      clearInterval(interval);
+      setIsSaving(false);
+      if (apiSuccess) {
+        showToast('Student registered successfully in the system ledger.', 'success', 'Success');
+      } else {
+        showToast('Backend API offline/failed. Saved to offline local cache.', 'warning', 'Offline Sync');
+      }
+      setTimeout(() => {
+        navigate('/dashboard/students');
+      }, 1500);
+    }, 2800);
   };
 
   const tabs = [
@@ -46,10 +142,10 @@ const AddStudent = () => {
           </p>
         </div>
         <div style={{ display: 'flex', gap: '16px' }}>
-          <button className="btn" style={{ border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-card)', padding: '12px 24px', borderRadius: '14px' }} onClick={() => navigate('/dashboard/students')}>
+          <button type="button" className="btn" style={{ border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-card)', padding: '12px 24px', borderRadius: '14px', cursor: 'pointer' }} onClick={() => navigate('/dashboard/students')}>
             Cancel
           </button>
-          <button className="btn btn-primary" style={{ padding: '12px 32px', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 10px 20px -5px rgba(69, 179, 224, 0.4)' }}>
+          <button type="button" onClick={handleSubmit} className="btn btn-primary" style={{ padding: '12px 32px', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', boxShadow: '0 10px 20px -5px rgba(69, 179, 224, 0.4)' }}>
             <Save size={18} /> <span style={{ fontWeight: 800 }}>Submit Registration</span>
           </button>
         </div>
@@ -59,15 +155,26 @@ const AddStudent = () => {
         {/* Left Sidebar: Form Navigation & Photo Upload */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
           <div className="card" style={{ padding: '32px', borderRadius: '24px', textAlign: 'center' }}>
-            <div style={{ 
-              width: '140px', height: '140px', borderRadius: '40px', backgroundColor: 'var(--bg-body)', 
-              border: '2px dashed var(--border-color)', margin: '0 auto 24px', display: 'flex', 
-              flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)',
-              cursor: 'pointer', transition: '0.3s', overflow: 'hidden', position: 'relative'
-            }} onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--primary)'} onMouseOut={(e) => e.currentTarget.style.borderColor = 'var(--border-color)'}>
-              <Camera size={40} style={{ marginBottom: '8px' }} />
-              <span style={{ fontSize: '0.75rem', fontWeight: 800 }}>UPLOAD PHOTO</span>
-              <input type="file" style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} />
+            <input type="file" id="student-photo-input" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoUpload} />
+            <div 
+              onClick={() => document.getElementById('student-photo-input').click()}
+              style={{ 
+                width: '140px', height: '140px', borderRadius: '40px', backgroundColor: 'var(--bg-body)', 
+                border: '2px dashed var(--border-color)', margin: '0 auto 24px', display: 'flex', 
+                flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)',
+                cursor: 'pointer', transition: '0.3s', overflow: 'hidden', position: 'relative'
+              }} 
+              onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--primary)'} 
+              onMouseOut={(e) => e.currentTarget.style.borderColor = 'var(--border-color)'}
+            >
+              {formData.avatar ? (
+                <img src={formData.avatar} alt="Avatar Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <>
+                  <Camera size={40} style={{ marginBottom: '8px' }} />
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800 }}>UPLOAD PHOTO</span>
+                </>
+              )}
             </div>
             <h4 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 900 }}>Student Portrait</h4>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '8px', lineHeight: 1.5 }}>Supported formats: JPG, PNG. Max size: 2MB.</p>
@@ -77,6 +184,7 @@ const AddStudent = () => {
             {tabs.map(tab => (
               <button 
                 key={tab.id}
+                type="button"
                 onClick={() => setActiveTab(tab.id)}
                 style={{ 
                   width: '100%', padding: '16px 20px', borderRadius: '16px', border: 'none',
@@ -103,7 +211,7 @@ const AddStudent = () => {
 
         {/* Right Content: Form Fields */}
         <div className="card" style={{ padding: '40px', borderRadius: '32px' }}>
-          <form style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
             
             {/* Conditional Rendering Based on Active Tab */}
             {activeTab === 'personal' && (
@@ -112,43 +220,50 @@ const AddStudent = () => {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
                   <div className="form-group">
                     <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>FIRST NAME *</label>
-                    <input type="text" name="firstName" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="Enter first name" required />
+                    <input type="text" name="firstName" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="Enter first name" required value={formData.firstName} onChange={handleInputChange} />
                   </div>
                   <div className="form-group">
                     <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>LAST NAME *</label>
-                    <input type="text" name="lastName" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="Enter last name" required />
+                    <input type="text" name="lastName" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="Enter last name" required value={formData.lastName} onChange={handleInputChange} />
                   </div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
                   <div className="form-group">
                     <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>GENDER *</label>
-                    <select name="gender" className="form-input" style={{ borderRadius: '14px', padding: '14px' }}>
-                      <option value="">Select Gender</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
+                    <select name="gender" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} value={formData.gender} onChange={handleInputChange}>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
                     </select>
                   </div>
                   <div className="form-group">
                     <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>DATE OF BIRTH *</label>
                     <div style={{ position: 'relative' }}>
-                      <Calendar size={18} style={{ position: 'absolute', right: '16px', top: '14px', color: 'var(--text-muted)' }} />
-                      <input type="date" name="dob" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} required />
+                      <input type="date" name="dob" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} required value={formData.dob} onChange={handleInputChange} />
                     </div>
                   </div>
                   <div className="form-group">
                     <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>BLOOD GROUP</label>
-                    <input type="text" name="bloodGroup" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="e.g. A+" />
+                    <select name="bloodGroup" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} value={formData.bloodGroup} onChange={handleInputChange}>
+                      <option value="A+">A+</option>
+                      <option value="A-">A-</option>
+                      <option value="B+">B+</option>
+                      <option value="B-">B-</option>
+                      <option value="AB+">AB+</option>
+                      <option value="AB-">AB-</option>
+                      <option value="O+">O+</option>
+                      <option value="O-">O-</option>
+                    </select>
                   </div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
                   <div className="form-group">
                     <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>RELIGION</label>
-                    <input type="text" name="religion" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="Enter religion" />
+                    <input type="text" name="religion" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="Enter religion" value={formData.religion} onChange={handleInputChange} />
                   </div>
                   <div className="form-group">
                     <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>NATIONALITY</label>
-                    <input type="text" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} defaultValue="American" />
+                    <input type="text" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} defaultValue="American" readOnly />
                   </div>
                 </div>
               </motion.div>
@@ -160,31 +275,29 @@ const AddStudent = () => {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
                   <div className="form-group">
                     <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>ADMISSION ID *</label>
-                    <input type="text" name="admissionId" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="e.g. ADM-2026-001" required />
+                    <input type="text" name="admissionId" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="e.g. STU999" required value={formData.admissionId} onChange={handleInputChange} />
                   </div>
                   <div className="form-group">
                     <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>ROLL NUMBER *</label>
-                    <input type="text" name="rollNo" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="e.g. 01" required />
+                    <input type="text" name="rollNo" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="e.g. 01" required value={formData.rollNo} onChange={handleInputChange} />
                   </div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
                   <div className="form-group">
                     <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>CLASS / GRADE *</label>
-                    <select name="class" className="form-input" style={{ borderRadius: '14px', padding: '14px' }}>
-                      <option value="">Select Class</option>
+                    <select name="class" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} value={formData.class} onChange={handleInputChange}>
                       {['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'].map(c => <option key={c} value={c}>Class {c}</option>)}
                     </select>
                   </div>
                   <div className="form-group">
                     <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>SECTION *</label>
-                    <select name="section" className="form-input" style={{ borderRadius: '14px', padding: '14px' }}>
-                      <option value="">Select Section</option>
+                    <select name="section" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} value={formData.section} onChange={handleInputChange}>
                       {['A', 'B', 'C', 'D'].map(s => <option key={s} value={s}>Section {s}</option>)}
                     </select>
                   </div>
                   <div className="form-group">
                     <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>ADMISSION DATE *</label>
-                    <input type="date" name="admissionDate" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} defaultValue={formData.admissionDate} required />
+                    <input type="date" name="admissionDate" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} required value={formData.admissionDate} onChange={handleInputChange} />
                   </div>
                 </div>
               </motion.div>
@@ -196,11 +309,11 @@ const AddStudent = () => {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
                   <div className="form-group">
                     <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>FATHER / GUARDIAN NAME *</label>
-                    <input type="text" name="parentName" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="Enter full name" required />
+                    <input type="text" name="parentName" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="Enter full name" required value={formData.parentName} onChange={handleInputChange} />
                   </div>
                   <div className="form-group">
                     <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>OCCUPATION</label>
-                    <input type="text" name="parentOccupation" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="Enter occupation" />
+                    <input type="text" name="parentOccupation" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="Enter occupation" value={formData.parentOccupation} onChange={handleInputChange} />
                   </div>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
@@ -208,14 +321,14 @@ const AddStudent = () => {
                     <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>GUARDIAN PHONE *</label>
                     <div style={{ position: 'relative' }}>
                       <Phone size={18} style={{ position: 'absolute', left: '16px', top: '14px', color: 'var(--text-muted)' }} />
-                      <input type="tel" name="parentPhone" className="form-input" style={{ borderRadius: '14px', padding: '14px 14px 14px 48px' }} placeholder="+1 234 567 890" required />
+                      <input type="tel" name="parentPhone" className="form-input" style={{ borderRadius: '14px', padding: '14px 14px 14px 48px' }} placeholder="+1 234 567 890" required value={formData.parentPhone} onChange={handleInputChange} />
                     </div>
                   </div>
                   <div className="form-group">
                     <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>GUARDIAN EMAIL</label>
                     <div style={{ position: 'relative' }}>
                       <Mail size={18} style={{ position: 'absolute', left: '16px', top: '14px', color: 'var(--text-muted)' }} />
-                      <input type="email" name="parentEmail" className="form-input" style={{ borderRadius: '14px', padding: '14px 14px 14px 48px' }} placeholder="guardian@example.com" />
+                      <input type="email" name="parentEmail" className="form-input" style={{ borderRadius: '14px', padding: '14px 14px 14px 48px' }} placeholder="guardian@example.com" value={formData.parentEmail} onChange={handleInputChange} />
                     </div>
                   </div>
                 </div>
@@ -228,20 +341,20 @@ const AddStudent = () => {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
                   <div className="form-group">
                     <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>STUDENT PHONE</label>
-                    <input type="tel" name="phone" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="+1 234 567 890" />
+                    <input type="tel" name="phone" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="+1 234 567 890" value={formData.phone} onChange={handleInputChange} />
                   </div>
                   <div className="form-group">
                     <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>STUDENT EMAIL</label>
-                    <input type="email" name="email" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="student@edupro.edu" />
+                    <input type="email" name="email" className="form-input" style={{ borderRadius: '14px', padding: '14px' }} placeholder="student@edupro.edu" value={formData.email} onChange={handleInputChange} />
                   </div>
                 </div>
                 <div className="form-group">
                   <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>PRESENT ADDRESS *</label>
-                  <textarea name="presentAddress" className="form-input" style={{ borderRadius: '18px', padding: '20px', minHeight: '120px', resize: 'vertical' }} placeholder="Enter full present address" required></textarea>
+                  <textarea name="presentAddress" className="form-input" style={{ borderRadius: '18px', padding: '20px', minHeight: '120px', resize: 'vertical' }} placeholder="Enter full present address" required value={formData.presentAddress} onChange={handleInputChange}></textarea>
                 </div>
                 <div className="form-group">
                   <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '10px', display: 'block' }}>PERMANENT ADDRESS</label>
-                  <textarea name="permanentAddress" className="form-input" style={{ borderRadius: '18px', padding: '20px', minHeight: '120px', resize: 'vertical' }} placeholder="Enter permanent address (if different)"></textarea>
+                  <textarea name="permanentAddress" className="form-input" style={{ borderRadius: '18px', padding: '20px', minHeight: '120px', resize: 'vertical' }} placeholder="Enter permanent address (if different)" value={formData.permanentAddress} onChange={handleInputChange}></textarea>
                 </div>
               </motion.div>
             )}
@@ -259,7 +372,7 @@ const AddStudent = () => {
                 style={{ 
                   backgroundColor: 'var(--bg-body)', border: '1px solid var(--border-color)', 
                   padding: '14px 28px', borderRadius: '14px', fontWeight: 700,
-                  opacity: activeTab === 'personal' ? 0.5 : 1
+                  opacity: activeTab === 'personal' ? 0.5 : 1, cursor: activeTab === 'personal' ? 'not-allowed' : 'pointer'
                 }}
               >
                 Previous Section
@@ -272,12 +385,12 @@ const AddStudent = () => {
                     const idx = tabs.findIndex(t => t.id === activeTab);
                     setActiveTab(tabs[idx+1].id);
                   }}
-                  style={{ padding: '14px 32px', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '10px' }}
+                  style={{ padding: '14px 32px', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
                 >
                   Continue to Next <ChevronRight size={18} />
                 </button>
               ) : (
-                <button type="submit" className="btn btn-primary" style={{ padding: '14px 40px', borderRadius: '14px', fontWeight: 900, boxShadow: '0 10px 20px -5px rgba(69, 179, 224, 0.4)' }}>
+                <button type="submit" className="btn btn-primary" style={{ padding: '14px 40px', borderRadius: '14px', fontWeight: 900, cursor: 'pointer', boxShadow: '0 10px 20px -5px rgba(69, 179, 224, 0.4)' }}>
                   Complete Registration
                 </button>
               )}
@@ -285,6 +398,94 @@ const AddStudent = () => {
           </form>
         </div>
       </div>
+
+      {/* Simulated Ledger Saving Overlay */}
+      <AnimatePresence>
+        {isSaving && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0, 0, 0, 0.45)',
+              backdropFilter: 'blur(10px)',
+              zIndex: 9999,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '24px'
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 10 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 10 }}
+              style={{
+                width: '100%',
+                maxWidth: '520px',
+                backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                backdropFilter: 'blur(20px)',
+                borderRadius: '32px',
+                border: '1px solid rgba(255, 255, 255, 0.4)',
+                boxShadow: '0 30px 60px rgba(0,0,0,0.2)',
+                padding: '40px',
+                color: '#1f2937'
+              }}
+            >
+              <h3 style={{ fontSize: '1.4rem', fontWeight: 950, margin: '0 0 24px 0', textAlign: 'center' }}>
+                Registering Student Ledger
+              </h3>
+              
+              {/* Dynamic steps indicator */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {savePhases.map((phase, idx) => {
+                  const isPending = idx > savePhase;
+                  const isCurrent = idx === savePhase;
+                  const isDone = idx < savePhase;
+
+                  return (
+                    <div 
+                      key={idx} 
+                      style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '16px',
+                        opacity: isPending ? 0.35 : 1,
+                        transition: 'opacity 0.3s'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {isDone ? (
+                          <div style={{ color: '#10B981', display: 'flex', alignItems: 'center' }}>
+                            <CheckCircle2 size={24} />
+                          </div>
+                        ) : isCurrent ? (
+                          <div className="spinner" style={{ width: '20px', height: '20px', border: '3px solid var(--primary-light)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+                        ) : (
+                          <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '2px solid var(--border-color)' }}></div>
+                        )}
+                      </div>
+                      <span style={{ 
+                        fontSize: '0.95rem', 
+                        fontWeight: isCurrent ? 800 : 600,
+                        color: isCurrent ? 'var(--primary)' : isDone ? '#1f2937' : '#4b5563'
+                      }}>
+                        {phase}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <ToastRenderer toast={toast} onClose={hideToast} />
     </motion.div>
   );
 };

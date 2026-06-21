@@ -7,7 +7,8 @@ const initDb = require('./config/dbInit');
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 const secret = process.env.JWT_SECRET || 'supersecret';
 
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
 // Database Pool
 const pool = mysql.createPool({
     host: process.env.DB_HOST || '127.0.0.1',
+    port: process.env.DB_PORT || 3306,
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_NAME || 'school_db',
@@ -78,7 +80,11 @@ app.get('/api/stats', async (req, res) => {
 // CRUD for Students
 app.get('/api/students', async (req, res) => {
     try {
-        const [rows] = await pool.query('SELECT * FROM students');
+        const [rows] = await pool.query(`
+            SELECT s.*, sec.section_name AS section 
+            FROM students s
+            LEFT JOIN sections sec ON s.section_id = sec.section_id
+        `);
         res.json(rows);
     } catch (err) {
         console.error('Error fetching students:', err);
@@ -87,8 +93,20 @@ app.get('/api/students', async (req, res) => {
 });
 app.post('/api/students', async (req, res) => {
     try {
-        const { student_id, name, email, phone, class_id } = req.body;
-        await pool.query('INSERT INTO students (student_id, name, email, phone, class_id) VALUES (?, ?, ?, ?, ?)', [student_id, name, email, phone, class_id]);
+        const { student_id, name, email, phone, class_id, section, dob, gender, address, blood_group, admission_date, avatar } = req.body;
+        
+        let sectionId = null;
+        if (section && class_id) {
+            const [secRows] = await pool.query('SELECT section_id FROM sections WHERE class_id = ? AND section_name = ?', [class_id, section]);
+            if (secRows.length > 0) {
+                sectionId = secRows[0].section_id;
+            }
+        }
+
+        await pool.query(
+            'INSERT INTO students (student_id, name, email, phone, class_id, section_id, dob, gender, address, blood_group, admission_date, avatar) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+            [student_id, name, email, phone, class_id || null, sectionId, dob || null, gender || null, address || null, blood_group || null, admission_date || null, avatar || null]
+        );
         res.json({ message: 'Student added' });
     } catch (err) {
         console.error('Error adding student:', err);
@@ -161,7 +179,14 @@ app.post('/api/notices', async (req, res) => {
 // Attendance
 app.get('/api/attendance', async (req, res) => {
     try {
-        const [rows] = await pool.query('SELECT * FROM attendance');
+        const { date } = req.query;
+        let query = 'SELECT * FROM attendance';
+        const params = [];
+        if (date) {
+            query += ' WHERE date = ?';
+            params.push(date);
+        }
+        const [rows] = await pool.query(query, params);
         res.json(rows);
     } catch (err) {
         console.error('Error fetching attendance:', err);
@@ -170,9 +195,18 @@ app.get('/api/attendance', async (req, res) => {
 });
 app.post('/api/attendance', async (req, res) => {
     try {
-        const { student_id, status, date } = req.body;
-        await pool.query('INSERT INTO attendance (student_id, status, date) VALUES (?, ?, ?)', [student_id, status, date]);
-        res.json({ message: 'Attendance recorded' });
+        const records = Array.isArray(req.body) ? req.body : [req.body];
+        const values = records.map(r => [r.student_id, r.status, r.date]);
+        
+        if (values.length > 0) {
+            const studentIds = records.map(r => r.student_id);
+            const dateVal = records[0].date;
+            // Delete existing records for these students on this date to prevent duplicates
+            await pool.query('DELETE FROM attendance WHERE date = ? AND student_id IN (?)', [dateVal, studentIds]);
+            // Bulk insert new records
+            await pool.query('INSERT INTO attendance (student_id, status, date) VALUES ?', [values]);
+        }
+        res.json({ message: 'Attendance recorded successfully' });
     } catch (err) {
         console.error('Error recording attendance:', err);
         res.status(500).json({ error: 'Database error', details: err.message });
