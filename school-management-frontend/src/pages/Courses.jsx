@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useToast, ToastRenderer } from '../hooks/useToast';
 import { 
   BookOpen, Search, Filter, Plus, Star, 
@@ -7,35 +7,156 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const getLearningMaterials = (category, courseName) => {
+  const videoUrls = {
+    'Development': 'https://www.youtube.com/embed/Ke90Tje7VS0',
+    'Design': 'https://www.youtube.com/embed/c9Wg6Ry_zYI',
+    'Data Science': 'https://www.youtube.com/embed/ua-CiDNNj30',
+    'Science': 'https://www.youtube.com/embed/ua-CiDNNj30',
+    'Security': 'https://www.youtube.com/embed/inWWhr5tXLA',
+    'Marketing': 'https://www.youtube.com/embed/nU-IIX3puyU'
+  };
+  
+  const imageUrls = {
+    'Development': 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=600',
+    'Design': 'https://images.unsplash.com/photo-1561070791-26c113006238?q=80&w=600',
+    'Data Science': 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=600',
+    'Science': 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=600',
+    'Security': 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=600',
+    'Marketing': 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600'
+  };
+
+  const defaultVideo = 'https://www.youtube.com/embed/Ke90Tje7VS0';
+  const defaultImage = 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=600';
+  
+  const texts = {
+    'Development': {
+      title: 'Module 1: Modular Application Architectures',
+      overview: 'In this module, we examine the construction of highly scalable web interfaces. We focus on decoupling state from representation and managing async lifecycles.',
+      details: [
+        'Understand virtual DOM diffing, component lifecycle events, and render cycles.',
+        'Implement advanced state management using lightweight context layers.',
+        'Optimize re-renders using selectors, memoization, and concurrent rendering APIs.'
+      ],
+      code: `// Scalable Architecture Hook Example\nimport { useState, useEffect } from 'react';\n\nexport const useAsyncState = (apiCall) => {\n  const [state, setState] = useState({ data: null, loading: true });\n  useEffect(() => {\n    apiCall().then(data => setState({ data, loading: false }));\n  }, [apiCall]);\n  return state;\n};`
+    },
+    'Design': {
+      title: 'Module 1: Cognitive Load & Visual Hierarchy',
+      overview: 'This module explores user interaction models, focusing on minimizing cognitive friction and designing cohesive layout grids.',
+      details: [
+        'Apply Fitts\'s Law and Hicks\'s Law to interactive navigation patterns.',
+        'Construct robust, scalable design tokens for consistent color and typography.',
+        'Develop responsive fluid grids that adapt beautifully to all screen configurations.'
+      ],
+      code: `/* Visual Token Grid System */\n:root {\n  --token-grid-unit: 8px;\n  --token-font-primary: 'Inter', sans-serif;\n  --token-color-primary: hsl(220, 90%, 56%);\n}`
+    },
+    'Data Science': {
+      title: 'Module 1: Exploratory Data Ingestion',
+      overview: 'Learn how to consume, scrub, and visualize complex multi-dimensional datasets using Python data science environments.',
+      details: [
+        'Clean raw missing/null data elements inside Python Pandas DataFrames.',
+        'Identify correlations, outliers, and variance using visualization libraries.',
+        'Deploy scalable data pipeline scripts to parse streaming JSON payloads.'
+      ],
+      code: `# Pandas Ingestion Pipeline\nimport pandas as pd\n\ndef clean_and_load(file_path):\n    df = pd.read_csv(file_path)\n    df.dropna(subset=['id', 'value'], inplace=True)\n    return df.describe()`
+    },
+    'Science': {
+      title: 'Module 1: Exploratory Data Ingestion',
+      overview: 'Learn how to consume, scrub, and visualize complex multi-dimensional datasets using Python data science environments.',
+      details: [
+        'Clean raw missing/null data elements inside Python Pandas DataFrames.',
+        'Identify correlations, outliers, and variance using visualization libraries.',
+        'Deploy scalable data pipeline scripts to parse streaming JSON payloads.'
+      ],
+      code: `# Pandas Ingestion Pipeline\nimport pandas as pd\n\ndef clean_and_load(file_path):\n    df = pd.read_csv(file_path)\n    df.dropna(subset=['id', 'value'], inplace=True)\n    return df.describe()`
+    },
+    'Security': {
+      title: 'Module 1: Modern Threat Vectors & Defensive Cryptography',
+      overview: 'An examination of threat landscapes, secure communication protocols, and cryptographic storage standards.',
+      details: [
+        'Identify key vulnerabilities in modern network communication layers.',
+        'Implement secure token validation using asymmetric encryption models.',
+        'Mitigate injection attacks and script execution exploits systematically.'
+      ],
+      code: `// Secure Password Hashing Simulation\nconst crypto = require('crypto');\n\nconst hashPassword = (password) => {\n  const salt = crypto.randomBytes(16).toString('hex');\n  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');\n  return { salt, hash };\n};`
+    },
+    'Marketing': {
+      title: 'Module 1: Conversions & Funnel Optimizations',
+      overview: 'Explore behavioral funnel metrics, paid acquisition parameters, and SEO optimization models.',
+      details: [
+        'Map user clickpaths to define exact drop-off points in transaction funnels.',
+        'Construct and execute high-yield A/B test experiments for checkout headers.',
+        'Leverage structured schema tags to maximize organic visibility on search nodes.'
+      ],
+      code: `<!-- Schema structured meta tag example -->\n<script type="application/ld+json">\n{\n  "@context": "https://schema.org",\n  "@type": "Course",\n  "name": "Digital Marketing Strategy"\n}\n</script>`
+    }
+  };
+
+  const selectedText = texts[category] || texts['Development'];
+  
+  return {
+    videoUrl: videoUrls[category] || defaultVideo,
+    imageUrl: imageUrls[category] || defaultImage,
+    text: selectedText
+  };
+};
+
 const Courses = () => {
   const { toast, showToast, hideToast } = useToast();
   // Course States
-  const [courses, setCourses] = useState([
-    { id: 'CRS-001', name: 'Advanced React Architecture', instructor: 'Dr. Sarah Wilson', students: 1250, rating: 4.9, image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=400&auto=format&fit=crop', category: 'Development', isPublic: true },
-    { id: 'CRS-002', name: 'UI/UX Design Masterclass', instructor: 'Emma Thompson', students: 850, rating: 4.8, image: 'https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=400&auto=format&fit=crop', category: 'Design', isPublic: true },
-    { id: 'CRS-003', name: 'Data Analysis with Python', instructor: 'Michael Chen', students: 2100, rating: 4.7, image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=400&auto=format&fit=crop', category: 'Data Science', isPublic: true },
-    { id: 'CRS-004', name: 'Fullstack Web Development', instructor: 'James Miller', students: 1800, rating: 4.9, image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=400&auto=format&fit=crop', category: 'Development', isPublic: true },
-    { id: 'CRS-005', name: 'Cyber Security Fundamentals', instructor: 'Robert Fox', students: 540, rating: 4.6, image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=400&auto=format&fit=crop', category: 'Security', isPublic: false },
-    { id: 'CRS-006', name: 'Digital Marketing Strategy', instructor: 'Eleanor Pena', students: 920, rating: 4.5, image: 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?q=80&w=400&auto=format&fit=crop', category: 'Marketing', isPublic: true },
-    { id: 'CRS-007', name: 'Mobile App Dev (Flutter)', instructor: 'Guy Hawkins', students: 760, rating: 4.8, image: 'https://images.unsplash.com/photo-1526498460520-4c246339dccb?q=80&w=400&auto=format&fit=crop', category: 'Development', isPublic: false },
-    { id: 'CRS-008', name: 'Machine Learning Bootcamp', instructor: 'Jane Cooper', students: 1100, rating: 4.9, image: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=400&auto=format&fit=crop', category: 'Data Science', isPublic: true },
-    { id: 'CRS-009', name: 'Data Science with R', instructor: 'Dr. Emily Blunt', students: 640, rating: 4.7, image: 'https://images.unsplash.com/photo-1518186239747-d08efaa57396?q=80&w=400&auto=format&fit=crop', category: 'Data Science', isPublic: false },
-    { id: 'CRS-010', name: 'UI/UX Advanced Prototyping', instructor: 'Chris Evans', students: 430, rating: 4.8, image: 'https://images.unsplash.com/photo-1545235617-9465d2a55698?q=80&w=400&auto=format&fit=crop', category: 'Design', isPublic: false },
-    { id: 'CRS-011', name: 'Ethical Hacking Masterclass', instructor: 'Scarlett Johansson', students: 1500, rating: 4.9, image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=400&auto=format&fit=crop', category: 'Security', isPublic: true },
-    { id: 'CRS-012', name: 'Blockchain Development', instructor: 'Mark Ruffalo', students: 890, rating: 4.6, image: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=400&auto=format&fit=crop', category: 'Development', isPublic: false },
-  ]);
+  const [courses, setCourses] = useState(() => {
+    const saved = localStorage.getItem('courses');
+    return saved ? JSON.parse(saved) : [
+      { id: 'CRS-001', name: 'Advanced React Architecture', instructor: 'Dr. Sarah Wilson', students: 1250, rating: 4.9, image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=400&auto=format&fit=crop', category: 'Development', isPublic: true },
+      { id: 'CRS-002', name: 'UI/UX Design Masterclass', instructor: 'Emma Thompson', students: 850, rating: 4.8, image: 'https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=400&auto=format&fit=crop', category: 'Design', isPublic: true },
+      { id: 'CRS-003', name: 'Data Analysis with Python', instructor: 'Michael Chen', students: 2100, rating: 4.7, image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=400&auto=format&fit=crop', category: 'Data Science', isPublic: true },
+      { id: 'CRS-004', name: 'Fullstack Web Development', instructor: 'James Miller', students: 1800, rating: 4.9, image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=400&auto=format&fit=crop', category: 'Development', isPublic: true },
+      { id: 'CRS-005', name: 'Cyber Security Fundamentals', instructor: 'Robert Fox', students: 540, rating: 4.6, image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=400&auto=format&fit=crop', category: 'Security', isPublic: false },
+      { id: 'CRS-006', name: 'Digital Marketing Strategy', instructor: 'Eleanor Pena', students: 920, rating: 4.5, image: 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?q=80&w=400&auto=format&fit=crop', category: 'Marketing', isPublic: true },
+      { id: 'CRS-007', name: 'Mobile App Dev (Flutter)', instructor: 'Guy Hawkins', students: 760, rating: 4.8, image: 'https://images.unsplash.com/photo-1526498460520-4c246339dccb?q=80&w=400&auto=format&fit=crop', category: 'Development', isPublic: false },
+      { id: 'CRS-008', name: 'Machine Learning Bootcamp', instructor: 'Jane Cooper', students: 1100, rating: 4.9, image: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=400&auto=format&fit=crop', category: 'Data Science', isPublic: true },
+      { id: 'CRS-009', name: 'Data Science with R', instructor: 'Dr. Emily Blunt', students: 640, rating: 4.7, image: 'https://images.unsplash.com/photo-1518186239747-d08efaa57396?q=80&w=400&auto=format&fit=crop', category: 'Data Science', isPublic: false },
+      { id: 'CRS-010', name: 'UI/UX Advanced Prototyping', instructor: 'Chris Evans', students: 430, rating: 4.8, image: 'https://images.unsplash.com/photo-1545235617-9465d2a55698?q=80&w=400&auto=format&fit=crop', category: 'Design', isPublic: false },
+      { id: 'CRS-011', name: 'Ethical Hacking Masterclass', instructor: 'Scarlett Johansson', students: 1500, rating: 4.9, image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=400&auto=format&fit=crop', category: 'Security', isPublic: true },
+      { id: 'CRS-012', name: 'Blockchain Development', instructor: 'Mark Ruffalo', students: 890, rating: 4.6, image: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=400&auto=format&fit=crop', category: 'Development', isPublic: false },
+    ];
+  });
 
   // Filtering & UI State
   const [activeCategory, setActiveCategory] = useState('All Courses');
   const [searchQuery, setSearchQuery] = useState('');
   const [publicOnly, setPublicOnly] = useState(false);
-  const [starredIds, setStarredIds] = useState(['CRS-001', 'CRS-004']); // Initial starred items
+  const [starredIds, setStarredIds] = useState(() => {
+    const saved = localStorage.getItem('starredIds');
+    return saved ? JSON.parse(saved) : ['CRS-001', 'CRS-004'];
+  });
 
   // Modals & Details Slider State
   const [activeCourseDetails, setActiveCourseDetails] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showInstructorModal, setShowInstructorModal] = useState(false);
-  const [isEnrolledMap, setIsEnrolledMap] = useState({});
+  const [isEnrolledMap, setIsEnrolledMap] = useState(() => {
+    const saved = localStorage.getItem('isEnrolledMap');
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  const [activeDrawerTab, setActiveDrawerTab] = useState('overview');
+
+  useEffect(() => {
+    localStorage.setItem('courses', JSON.stringify(courses));
+  }, [courses]);
+
+  useEffect(() => {
+    localStorage.setItem('starredIds', JSON.stringify(starredIds));
+  }, [starredIds]);
+
+  useEffect(() => {
+    localStorage.setItem('isEnrolledMap', JSON.stringify(isEnrolledMap));
+  }, [isEnrolledMap]);
+
+  useEffect(() => {
+    setActiveDrawerTab('overview');
+  }, [activeCourseDetails]);
 
   // Instructor Onboarding Form State
   const [instructorForm, setInstructorForm] = useState({ name: '', category: 'Development', concept: '', bio: '' });
@@ -514,61 +635,151 @@ const Courses = () => {
                   </div>
                 </div>
 
-                {/* Syllabus Modules preview */}
-                <div>
-                  <h3 style={{ fontSize: '1rem', fontWeight: 900, marginBottom: '16px', color: 'var(--text-main)' }}>Course Syllabus Overview</h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {getCourseSyllabus(activeCourseDetails.name).map((module, index) => (
-                      <div key={index} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', padding: '12px', borderRadius: '12px', backgroundColor: 'var(--bg-body)' }}>
-                        <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: 'var(--primary-light)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 900, flexShrink: 0 }}>
-                          {index + 1}
-                        </div>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', lineHeight: 1.4 }}>{module}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Instructor */}
-                <div>
-                  <h3 style={{ fontSize: '1rem', fontWeight: 900, marginBottom: '12px', color: 'var(--text-main)' }}>Instructor Details</h3>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', borderRadius: '16px', backgroundColor: 'var(--bg-body)' }}>
-                    <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '1.1rem' }}>
-                      {activeCourseDetails.instructor.split(' ').map(n => n[0]).join('')}
-                    </div>
-                    <div>
-                      <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 900, color: 'var(--text-main)' }}>{activeCourseDetails.instructor}</h4>
-                      <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>Senior Faculty Member at Curriculum Core</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action button: Enrollment */}
-                <div style={{ marginTop: 'auto', paddingTop: '16px' }}>
+                {/* Tabs for Details */}
+                <div style={{ display: 'flex', borderBottom: '1px solid var(--border-color)', marginBottom: '8px' }}>
                   <button 
-                    onClick={() => handleEnrollNow(activeCourseDetails.id)}
-                    disabled={isEnrolledMap[activeCourseDetails.id]}
-                    style={{ 
-                      width: '100%', padding: '16px', borderRadius: '16px', border: 'none', 
-                      backgroundColor: isEnrolledMap[activeCourseDetails.id] ? '#e6f4ea' : 'var(--primary)', 
-                      color: isEnrolledMap[activeCourseDetails.id] ? '#137333' : 'white', 
-                      fontWeight: 900, cursor: isEnrolledMap[activeCourseDetails.id] ? 'default' : 'pointer', 
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
-                      fontSize: '1rem', boxShadow: isEnrolledMap[activeCourseDetails.id] ? 'none' : '0 6px 20px rgba(72, 128, 255, 0.3)',
-                      transition: 'all 0.2s ease'
+                    type="button"
+                    onClick={() => setActiveDrawerTab('overview')}
+                    style={{
+                      flex: 1, padding: '12px', border: 'none', background: 'none',
+                      borderBottom: activeDrawerTab === 'overview' ? '2px solid var(--primary)' : 'none',
+                      color: activeDrawerTab === 'overview' ? 'var(--primary)' : 'var(--text-muted)',
+                      fontWeight: 800, cursor: 'pointer', fontSize: '0.9rem',
+                      transition: 'all 0.2s'
                     }}
                   >
-                    {isEnrolledMap[activeCourseDetails.id] ? (
-                      <>
-                        <Check size={18} /> ENROLLED SUCCESSFUL
-                      </>
-                    ) : (
-                      <>
-                        START LEARNING NOW <ArrowRight size={18} />
-                      </>
-                    )}
+                    Overview
+                  </button>
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      if (isEnrolledMap[activeCourseDetails.id]) {
+                        setActiveDrawerTab('learning');
+                      } else {
+                        showToast('Please enroll in this course to access the Learning Hub.', 'warning', 'Locked Content');
+                      }
+                    }}
+                    style={{
+                      flex: 1, padding: '12px', border: 'none', background: 'none',
+                      borderBottom: activeDrawerTab === 'learning' ? '2px solid var(--primary)' : 'none',
+                      color: activeDrawerTab === 'learning' ? 'var(--primary)' : 'var(--text-muted)',
+                      fontWeight: 800, cursor: 'pointer', fontSize: '0.9rem',
+                      opacity: isEnrolledMap[activeCourseDetails.id] ? 1 : 0.6,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                      transition: 'all 0.2s'
+                    }}
+                  >
+                    Learning Hub {!isEnrolledMap[activeCourseDetails.id] && '🔒'}
                   </button>
                 </div>
+
+                {activeDrawerTab === 'overview' ? (
+                  <>
+                    {/* Syllabus Modules preview */}
+                    <div>
+                      <h3 style={{ fontSize: '1rem', fontWeight: 900, marginBottom: '16px', color: 'var(--text-main)' }}>Course Syllabus Overview</h3>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        {getCourseSyllabus(activeCourseDetails.name).map((module, index) => (
+                          <div key={index} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', padding: '12px', borderRadius: '12px', backgroundColor: 'var(--bg-body)' }}>
+                            <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: 'var(--primary-light)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 900, flexShrink: 0 }}>
+                              {index + 1}
+                            </div>
+                            <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-main)', lineHeight: 1.4 }}>{module}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Instructor */}
+                    <div>
+                      <h3 style={{ fontSize: '1rem', fontWeight: 900, marginBottom: '12px', color: 'var(--text-main)' }}>Instructor Details</h3>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', borderRadius: '16px', backgroundColor: 'var(--bg-body)' }}>
+                        <div style={{ width: '48px', height: '48px', borderRadius: '12px', backgroundColor: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '1.1rem' }}>
+                          {activeCourseDetails.instructor.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <div>
+                          <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 900, color: 'var(--text-main)' }}>{activeCourseDetails.instructor}</h4>
+                          <p style={{ margin: '4px 0 0', fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>Senior Faculty Member at Curriculum Core</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action button: Enrollment */}
+                    <div style={{ marginTop: 'auto', paddingTop: '16px' }}>
+                      <button 
+                        onClick={() => handleEnrollNow(activeCourseDetails.id)}
+                        disabled={isEnrolledMap[activeCourseDetails.id]}
+                        style={{ 
+                          width: '100%', padding: '16px', borderRadius: '16px', border: 'none', 
+                          backgroundColor: isEnrolledMap[activeCourseDetails.id] ? '#e6f4ea' : 'var(--primary)', 
+                          color: isEnrolledMap[activeCourseDetails.id] ? '#137333' : 'white', 
+                          fontWeight: 900, cursor: isEnrolledMap[activeCourseDetails.id] ? 'default' : 'pointer', 
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+                          fontSize: '1rem', boxShadow: isEnrolledMap[activeCourseDetails.id] ? 'none' : '0 6px 20px rgba(72, 128, 255, 0.3)',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        {isEnrolledMap[activeCourseDetails.id] ? (
+                          <>
+                            <Check size={18} /> ENROLLED SUCCESSFUL
+                          </>
+                        ) : (
+                          <>
+                            START LEARNING NOW <ArrowRight size={18} />
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Learning Hub Contents */}
+                    {(() => {
+                      const materials = getLearningMaterials(activeCourseDetails.category, activeCourseDetails.name);
+                      return (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                          <div>
+                            <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>LECTURE DEMO VIDEO</span>
+                            <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', height: 0, borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--border-color)', backgroundColor: 'black' }}>
+                              <iframe 
+                                style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+                                src={materials.videoUrl} 
+                                title="Course Demo Video" 
+                                frameBorder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowFullScreen
+                              ></iframe>
+                            </div>
+                          </div>
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-muted)' }}>CONCEPTUAL DIAGRAM MODEL</span>
+                            <img src={materials.imageUrl} alt="Course Concept Diagram" style={{ width: '100%', borderRadius: '16px', border: '1px solid var(--border-color)', objectFit: 'cover', height: '180px' }} />
+                          </div>
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '20px', borderRadius: '16px', backgroundColor: 'var(--bg-body)', border: '1px solid var(--border-color)' }}>
+                            <h4 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 900, color: 'var(--text-main)' }}>{materials.text.title}</h4>
+                            <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.5, fontWeight: 600 }}>{materials.text.overview}</p>
+                            
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', margin: '8px 0' }}>
+                              {materials.text.details.map((detail, index) => (
+                                <div key={index} style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--primary)', marginTop: '6px', flexShrink: 0 }} />
+                                  <span style={{ fontSize: '0.8rem', color: 'var(--text-main)', fontWeight: 600, lineHeight: 1.4 }}>{detail}</span>
+                                </div>
+                              ))}
+                            </div>
+
+                            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Academic Code Lab Reference</div>
+                            <pre style={{ margin: 0, padding: '12px', borderRadius: '10px', backgroundColor: 'rgba(0, 0, 0, 0.05)', color: 'var(--text-main)', overflowX: 'auto', fontSize: '0.75rem', fontFamily: 'monospace', lineHeight: 1.4, border: '1px solid var(--border-color)' }}>
+                              <code>{materials.text.code}</code>
+                            </pre>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </>
+                )}
               </div>
             </motion.div>
           </>

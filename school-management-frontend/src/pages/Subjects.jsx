@@ -1,15 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BookOpen, Plus, Search, Filter, Edit2, Trash, Book, X, Save, GraduationCap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Subjects = () => {
-  const [subjects, setSubjects] = useState([
-    { id: 1, name: 'Mathematics', code: 'MATH101', type: 'Core', classes: ['10th', '11th', '12th'], teacher: 'Dr. Michael Chen' },
-    { id: 2, name: 'Physics', code: 'PHY202', type: 'Core', classes: ['11th', '12th'], teacher: 'Prof. Robert Frost' },
-    { id: 3, name: 'English Literature', code: 'ENG105', type: 'Language', classes: ['9th', '10th'], teacher: 'Ms. Emily Bronte' },
-    { id: 4, name: 'Computer Science', code: 'CS303', type: 'Elective', classes: ['11th', '12th'], teacher: 'Mr. Alan Turing' },
-    { id: 5, name: 'History', code: 'HIS102', type: 'Humanities', classes: ['8th', '9th', '10th'], teacher: 'Dr. Yuval Noah' },
-  ]);
+  const [subjects, setSubjects] = useState(() => {
+    const cached = localStorage.getItem('edupro_subjects');
+    return cached ? JSON.parse(cached) : [
+      { id: 1, name: 'Mathematics', code: 'MATH101', type: 'Core', classes: ['10th', '11th', '12th'], teacher: 'Dr. Michael Chen' },
+      { id: 2, name: 'Physics', code: 'PHY202', type: 'Core', classes: ['11th', '12th'], teacher: 'Prof. Robert Frost' },
+      { id: 3, name: 'English Literature', code: 'ENG105', type: 'Language', classes: ['9th', '10th'], teacher: 'Ms. Emily Bronte' },
+      { id: 4, name: 'Computer Science', code: 'CS303', type: 'Elective', classes: ['11th', '12th'], teacher: 'Mr. Alan Turing' },
+      { id: 5, name: 'History', code: 'HIS102', type: 'Humanities', classes: ['8th', '9th', '10th'], teacher: 'Dr. Yuval Noah' },
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('edupro_subjects', JSON.stringify(subjects));
+  }, [subjects]);
 
   const teachersList = [
     'Dr. Michael Chen',

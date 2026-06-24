@@ -6,6 +6,7 @@ import {
   Eye, Edit2, Flag, Trash2, X, CheckCircle2, SlidersHorizontal, RotateCcw
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { getTeachers } from '../services/service';
 import ActionDropdown from '../components/ActionDropdown';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -33,12 +34,95 @@ const STATUS_OPTIONS = [
 const TeacherAttendance = () => {
   const navigate = useNavigate();
   const [teachersList, setTeachersList] = useState([]);
-  
+  const [attendanceData, setAttendanceData] = useState([]);
+  const original = useRef([]);
+
   useEffect(() => {
-    const stored = localStorage.getItem('teachers');
-    if (stored) {
-      setTeachersList(JSON.parse(stored));
-    }
+    const fetchTeachersForAttendance = async () => {
+      let data = [];
+      try {
+        data = await getTeachers();
+      } catch (e) {
+        console.warn("Backend API offline, utilizing fallback cache/mock data");
+      }
+
+      let list = [];
+      if (data && data.length > 0) {
+        list = data.map(t => ({
+          ...t,
+          id: t.teacher_id || `AD${t.id}`,
+          teacherId: t.teacher_id || `AD${t.id}`,
+          name: t.name,
+          fullName: t.name || t.fullName,
+          subject: t.subject || 'Faculty',
+          class: t.class || 'N/A',
+          email: t.email,
+          phone: t.phone || 'N/A',
+          joinDate: t.joinDate || t.admission_date || t.created_at || new Date().toISOString(),
+          status: t.status || 'Active',
+          avatar: t.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${t.name}`,
+          color: t.color || '#4880FF',
+          dob: t.dob || '',
+          gender: t.gender || '',
+          currentAddress: t.address || t.currentAddress || '',
+          permanentAddress: t.permanentAddress || t.address || '',
+          bloodGroup: t.blood_group || t.bloodGroup || '',
+          qualification: t.qualification || '',
+          experience: t.experience || '',
+          details: t.details || '',
+          documents: (() => {
+            if (!t.documents) return [];
+            if (typeof t.documents === 'string') {
+              try {
+                return JSON.parse(t.documents);
+              } catch (e) {
+                return [];
+              }
+            }
+            return Array.isArray(t.documents) ? t.documents : [];
+          })()
+        }));
+        localStorage.setItem('teachers', JSON.stringify(list));
+      } else {
+        const stored = localStorage.getItem('teachers');
+        if (stored) {
+          list = JSON.parse(stored);
+        } else {
+          list = INITIAL_DATA.map(d => ({
+            id: d.id,
+            teacherId: d.id,
+            name: d.name,
+            fullName: d.name,
+            dept: d.dept,
+            designation: d.role,
+            avatar: d.avatar,
+            color: d.color
+          }));
+          localStorage.setItem('teachers', JSON.stringify(list));
+        }
+      }
+
+      setTeachersList(list);
+
+      const rows = list.map(t => {
+        return {
+          id: t.id,
+          name: t.name || t.fullName,
+          dept: t.dept || t.subject || 'General',
+          role: t.designation || 'Teacher',
+          status: 'P',
+          time: '08:45 AM',
+          avatar: t.name ? t.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'T',
+          color: t.color || '#4880FF',
+          remark: ''
+        };
+      });
+
+      setAttendanceData(rows);
+      original.current = rows.map(r => ({ ...r }));
+    };
+
+    fetchTeachersForAttendance();
   }, []);
 
   const [date, setDate]               = useState(new Date().toISOString().split('T')[0]);
@@ -47,12 +131,6 @@ const TeacherAttendance = () => {
   const [statusFilter, setStatusFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [showMoreFilters, setShowMoreFilters] = useState(false);
-
-  // Snapshot for discard
-  const original = useRef(INITIAL_DATA.map(d => ({ ...d })));
-  const [attendanceData, setAttendanceData] = useState(() =>
-    INITIAL_DATA.map(d => ({ ...d }))
-  );
 
   // Save/discard UX
   const [isSaving, setIsSaving] = useState(false);
@@ -64,6 +142,9 @@ const TeacherAttendance = () => {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 3200);
   };
+
+  const uniqueDepts = ['All', ...new Set(attendanceData.map(item => item.dept))];
+  const uniqueRoles = ['All', ...new Set(attendanceData.map(item => item.role))];
 
   // ── Stats (dynamic) ─────────────────────────────────────────────
   const stats = [
@@ -251,7 +332,7 @@ const TeacherAttendance = () => {
             {/* Dept select */}
             <select className="form-input" style={{ width: '175px' }} value={department}
               onChange={(e) => setDepartment(e.target.value)}>
-              {DEPTS.map(d => <option key={d} value={d}>{d === 'All' ? 'All Departments' : d}</option>)}
+              {uniqueDepts.map(d => <option key={d} value={d}>{d === 'All' ? 'All Departments' : d}</option>)}
             </select>
 
             {/* More Filters toggle */}
@@ -289,7 +370,7 @@ const TeacherAttendance = () => {
                 <div>
                   <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 900, color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Filter by Role</label>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                    {ROLES.map(r => (
+                    {uniqueRoles.map(r => (
                       <button key={r} onClick={() => setRoleFilter(r)}
                         style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 700, transition: 'all 0.15s',
                           borderColor: roleFilter === r ? 'var(--primary)' : 'var(--border-color)',

@@ -28,6 +28,7 @@ export const login = async (email, password) => {
         localStorage.setItem('userRole', response.data.role);
         localStorage.setItem('userId', response.data.userId);
         localStorage.setItem('userName', response.data.name);
+        localStorage.setItem('userEmail', email);
         localStorage.setItem('isAuthenticated', 'true');
     }
     return response.data;
@@ -41,6 +42,17 @@ export const register = async (userData) => {
 export const logout = () => {
     localStorage.clear();
     window.location.href = '/login';
+};
+
+// Profile Management
+export const getProfile = async () => {
+    const response = await axios.get(`${API_URL}/profile`);
+    return response.data;
+};
+
+export const updateProfile = async (profileData) => {
+    const response = await axios.put(`${API_URL}/profile`, profileData);
+    return response.data;
 };
 
 // Global Stats
@@ -58,14 +70,48 @@ export const addStudent = async (studentData) => {
     const response = await axios.post(`${API_URL}/students`, studentData);
     return response.data;
 };
+export const updateStudent = async (studentId, studentData) => {
+    const response = await axios.put(`${API_URL}/students/${studentId}`, studentData);
+    return response.data;
+};
 export const deleteStudent = async (studentId) => {
     const response = await axios.delete(`${API_URL}/students/${studentId}`);
+    return response.data;
+};
+
+// Parent Management
+export const getParents = async () => {
+    const response = await axios.get(`${API_URL}/parents`);
+    return response.data;
+};
+export const addParent = async (parentData) => {
+    const response = await axios.post(`${API_URL}/parents`, parentData);
+    return response.data;
+};
+export const updateParent = async (parentId, parentData) => {
+    const response = await axios.put(`${API_URL}/parents/${parentId}`, parentData);
+    return response.data;
+};
+export const deleteParent = async (parentId) => {
+    const response = await axios.delete(`${API_URL}/parents/${parentId}`);
     return response.data;
 };
 
 // Teacher Management
 export const getTeachers = async () => {
     const response = await axios.get(`${API_URL}/teachers`);
+    return response.data;
+};
+export const addTeacher = async (teacherData) => {
+    const response = await axios.post(`${API_URL}/teachers`, teacherData);
+    return response.data;
+};
+export const updateTeacher = async (teacherId, teacherData) => {
+    const response = await axios.put(`${API_URL}/teachers/${teacherId}`, teacherData);
+    return response.data;
+};
+export const deleteTeacher = async (teacherId) => {
+    const response = await axios.delete(`${API_URL}/teachers/${teacherId}`);
     return response.data;
 };
 

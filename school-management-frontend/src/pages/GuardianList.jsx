@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users, UserPlus, Search, Filter, Shield,
@@ -8,18 +8,68 @@ import {
   Briefcase, Save
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { getParents } from '../services/service';
 import robertAvatar from '../assets/robert_avatar.png';
 
 const GuardianList = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchParents = async () => {
+      try {
+        const data = await getParents();
+        if (data && data.length > 0) {
+          const parsed = data.map(p => {
+            const initialColors = ['#4880FF', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444'];
+            const chosenColor = initialColors[Math.floor(Math.random() * initialColors.length)];
+            
+            return {
+              id: p.parent_id ? `GDN-${p.parent_id}` : `GDN-${Math.floor(1000 + Math.random() * 9000)}`,
+              name: p.name,
+              email: p.email || 'N/A',
+              phone: p.phone || 'N/A',
+              students: p.student_name ? [p.student_name] : ['N/A'],
+              status: 'active',
+              lastLogin: 'Active Now',
+              role: 'Parent',
+              avatar: p.name ? p.name.split(' ').map(n => n[0]).join('').toUpperCase() : 'P',
+              avatarUrl: `https://api.dicebear.com/7.x/avataaars/svg?seed=${p.name}`,
+              address: p.address || 'N/A',
+              occupation: p.occupation || 'N/A',
+              company: 'N/A',
+              gender: p.student_gender || 'Male',
+              dob: 'N/A',
+              emergencyContact: p.phone || 'N/A',
+              accountType: 'Standard Parent Portal',
+              relation: 'Parent',
+              joiningDate: new Date().toLocaleDateString(),
+              color: chosenColor,
+              lastActive: 'Active Now',
+              linkedStudents: p.student_id ? [
+                { id: p.student_id, name: p.student_name || 'Student', grade: `Class ${p.student_class || '10'}`, attendance: '98%', perf: 'A+' }
+              ] : []
+            };
+          });
+          setGuardians(parsed);
+          localStorage.setItem('guardians', JSON.stringify(parsed));
+        }
+      } catch (err) {
+        console.error("Failed to load parents from backend:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchParents();
+  }, []);
 
   const [guardians, setGuardians] = useState(() => {
     // Version check: if stored data is old (no avatarUrl), clear it so rich profiles load
     const storedVersion = localStorage.getItem('guardians_version');
-    if (storedVersion !== '2026-v4') {
+    if (storedVersion !== '2026-v5') {
       localStorage.removeItem('guardians');
-      localStorage.setItem('guardians_version', '2026-v4');
+      localStorage.setItem('guardians_version', '2026-v5');
     }
     const stored = localStorage.getItem('guardians');
     if (stored) return JSON.parse(stored);
@@ -159,7 +209,7 @@ const GuardianList = () => {
       headers.join(','),
       ...filteredGuardians.map(g => [
         g.id, `"${g.name}"`, g.email, g.phone,
-        `"${g.students.join(', ')}"`, g.role, g.status, `"${g.address}"`
+        `"${(g.students || []).join(', ')}"`, g.role, g.status, `"${g.address}"`
       ].join(','))
     ].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -602,7 +652,7 @@ const GuardianList = () => {
                       {deleteTarget.name}
                     </div>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                      {deleteTarget.id} · {deleteTarget.role} · {deleteTarget.students.join(', ')}
+                      {deleteTarget.id} · {deleteTarget.role} · {(deleteTarget.students || []).join(', ')}
                     </div>
                   </div>
                 </div>
@@ -802,7 +852,7 @@ const GuardianList = () => {
                     </td>
                     <td style={{ padding: '16px' }}>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                        {g.students.map((s, idx) => (
+                        {(g.students || []).map((s, idx) => (
                           <span key={idx} style={{ padding: '4px 10px', borderRadius: '6px', backgroundColor: 'var(--bg-body)', fontSize: '0.7rem', fontWeight: 700, border: '1px solid var(--border-color)' }}>{s}</span>
                         ))}
                       </div>

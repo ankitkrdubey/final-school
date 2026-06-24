@@ -51,7 +51,8 @@ const initDb = async () => {
         
         // 3. Students & Parents
         `CREATE TABLE IF NOT EXISTS students (student_id VARCHAR(20) PRIMARY KEY, name VARCHAR(100), email VARCHAR(100), phone VARCHAR(20), class_id INT, section_id INT, dob DATE, gender VARCHAR(10), address TEXT, blood_group VARCHAR(5), admission_date DATE, avatar LONGTEXT)`,
-        `CREATE TABLE IF NOT EXISTS parents (parent_id INT AUTO_INCREMENT PRIMARY KEY, student_id VARCHAR(20), name VARCHAR(100), phone VARCHAR(20), email VARCHAR(100))`,
+        `CREATE TABLE IF NOT EXISTS parents (parent_id INT AUTO_INCREMENT PRIMARY KEY, student_id VARCHAR(20), name VARCHAR(100), phone VARCHAR(20), email VARCHAR(100), occupation VARCHAR(100))`,
+        `CREATE TABLE IF NOT EXISTS teachers (teacher_id VARCHAR(20) PRIMARY KEY, name VARCHAR(100), email VARCHAR(100), phone VARCHAR(20), class_id INT, dob DATE, gender VARCHAR(10), address TEXT, blood_group VARCHAR(5), admission_date DATE, avatar LONGTEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`,
         
         // 4. Attendance
         `CREATE TABLE IF NOT EXISTS attendance (id INT AUTO_INCREMENT PRIMARY KEY, student_id VARCHAR(20), date DATE, status ENUM('Present', 'Absent', 'Late', 'Leave'), type ENUM('Manual', 'QR', 'Face'))`,
@@ -77,6 +78,84 @@ const initDb = async () => {
 
     for (const table of tables) {
         await connection.query(table);
+    }
+
+    // Auto-migrate: Alter parents table to add occupation column if missing
+    try {
+        await connection.query("ALTER TABLE parents ADD COLUMN occupation VARCHAR(100)");
+        console.log('🔄 Database Migration: Added occupation column to parents.');
+    } catch (err) {}
+
+    // Auto-migrate: Add all teacher detail columns if they don't exist
+    const teacherColumns = [
+        ['qualification', 'TEXT'],
+        ['subject', 'VARCHAR(100)'],
+        ['experience', 'VARCHAR(50)'],
+        ['designation', 'VARCHAR(100)'],
+        ['dept', 'VARCHAR(100)'],
+        ['status', 'VARCHAR(20)'],
+        ['class', 'VARCHAR(100)'],
+        ['maritalStatus', 'VARCHAR(20)'],
+        ['contractType', 'VARCHAR(20)'],
+        ['shift', 'VARCHAR(20)'],
+        ['workLocation', 'VARCHAR(100)'],
+        ['details', 'TEXT'],
+        ['color', 'VARCHAR(20)'],
+        ['rating', 'DECIMAL(3,2)'],
+        ['fatherName', 'VARCHAR(100)'],
+        ['motherName', 'VARCHAR(100)'],
+        ['permanentAddress', 'TEXT'],
+        ['height', 'VARCHAR(10)'],
+        ['weight', 'VARCHAR(10)'],
+        ['bankAccount', 'VARCHAR(50)'],
+        ['bankName', 'VARCHAR(100)'],
+        ['ifscCode', 'VARCHAR(20)'],
+        ['nationalId', 'VARCHAR(50)'],
+        ['prevSchoolName', 'VARCHAR(100)'],
+        ['prevSchoolAddress', 'TEXT'],
+        ['facebook', 'VARCHAR(255)'],
+        ['linkedin', 'VARCHAR(255)'],
+        ['instagram', 'VARCHAR(255)'],
+        ['youtube', 'VARCHAR(255)'],
+        ['loginEmail', 'VARCHAR(100)'],
+        ['password', 'VARCHAR(255)'],
+        ['documents', 'LONGTEXT']
+    ];
+
+    for (const [col, def] of teacherColumns) {
+        await addColumn('teachers', col, def);
+    }
+
+    // Auto-migrate: Add user profile detail columns if they don't exist
+    const userColumns = [
+        ['phone', 'VARCHAR(20)'],
+        ['location', 'VARCHAR(100)'],
+        ['achievements', 'TEXT'],
+        ['avatar', 'LONGTEXT'],
+        ['coverImage', 'LONGTEXT'],
+        ['lastLogin', 'VARCHAR(50)'],
+        ['permissions', 'TEXT']
+    ];
+
+    for (const [col, def] of userColumns) {
+        await addColumn('users', col, def);
+    }
+
+    // Auto-migrate: Add parent details columns if they don't exist
+    const parentColumns = [
+        ['avatarUrl', 'LONGTEXT'],
+        ['relation', 'VARCHAR(50)'],
+        ['company', 'VARCHAR(100)'],
+        ['dob', 'VARCHAR(30)'],
+        ['gender', 'VARCHAR(20)'],
+        ['emergencyContact', 'VARCHAR(50)'],
+        ['username', 'VARCHAR(100)'],
+        ['password', 'VARCHAR(255)'],
+        ['address', 'TEXT']
+    ];
+
+    for (const [col, def] of parentColumns) {
+        await addColumn('parents', col, def);
     }
 
     // Auto-migrate: Alter attendance status column to support 'Leave'
@@ -123,6 +202,15 @@ const initDb = async () => {
     if (existingTeachers[0].count === 0) {
         await connection.query('INSERT INTO users (name, email, password, role) VALUES ("Sarah Jenkins", "sarah.j@school.com", "demo123", "teacher"), ("Michael Chang", "michael.c@school.com", "demo123", "teacher")');
     }
+
+    // Seed teachers table if none exist
+    const [existingTeachersTable] = await connection.query('SELECT COUNT(*) as count FROM teachers');
+    if (existingTeachersTable[0].count === 0) {
+        await connection.query(`INSERT INTO teachers (teacher_id, name, email, phone, class_id, dob, gender, address, blood_group, admission_date) VALUES 
+        ("AD52365", "Eleanor Pena", "eleanor.p@edupro.com", "+1 234 567 890", 10, "1985-05-12", "Female", "724 Oakmound Road, Chicago, IL", "A+", "2024-01-12"),
+        ("AD52366", "Robert Fox", "robert.f@edupro.com", "+1 234 567 891", 10, "1988-08-20", "Male", "831 Maple Avenue, Seattle, WA", "B+", "2024-02-15")`);
+    }
+
 
     // Seed library books
     const [existingBooks] = await connection.query('SELECT COUNT(*) as count FROM library_books');

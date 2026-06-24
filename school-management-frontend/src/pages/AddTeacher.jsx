@@ -12,6 +12,7 @@ import {
   CloudUpload, Trash2, Share2, Camera, Home, CheckCircle2
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { addTeacher, updateTeacher } from '../services/service';
 
 const AddTeacher = ({ mode = 'add' }) => {
   const navigate = useNavigate();
@@ -205,69 +206,92 @@ const AddTeacher = ({ mode = 'add' }) => {
       });
     }, 600);
 
-    setTimeout(() => {
-      clearInterval(interval);
-      
-      const stored = localStorage.getItem('teachers');
-      let list = stored ? JSON.parse(stored) : [];
+    const performSave = async () => {
+      try {
+        const stored = localStorage.getItem('teachers');
+        let list = [];
+        try {
+          list = stored ? JSON.parse(stored) : [];
+          if (!Array.isArray(list)) list = [];
+        } catch (e) {
+          list = [];
+        }
 
-      const initialColors = ['#4880FF', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444'];
-      const chosenColor = formData.color || initialColors[Math.floor(Math.random() * initialColors.length)];
+        const initialColors = ['#4880FF', '#10B981', '#F59E0B', '#8B5CF6', '#EF4444'];
+        const chosenColor = formData.color || initialColors[Math.floor(Math.random() * initialColors.length)];
 
-      const teacherObj = {
-        id: formData.teacherId,
-        teacherId: formData.teacherId,
-        name: formData.fullName,
-        fullName: formData.fullName,
-        subject: formData.subject,
-        class: formData.class,
-        gender: formData.gender,
-        dob: formData.dob,
-        fatherName: formData.fatherName,
-        motherName: formData.motherName,
-        maritalStatus: formData.maritalStatus,
-        contractType: formData.contractType,
-        shift: formData.shift,
-        workLocation: formData.workLocation,
-        joinDate: formData.joinDate || new Date().toISOString().split('T')[0],
-        phone: formData.phone,
-        email: formData.email,
-        experience: formData.experience,
-        qualification: formData.qualification,
-        avatar: formData.avatar || (formData.fullName ? formData.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : 'T'),
-        color: chosenColor,
-        bloodGroup: formData.bloodGroup,
-        height: formData.height,
-        weight: formData.weight,
-        bankAccount: formData.bankAccount,
-        bankName: formData.bankName,
-        ifscCode: formData.ifscCode,
-        nationalId: formData.nationalId,
-        prevSchoolName: formData.prevSchoolName,
-        prevSchoolAddress: formData.prevSchoolAddress,
-        currentAddress: formData.currentAddress,
-        permanentAddress: formData.permanentAddress,
-        details: formData.details,
-        facebook: formData.facebook,
-        linkedin: formData.linkedin,
-        loginEmail: formData.loginEmail || formData.email,
-        password: formData.password || 'password123',
-        designation: formData.designation || (mode === 'edit' ? 'Lecturer' : 'Associate Professor'),
-        dept: formData.dept || (formData.subject === 'Mathematics' || formData.subject === 'Physics' || formData.subject === 'Chemistry' || formData.subject === 'Biology' ? 'Science & Research' : 'Humanities & Languages'),
-        rating: 4.8,
-        documents: formData.documents || []
-      };
+        const teacherObj = {
+          id: formData.teacherId,
+          teacherId: formData.teacherId,
+          teacher_id: formData.teacherId,
+          name: formData.fullName,
+          fullName: formData.fullName,
+          subject: formData.subject,
+          class: formData.class,
+          gender: formData.gender,
+          dob: formData.dob,
+          fatherName: formData.fatherName,
+          motherName: formData.motherName,
+          maritalStatus: formData.maritalStatus,
+          contractType: formData.contractType,
+          shift: formData.shift,
+          workLocation: formData.workLocation,
+          joinDate: formData.joinDate || new Date().toISOString().split('T')[0],
+          phone: formData.phone,
+          email: formData.email,
+          experience: formData.experience,
+          qualification: formData.qualification,
+          avatar: formData.avatar || (formData.fullName ? formData.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : 'T'),
+          color: chosenColor,
+          bloodGroup: formData.bloodGroup,
+          height: formData.height,
+          weight: formData.weight,
+          bankAccount: formData.bankAccount,
+          bankName: formData.bankName,
+          ifscCode: formData.ifscCode,
+          nationalId: formData.nationalId,
+          prevSchoolName: formData.prevSchoolName,
+          prevSchoolAddress: formData.prevSchoolAddress,
+          currentAddress: formData.currentAddress,
+          permanentAddress: formData.permanentAddress,
+          details: formData.details,
+          facebook: formData.facebook,
+          linkedin: formData.linkedin,
+          loginEmail: formData.loginEmail || formData.email,
+          password: formData.password || 'password123',
+          designation: formData.designation || (mode === 'edit' ? 'Lecturer' : 'Associate Professor'),
+          dept: formData.dept || (formData.subject === 'Mathematics' || formData.subject === 'Physics' || formData.subject === 'Chemistry' || formData.subject === 'Biology' ? 'Science & Research' : 'Humanities & Languages'),
+          rating: 4.8,
+          documents: formData.documents || []
+        };
 
-      if (mode === 'edit') {
-        list = list.map(t => t.id === id ? { ...t, ...teacherObj } : t);
-      } else {
-        list.push(teacherObj);
+        try {
+          const apiPromise = mode === 'edit' ? updateTeacher(id, teacherObj) : addTeacher(teacherObj);
+          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('API Timeout')), 4000));
+          await Promise.race([apiPromise, timeoutPromise]);
+        } catch (apiErr) {
+          console.warn("Backend API sync offline/failed or timed out, using fallback cache storage", apiErr);
+        }
+
+        if (mode === 'edit') {
+          list = list.map(t => t.id === id ? { ...t, ...teacherObj } : t);
+        } else {
+          list.push(teacherObj);
+        }
+
+        localStorage.setItem('teachers', JSON.stringify(list));
+      } catch (err) {
+        console.error("Critical error during performSave:", err);
+      } finally {
+        setTimeout(() => {
+          clearInterval(interval);
+          setIsSaving(false);
+          navigate(mode === 'edit' ? `/dashboard/teacher-details/${id}` : '/dashboard/teachers');
+        }, 1000);
       }
+    };
 
-      localStorage.setItem('teachers', JSON.stringify(list));
-      setIsSaving(false);
-      navigate(mode === 'edit' ? `/dashboard/teacher-details/${id}` : '/dashboard/teachers');
-    }, 2800);
+    performSave();
   };
 
   const handleReset = () => {

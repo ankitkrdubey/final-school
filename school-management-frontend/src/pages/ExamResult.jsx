@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Trophy, Search, Filter, Download, Plus, Layout, 
   ChevronRight, Star, TrendingUp, Award, CheckCircle2,
@@ -24,71 +24,85 @@ const ExamResult = () => {
   const [toastMessage, setToastMessage] = useState(null);
 
   // 3. Class Results State - Detailed rankings with core subject marks
-  const [resultsByClass, setResultsByClass] = useState({
-    '10A': [
-      { id: 'STU-001', name: 'Alex Johnson', rank: '1st', gpa: '3.95', percentage: '94.2%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop', subjects: { Math: 96, Physics: 92, Chem: 94, Bio: 98, Eng: 95, Hist: 90 } },
-      { id: 'STU-002', name: 'Sarah Williams', rank: '2nd', gpa: '3.88', percentage: '91.5%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop', subjects: { Math: 91, Physics: 88, Chem: 92, Bio: 94, Eng: 93, Hist: 90 } },
-      { id: 'STU-2026-0492', name: 'Devon Lane', rank: '3rd', gpa: '3.85', percentage: '91.0%', status: 'Passed', color: '#10B981', avatar: devonAvatar, subjects: { Math: 98, Physics: 92, Chem: 95, Bio: 89, Eng: 88, Hist: 82 } },
-      { id: 'STU-003', name: 'Michael Brown', rank: '4th', gpa: '3.82', percentage: '89.8%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop', subjects: { Math: 88, Physics: 85, Chem: 89, Bio: 92, Eng: 91, Hist: 84 } },
-      { id: 'STU-004', name: 'Emily Davis', rank: '5th', gpa: '3.45', percentage: '78.5%', status: 'Passed', color: '#F59E0B', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop', subjects: { Math: 76, Physics: 75, Chem: 80, Bio: 82, Eng: 84, Hist: 74 } },
-      { id: 'STU-005', name: 'John Doe', rank: '6th', gpa: '2.80', percentage: '65.2%', status: 'Passed', color: '#F59E0B', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop', subjects: { Math: 60, Physics: 64, Chem: 62, Bio: 70, Eng: 68, Hist: 67 } }
-    ],
-    '10B': [
-      { id: 'STU-006', name: 'Emma Stone', rank: '1st', gpa: '3.91', percentage: '93.1%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop', subjects: { Math: 94, Physics: 90, Chem: 91, Bio: 95, Eng: 96, Hist: 92 } },
-      { id: 'STU-007', name: 'Ryan Gosling', rank: '2nd', gpa: '3.80', percentage: '90.4%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop', subjects: { Math: 89, Physics: 92, Chem: 88, Bio: 91, Eng: 90, Hist: 92 } },
-      { id: 'STU-008', name: 'Jennifer Lawrence', rank: '3rd', gpa: '3.75', percentage: '87.9%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop', subjects: { Math: 86, Physics: 84, Chem: 89, Bio: 90, Eng: 92, Hist: 86 } },
-      { id: 'STU-009', name: 'Brad Pitt', rank: '4th', gpa: '3.20', percentage: '72.3%', status: 'Passed', color: '#F59E0B', avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&h=100&fit=crop', subjects: { Math: 70, Physics: 72, Chem: 68, Bio: 75, Eng: 78, Hist: 71 } },
-      { id: 'STU-010', name: 'Will Smith', rank: '5th', gpa: '2.10', percentage: '58.4%', status: 'Failed', color: '#EF4444', avatar: 'https://images.unsplash.com/photo-1500048993953-d23a436266cf?w=100&h=100&fit=crop', subjects: { Math: 52, Physics: 55, Chem: 50, Bio: 60, Eng: 65, Hist: 68 } }
-    ],
-    '11A': [
-      { id: 'STU-011', name: 'Taylor Swift', rank: '1st', gpa: '3.98', percentage: '95.5%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop', subjects: { Math: 98, Physics: 96, Chem: 97, Bio: 99, Eng: 98, Hist: 95 } },
-      { id: 'STU-012', name: 'Ed Sheeran', rank: '2nd', gpa: '3.85', percentage: '92.1%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&h=100&fit=crop', subjects: { Math: 92, Physics: 91, Chem: 90, Bio: 94, Eng: 93, Hist: 93 } },
-      { id: 'STU-013', name: 'Ariana Grande', rank: '3rd', gpa: '3.78', percentage: '88.4%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&h=100&fit=crop', subjects: { Math: 87, Physics: 85, Chem: 89, Bio: 91, Eng: 92, Hist: 86 } },
-      { id: 'STU-014', name: 'Bruno Mars', rank: '4th', gpa: '3.55', percentage: '84.2%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100&h=100&fit=crop', subjects: { Math: 82, Physics: 84, Chem: 81, Bio: 86, Eng: 87, Hist: 85 } }
-    ],
-    '8B': [
-      { id: 'STU-2026-0814', name: 'Jane Lane', rank: '1st', gpa: '3.92', percentage: '93.5%', status: 'Passed', color: '#10B981', avatar: janeAvatar, subjects: { Math: 94, Physics: 92, Chem: 90, Bio: 96, Eng: 95, Hist: 94 } },
-      { id: 'STU-021', name: 'Oliver Twist', rank: '2nd', gpa: '3.70', percentage: '88.2%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=100&h=100&fit=crop', subjects: { Math: 88, Physics: 85, Chem: 89, Bio: 90, Eng: 87, Hist: 90 } },
-      { id: 'STU-022', name: 'Alice Liddell', rank: '3rd', gpa: '3.50', percentage: '81.4%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop', subjects: { Math: 80, Physics: 78, Chem: 85, Bio: 84, Eng: 82, Hist: 79 } },
-      { id: 'STU-023', name: 'Tom Sawyer', rank: '4th', gpa: '2.95', percentage: '68.7%', status: 'Passed', color: '#F59E0B', avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&h=100&fit=crop', subjects: { Math: 65, Physics: 68, Chem: 70, Bio: 72, Eng: 66, Hist: 71 } }
-    ]
+  const [resultsByClass, setResultsByClass] = useState(() => {
+    const cached = localStorage.getItem('edupro_exam_results');
+    return cached ? JSON.parse(cached) : {
+      '10A': [
+        { id: 'STU-001', name: 'Alex Johnson', rank: '1st', gpa: '3.95', percentage: '94.2%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop', subjects: { Math: 96, Physics: 92, Chem: 94, Bio: 98, Eng: 95, Hist: 90 } },
+        { id: 'STU-002', name: 'Sarah Williams', rank: '2nd', gpa: '3.88', percentage: '91.5%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop', subjects: { Math: 91, Physics: 88, Chem: 92, Bio: 94, Eng: 93, Hist: 90 } },
+        { id: 'STU-2026-0492', name: 'Devon Lane', rank: '3rd', gpa: '3.85', percentage: '91.0%', status: 'Passed', color: '#10B981', avatar: devonAvatar, subjects: { Math: 98, Physics: 92, Chem: 95, Bio: 89, Eng: 88, Hist: 82 } },
+        { id: 'STU-003', name: 'Michael Brown', rank: '4th', gpa: '3.82', percentage: '89.8%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop', subjects: { Math: 88, Physics: 85, Chem: 89, Bio: 92, Eng: 91, Hist: 84 } },
+        { id: 'STU-004', name: 'Emily Davis', rank: '5th', gpa: '3.45', percentage: '78.5%', status: 'Passed', color: '#F59E0B', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop', subjects: { Math: 76, Physics: 75, Chem: 80, Bio: 82, Eng: 84, Hist: 74 } },
+        { id: 'STU-005', name: 'John Doe', rank: '6th', gpa: '2.80', percentage: '65.2%', status: 'Passed', color: '#F59E0B', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop', subjects: { Math: 60, Physics: 64, Chem: 62, Bio: 70, Eng: 68, Hist: 67 } }
+      ],
+      '10B': [
+        { id: 'STU-006', name: 'Emma Stone', rank: '1st', gpa: '3.91', percentage: '93.1%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop', subjects: { Math: 94, Physics: 90, Chem: 91, Bio: 95, Eng: 96, Hist: 92 } },
+        { id: 'STU-007', name: 'Ryan Gosling', rank: '2nd', gpa: '3.80', percentage: '90.4%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop', subjects: { Math: 89, Physics: 92, Chem: 88, Bio: 91, Eng: 90, Hist: 92 } },
+        { id: 'STU-008', name: 'Jennifer Lawrence', rank: '3rd', gpa: '3.75', percentage: '87.9%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop', subjects: { Math: 86, Physics: 84, Chem: 89, Bio: 90, Eng: 92, Hist: 86 } },
+        { id: 'STU-009', name: 'Brad Pitt', rank: '4th', gpa: '3.20', percentage: '72.3%', status: 'Passed', color: '#F59E0B', avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&h=100&fit=crop', subjects: { Math: 70, Physics: 72, Chem: 68, Bio: 75, Eng: 78, Hist: 71 } },
+        { id: 'STU-010', name: 'Will Smith', rank: '5th', gpa: '2.10', percentage: '58.4%', status: 'Failed', color: '#EF4444', avatar: 'https://images.unsplash.com/photo-1500048993953-d23a436266cf?w=100&h=100&fit=crop', subjects: { Math: 52, Physics: 55, Chem: 50, Bio: 60, Eng: 65, Hist: 68 } }
+      ],
+      '11A': [
+        { id: 'STU-011', name: 'Taylor Swift', rank: '1st', gpa: '3.98', percentage: '95.5%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop', subjects: { Math: 98, Physics: 96, Chem: 97, Bio: 99, Eng: 98, Hist: 95 } },
+        { id: 'STU-012', name: 'Ed Sheeran', rank: '2nd', gpa: '3.85', percentage: '92.1%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&h=100&fit=crop', subjects: { Math: 92, Physics: 91, Chem: 90, Bio: 94, Eng: 93, Hist: 93 } },
+        { id: 'STU-013', name: 'Ariana Grande', rank: '3rd', gpa: '3.78', percentage: '88.4%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&h=100&fit=crop', subjects: { Math: 87, Physics: 85, Chem: 89, Bio: 91, Eng: 92, Hist: 86 } },
+        { id: 'STU-014', name: 'Bruno Mars', rank: '4th', gpa: '3.55', percentage: '84.2%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100&h=100&fit=crop', subjects: { Math: 82, Physics: 84, Chem: 81, Bio: 86, Eng: 87, Hist: 85 } }
+      ],
+      '8B': [
+        { id: 'STU-2026-0814', name: 'Jane Lane', rank: '1st', gpa: '3.92', percentage: '93.5%', status: 'Passed', color: '#10B981', avatar: janeAvatar, subjects: { Math: 94, Physics: 92, Chem: 90, Bio: 96, Eng: 95, Hist: 94 } },
+        { id: 'STU-021', name: 'Oliver Twist', rank: '2nd', gpa: '3.70', percentage: '88.2%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=100&h=100&fit=crop', subjects: { Math: 88, Physics: 85, Chem: 89, Bio: 90, Eng: 87, Hist: 90 } },
+        { id: 'STU-022', name: 'Alice Liddell', rank: '3rd', gpa: '3.50', percentage: '81.4%', status: 'Passed', color: '#10B981', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop', subjects: { Math: 80, Physics: 78, Chem: 85, Bio: 84, Eng: 82, Hist: 79 } },
+        { id: 'STU-023', name: 'Tom Sawyer', rank: '4th', gpa: '2.95', percentage: '68.7%', status: 'Passed', color: '#F59E0B', avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&h=100&fit=crop', subjects: { Math: 65, Physics: 68, Chem: 70, Bio: 72, Eng: 66, Hist: 71 } }
+      ]
+    };
   });
 
   // 4. Subject-wise class average scores (updates dynamically based on roster calculations)
-  const [performanceDataByClass, setPerformanceDataByClass] = useState({
-    '10A': [
-      { month: 'Math', score: 85 },
-      { month: 'Physics', score: 78 },
-      { month: 'Chem', score: 82 },
-      { month: 'Bio', score: 90 },
-      { month: 'Eng', score: 88 },
-      { month: 'Hist', score: 75 }
-    ],
-    '10B': [
-      { month: 'Math', score: 82 },
-      { month: 'Physics', score: 84 },
-      { month: 'Chem', score: 80 },
-      { month: 'Bio', score: 85 },
-      { month: 'Eng', score: 89 },
-      { month: 'Hist', score: 81 }
-    ],
-    '11A': [
-      { month: 'Math', score: 91 },
-      { month: 'Physics', score: 88 },
-      { month: 'Chem', score: 90 },
-      { month: 'Bio', score: 92 },
-      { month: 'Eng', score: 93 },
-      { month: 'Hist', score: 86 }
-    ],
-    '8B': [
-      { month: 'Math', score: 84 },
-      { month: 'Physics', score: 79 },
-      { month: 'Chem', score: 81 },
-      { month: 'Bio', score: 88 },
-      { month: 'Eng', score: 90 },
-      { month: 'Hist', score: 83 }
-    ]
+  const [performanceDataByClass, setPerformanceDataByClass] = useState(() => {
+    const cached = localStorage.getItem('edupro_performance_data');
+    return cached ? JSON.parse(cached) : {
+      '10A': [
+        { month: 'Math', score: 85 },
+        { month: 'Physics', score: 78 },
+        { month: 'Chem', score: 82 },
+        { month: 'Bio', score: 90 },
+        { month: 'Eng', score: 88 },
+        { month: 'Hist', score: 75 }
+      ],
+      '10B': [
+        { month: 'Math', score: 82 },
+        { month: 'Physics', score: 84 },
+        { month: 'Chem', score: 80 },
+        { month: 'Bio', score: 85 },
+        { month: 'Eng', score: 89 },
+        { month: 'Hist', score: 81 }
+      ],
+      '11A': [
+        { month: 'Math', score: 91 },
+        { month: 'Physics', score: 88 },
+        { month: 'Chem', score: 90 },
+        { month: 'Bio', score: 92 },
+        { month: 'Eng', score: 93 },
+        { month: 'Hist', score: 86 }
+      ],
+      '8B': [
+        { month: 'Math', score: 84 },
+        { month: 'Physics', score: 79 },
+        { month: 'Chem', score: 81 },
+        { month: 'Bio', score: 88 },
+        { month: 'Eng', score: 90 },
+        { month: 'Hist', score: 83 }
+      ]
+    };
   });
+
+  useEffect(() => {
+    localStorage.setItem('edupro_exam_results', JSON.stringify(resultsByClass));
+  }, [resultsByClass]);
+
+  useEffect(() => {
+    localStorage.setItem('edupro_performance_data', JSON.stringify(performanceDataByClass));
+  }, [performanceDataByClass]);
 
   // 5. Upload Results Form State
   const [uploadForm, setUploadForm] = useState({

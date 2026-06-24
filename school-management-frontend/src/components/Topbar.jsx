@@ -16,16 +16,43 @@ import robertAvatar from '../assets/robert_avatar.png';
 import studentAvatar from '../assets/student_avatar.png';
 
 const Topbar = ({ toggleSidebar }) => {
-  const getTeacherProfilePic = () => {
-    try {
-      const stored = localStorage.getItem('teachers');
-      if (stored) {
-        const list = JSON.parse(stored);
-        const record = list.find(t => t.id === 'TCH-001' || t.teacherId === 'TCH-001');
-        if (record && record.avatar) return record.avatar;
-      }
-    } catch (e) {}
-    return janeAvatar;
+  const getUserAvatar = () => {
+    const role = localStorage.getItem('userRole') || 'admin';
+    const email = localStorage.getItem('userEmail');
+    const name = localStorage.getItem('userName');
+
+    if (role.toLowerCase().includes('admin')) {
+      return localStorage.getItem('admin_avatar') || eleanorAvatar;
+    }
+    if (role === 'teacher') {
+      try {
+        const stored = localStorage.getItem('teachers');
+        if (stored) {
+          const list = JSON.parse(stored);
+          const record = list.find(t => 
+            (t.email && t.email.toLowerCase() === email?.toLowerCase()) || 
+            (t.name && t.name.toLowerCase() === name?.toLowerCase())
+          );
+          if (record && record.avatar) return record.avatar;
+        }
+      } catch (e) {}
+      return janeAvatar;
+    }
+    if (role === 'parent') {
+      try {
+        const stored = localStorage.getItem('guardians');
+        if (stored) {
+          const list = JSON.parse(stored);
+          const record = list.find(g => 
+            (g.email && g.email.toLowerCase() === email?.toLowerCase()) || 
+            (g.name && g.name.toLowerCase() === name?.toLowerCase())
+          );
+          if (record && (record.avatarUrl || record.img)) return record.avatarUrl || record.img;
+        }
+      } catch (e) {}
+      return robertAvatar;
+    }
+    return studentAvatar;
   };
 
   const [darkMode, setDarkMode] = useState(localStorage.getItem('theme') === 'dark');
@@ -34,6 +61,18 @@ const Topbar = ({ toggleSidebar }) => {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [notificationsMuted, setNotificationsMuted] = useState(localStorage.getItem('notificationsMuted') === 'true');
   const [selectedLang, setSelectedLang] = useState(localStorage.getItem('language') || 'English');
+  const [userName, setUserName] = useState(() => {
+    const role = localStorage.getItem('userRole') || 'admin';
+    if (role.toLowerCase().includes('admin')) {
+      const stored = localStorage.getItem('admin_profile_data');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.name) return parsed.name;
+      }
+    }
+    return localStorage.getItem('userName') || 'Institutional User';
+  });
+  const [adminAvatar, setAdminAvatar] = useState(() => getUserAvatar());
   const [notifications, setNotifications] = useState([
     { id: 1, title: 'Exam Results Published', desc: 'Class 10th final exam results are now live.', time: '2 mins ago', type: 'academic', icon: <FileText size={16} />, color: '#4880FF', unread: true },
     { id: 2, title: 'Security Alert', desc: 'New login detected from Chrome on Windows.', time: '45 mins ago', type: 'security', icon: <Lock size={16} />, color: '#EF4444', unread: true },
@@ -46,8 +85,39 @@ const Topbar = ({ toggleSidebar }) => {
       setNotificationsMuted(localStorage.getItem('notificationsMuted') === 'true');
       const storedTheme = localStorage.getItem('theme');
       setDarkMode(storedTheme === 'dark');
+      
+      const role = localStorage.getItem('userRole') || 'admin';
+      let name = localStorage.getItem('userName') || 'Institutional User';
+      if (role.toLowerCase().includes('admin')) {
+        const stored = localStorage.getItem('admin_profile_data');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed.name) name = parsed.name;
+        }
+      } else {
+        // Retrieve parent or teacher name if matching local storage list exists
+        if (role === 'teacher') {
+          try {
+            const list = JSON.parse(localStorage.getItem('teachers') || '[]');
+            const email = localStorage.getItem('userEmail');
+            const found = list.find(t => t.email?.toLowerCase() === email?.toLowerCase());
+            if (found && found.name) name = found.name;
+          } catch (e) {}
+        } else if (role === 'parent') {
+          try {
+            const list = JSON.parse(localStorage.getItem('guardians') || '[]');
+            const email = localStorage.getItem('userEmail');
+            const found = list.find(g => g.email?.toLowerCase() === email?.toLowerCase());
+            if (found && found.name) name = found.name;
+          } catch (e) {}
+        }
+      }
+      setUserName(name);
+      setAdminAvatar(getUserAvatar());
     };
     window.addEventListener('storage', syncState);
+    // Trigger initial sync to ensure correctness
+    syncState();
     return () => window.removeEventListener('storage', syncState);
   }, []);
 
@@ -141,7 +211,6 @@ const Topbar = ({ toggleSidebar }) => {
   }, [darkMode]);
 
   const userRole = localStorage.getItem('userRole') || 'admin';
-  const userName = localStorage.getItem('userName') || 'Institutional User';
   const userId = localStorage.getItem('userId') || 'ID-2026-X';
   const currentFlag = languages.find(l => l.name === selectedLang)?.flag || '🇺🇸';
   const unreadCount = notifications.filter(n => n.unread).length;
@@ -400,7 +469,7 @@ const Topbar = ({ toggleSidebar }) => {
              }}>
                {isSuperAdmin ? (
                  <img 
-                   src={eleanorAvatar} 
+                   src={adminAvatar} 
                    alt={userName} 
                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                  />
@@ -435,13 +504,13 @@ const Topbar = ({ toggleSidebar }) => {
                       <div style={{ width: '54px', height: '54px', borderRadius: '16px', backgroundColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 950, fontSize: '1.6rem', border: '1px solid rgba(255,255,255,0.3)', overflow: 'hidden' }}>
                         {isSuperAdmin ? (
                           <img 
-                            src={eleanorAvatar} 
+                            src={adminAvatar} 
                             alt={userName} 
                             style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                           />
                         ) : (
                           <img 
-                            src={userRole === 'teacher' ? getTeacherProfilePic() : (userRole === 'parent' ? robertAvatar : (userRole === 'student' ? studentAvatar : `https://api.dicebear.com/7.x/avataaars/svg?seed=${userName}`))} 
+                            src={adminAvatar} 
                             alt={userName} 
                             style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                           />

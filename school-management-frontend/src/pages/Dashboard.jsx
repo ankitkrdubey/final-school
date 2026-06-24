@@ -16,7 +16,7 @@ import UserOverviewChart from '../components/UserOverviewChart';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Dashboard = () => {
-  const [stats, setStats] = useState({ totalStudents: 0, totalTeachers: 0, activeNotices: 0, revenue: 0 });
+  const [stats, setStats] = useState({ totalStudents: 0, totalTeachers: 0, totalParents: 0, activeNotices: 0, revenue: 0 });
   const [notices, setNotices] = useState([]);
   const [timeRange, setTimeRange] = useState('This Month');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -42,7 +42,7 @@ const Dashboard = () => {
     'Role Distribution': [
       { name: 'Students', value: stats.totalStudents > 0 ? stats.totalStudents : 850, color: 'var(--primary)' },
       { name: 'Teachers', value: stats.totalTeachers > 0 ? stats.totalTeachers : 45, color: '#f59e0b' },
-      { name: 'Parents', value: 600, color: '#6366f1' },
+      { name: 'Parents', value: stats.totalParents > 0 ? stats.totalParents : 600, color: '#6366f1' },
       { name: 'Staff', value: 20, color: 'var(--secondary)' },
     ],
     'Status Breakdown': [

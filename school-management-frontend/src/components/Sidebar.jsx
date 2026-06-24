@@ -9,7 +9,7 @@ import {
   Layout, Trophy, HelpCircle, Archive, Layers, UserCheck, Book, Award, MapPin, Map, MessageSquare, Mail, Smartphone, MessageCircle, TrendingUp, CircleDollarSign, UserCircle, Coins, Settings2, Folder, Bed, Utensils, Coffee, ChefHat, Zap, Gem, Sparkles, LockKeyhole, ShieldAlert, LogIn, Globe, LayoutGrid, Target, Landmark, Package
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { logout } from '../services/service';
+import { logout, getStudents, getTeachers, getParents } from '../services/service';
 
 import eleanorAvatar from '../assets/eleanor_avatar.png';
 import janeAvatar from '../assets/jane_avatar.png';
@@ -57,28 +57,31 @@ const NavItem = ({ item, collapsed, role }) => {
                 exit={{ height: 0, opacity: 0 }}
                 style={{ listStyle: 'none', paddingLeft: '40px', overflow: 'hidden' }}
               >
-                {item.subItems.map((sub, index) => (
-                  <li key={`sub-${sub.path}-${sub.name}-${index}`}>
-                    {sub.onClick ? (
-                      <div 
-                        onClick={sub.onClick}
-                        className="nav-item sub-item"
-                        style={{ cursor: 'pointer' }}
-                      >
-                        {sub.icon && <span style={{ opacity: 0.8, display: 'flex', alignItems: 'center' }}>{sub.icon}</span>}
-                        <span style={{ fontSize: '0.9rem' }}>{sub.name}</span>
-                      </div>
-                    ) : (
-                      <NavLink 
-                        to={sub.path} 
-                        className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`}
-                      >
-                        {sub.icon && <span style={{ opacity: 0.8, display: 'flex', alignItems: 'center' }}>{sub.icon}</span>}
-                        <span style={{ fontSize: '0.9rem' }}>{sub.name}</span>
-                      </NavLink>
-                    )}
-                  </li>
-                ))}
+                {item.subItems.map((sub, index) => {
+                  if (sub.roles && !sub.roles.includes(role)) return null;
+                  return (
+                    <li key={`sub-${sub.path}-${sub.name}-${index}`}>
+                      {sub.onClick ? (
+                        <div 
+                          onClick={sub.onClick}
+                          className="nav-item sub-item"
+                          style={{ cursor: 'pointer' }}
+                        >
+                          {sub.icon && <span style={{ opacity: 0.8, display: 'flex', alignItems: 'center' }}>{sub.icon}</span>}
+                          <span style={{ fontSize: '0.9rem' }}>{sub.name}</span>
+                        </div>
+                      ) : (
+                        <NavLink 
+                          to={sub.path} 
+                          className={({ isActive }) => `nav-item sub-item ${isActive ? 'active' : ''}`}
+                        >
+                          {sub.icon && <span style={{ opacity: 0.8, display: 'flex', alignItems: 'center' }}>{sub.icon}</span>}
+                          <span style={{ fontSize: '0.9rem' }}>{sub.name}</span>
+                        </NavLink>
+                      )}
+                    </li>
+                  );
+                })}
               </motion.ul>
             )}
           </AnimatePresence>
@@ -111,23 +114,219 @@ const NavItem = ({ item, collapsed, role }) => {
 };
 
 const Sidebar = ({ collapsed }) => {
-  const getTeacherProfilePic = () => {
-    try {
-      const stored = localStorage.getItem('teachers');
-      if (stored) {
-        const list = JSON.parse(stored);
-        const record = list.find(t => t.id === 'TCH-001' || t.teacherId === 'TCH-001');
-        if (record && record.avatar) return record.avatar;
-      }
-    } catch (e) {}
-    return janeAvatar;
+  const getUserAvatar = () => {
+    const role = localStorage.getItem('userRole') || 'admin';
+    const email = localStorage.getItem('userEmail');
+    const name = localStorage.getItem('userName');
+
+    if (role.toLowerCase().includes('admin')) {
+      return localStorage.getItem('admin_avatar') || eleanorAvatar;
+    }
+    if (role === 'teacher') {
+      try {
+        const stored = localStorage.getItem('teachers');
+        if (stored) {
+          const list = JSON.parse(stored);
+          const record = list.find(t => 
+            (t.email && t.email.toLowerCase() === email?.toLowerCase()) || 
+            (t.name && t.name.toLowerCase() === name?.toLowerCase())
+          );
+          if (record && record.avatar) return record.avatar;
+        }
+      } catch (e) {}
+      return janeAvatar;
+    }
+    if (role === 'parent') {
+      try {
+        const stored = localStorage.getItem('guardians');
+        if (stored) {
+          const list = JSON.parse(stored);
+          const record = list.find(g => 
+            (g.email && g.email.toLowerCase() === email?.toLowerCase()) || 
+            (g.name && g.name.toLowerCase() === name?.toLowerCase())
+          );
+          if (record && (record.avatarUrl || record.img)) return record.avatarUrl || record.img;
+        }
+      } catch (e) {}
+      return robertAvatar;
+    }
+    return studentAvatar;
   };
 
   const navigate = useNavigate();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef(null);
   const role = localStorage.getItem('userRole') || 'admin';
-  const userName = localStorage.getItem('userName') || 'Institutional User';
+  const [userName, setUserName] = useState(() => {
+    const role = localStorage.getItem('userRole') || 'admin';
+    if (role.toLowerCase().includes('admin')) {
+      const stored = localStorage.getItem('admin_profile_data');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.name) return parsed.name;
+      }
+    }
+    return localStorage.getItem('userName') || 'Institutional User';
+  });
+  const [adminAvatar, setAdminAvatar] = useState(() => getUserAvatar());
+  const [resolvedId, setResolvedId] = useState('');
+
+  useEffect(() => {
+    const syncSidebar = () => {
+      const role = localStorage.getItem('userRole') || 'admin';
+      let name = localStorage.getItem('userName') || 'Institutional User';
+      if (role.toLowerCase().includes('admin')) {
+        const stored = localStorage.getItem('admin_profile_data');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed.name) name = parsed.name;
+        }
+      } else {
+        if (role === 'teacher') {
+          try {
+            const list = JSON.parse(localStorage.getItem('teachers') || '[]');
+            const email = localStorage.getItem('userEmail');
+            const found = list.find(t => t.email?.toLowerCase() === email?.toLowerCase());
+            if (found && found.name) name = found.name;
+          } catch (e) {}
+        } else if (role === 'parent') {
+          try {
+            const list = JSON.parse(localStorage.getItem('guardians') || '[]');
+            const email = localStorage.getItem('userEmail');
+            const found = list.find(g => g.email?.toLowerCase() === email?.toLowerCase());
+            if (found && found.name) name = found.name;
+          } catch (e) {}
+        }
+      }
+      setUserName(name);
+      setAdminAvatar(getUserAvatar());
+    };
+    window.addEventListener('storage', syncSidebar);
+    // Initial sync
+    syncSidebar();
+    return () => window.removeEventListener('storage', syncSidebar);
+  }, []);
+  const [firstStudentId, setFirstStudentId] = useState('STU101');
+  const [firstGuardianId, setFirstGuardianId] = useState('GDN-2026-001');
+  const [firstTeacherId, setFirstTeacherId] = useState('TCH-2026-001');
+
+  useEffect(() => {
+    const fetchFirstStudentId = async () => {
+      try {
+        const list = await getStudents();
+        if (list && list.length > 0) {
+          setFirstStudentId(list[0].student_id);
+        }
+      } catch (err) {
+        console.error("Error fetching first student ID in Sidebar:", err);
+      }
+    };
+    fetchFirstStudentId();
+  }, []);
+
+  useEffect(() => {
+    const fetchFirstGuardianId = async () => {
+      try {
+        const stored = localStorage.getItem('guardians');
+        if (stored) {
+          const list = JSON.parse(stored);
+          if (list && list.length > 0 && list[0].id) {
+            setFirstGuardianId(list[0].id);
+            return;
+          }
+        }
+        const list = await getParents();
+        if (list && list.length > 0) {
+          const p = list[0];
+          const calculatedId = p.parent_id ? `GDN-${p.parent_id}` : (p.id || 'GDN-2026-001');
+          setFirstGuardianId(calculatedId);
+        }
+      } catch (err) {
+        console.error("Error fetching first guardian ID in Sidebar:", err);
+      }
+    };
+    fetchFirstGuardianId();
+  }, []);
+
+  useEffect(() => {
+    const fetchFirstTeacherId = async () => {
+      try {
+        const stored = localStorage.getItem('teachers');
+        if (stored) {
+          const list = JSON.parse(stored);
+          if (list && list.length > 0 && list[0].id) {
+            setFirstTeacherId(list[0].id);
+            return;
+          }
+        }
+        const list = await getTeachers();
+        if (list && list.length > 0) {
+          const t = list[0];
+          const calculatedId = t.teacher_id || t.id || 'TCH-2026-001';
+          setFirstTeacherId(calculatedId);
+        }
+      } catch (err) {
+        console.error("Error fetching first teacher ID in Sidebar:", err);
+      }
+    };
+    fetchFirstTeacherId();
+  }, []);
+
+  useEffect(() => {
+    const fetchId = async () => {
+      const email = localStorage.getItem('userEmail');
+      const name = localStorage.getItem('userName');
+      if (!email && !name) return;
+
+      try {
+        if (role === 'student') {
+          const list = await getStudents();
+          const match = list.find(s => 
+            (s.email && s.email.toLowerCase() === email?.toLowerCase()) || 
+            (s.name && s.name.toLowerCase() === name?.toLowerCase())
+          );
+          if (match) {
+            setResolvedId(match.student_id);
+            localStorage.setItem('userStudentId', match.student_id);
+          } else if (list.length > 0) {
+            setResolvedId(list[0].student_id);
+            localStorage.setItem('userStudentId', list[0].student_id);
+          }
+        } else if (role === 'teacher') {
+          const list = await getTeachers();
+          const match = list.find(t => 
+            (t.email && t.email.toLowerCase() === email?.toLowerCase()) || 
+            (t.name && t.name.toLowerCase() === name?.toLowerCase())
+          );
+          if (match) {
+            setResolvedId(match.teacher_id || match.id);
+            localStorage.setItem('userTeacherId', match.teacher_id || match.id);
+          } else if (list.length > 0) {
+            setResolvedId(list[0].teacher_id || list[0].id);
+            localStorage.setItem('userTeacherId', list[0].teacher_id || list[0].id);
+          }
+        } else if (role === 'parent') {
+          const list = await getParents();
+          const match = list.find(p => 
+            (p.email && p.email.toLowerCase() === email?.toLowerCase()) || 
+            (p.name && p.name.toLowerCase() === name?.toLowerCase())
+          );
+          if (match) {
+            setResolvedId(match.parent_id || match.id);
+            localStorage.setItem('userParentId', match.parent_id || match.id);
+          } else if (list.length > 0) {
+            setResolvedId(list[0].parent_id || list[0].id);
+            localStorage.setItem('userParentId', list[0].parent_id || list[0].id);
+          }
+        }
+      } catch (err) {
+        console.error("Error resolving ID in Sidebar:", err);
+      }
+    };
+    if (role !== 'admin') {
+      fetchId();
+    }
+  }, [role]);
 
   // Close profile menu when clicking outside
   useEffect(() => {
@@ -149,11 +348,11 @@ const Sidebar = ({ collapsed }) => {
           icon: <LayoutDashboard size={20} />, 
           roles: ['admin', 'teacher', 'student', 'parent'],
           subItems: [
-            { path: '/dashboard', name: 'School', icon: <Building size={16} /> },
-            { path: '/dashboard/student', name: 'Student', icon: <User size={16} /> },
-            { path: '/dashboard/teacher', name: 'Teacher', icon: <Briefcase size={16} /> },
-            { path: '/dashboard/parent', name: 'Parent', icon: <Users size={16} /> },
-            { path: '/dashboard/lms', name: 'LMS', icon: <MonitorPlay size={16} /> }
+            { path: '/dashboard', name: 'School', icon: <Building size={16} />, roles: ['admin'] },
+            { path: '/dashboard/student', name: 'Student', icon: <User size={16} />, roles: ['admin', 'student'] },
+            { path: '/dashboard/teacher', name: 'Teacher', icon: <Briefcase size={16} />, roles: ['admin', 'teacher'] },
+            { path: '/dashboard/parent', name: 'Parent', icon: <Users size={16} />, roles: ['admin', 'parent'] },
+            { path: '/dashboard/lms', name: 'LMS', icon: <MonitorPlay size={16} />, roles: ['admin', 'teacher', 'student', 'parent'] }
           ]
         },
         { 
@@ -211,7 +410,7 @@ const Sidebar = ({ collapsed }) => {
           roles: ['admin', 'teacher'],
           subItems: [
             { path: '/dashboard/students', name: 'Student List', icon: <List size={14} /> },
-            { path: '/dashboard/student-details/ADM-2026-004', name: 'Student Profile', icon: <GraduationCap size={14} /> },
+            { path: `/dashboard/student-details/${localStorage.getItem('lastViewedStudentId') || firstStudentId}`, name: 'Student Profile', icon: <GraduationCap size={14} /> },
             { path: '/dashboard/add-student', name: 'Add Student', icon: <UserPlus size={14} /> },
             { path: '/dashboard/suspended-students', name: 'Suspended Students', icon: <UserX size={14} /> },
             { path: '/dashboard/student-categories', name: 'Student Categories', icon: <Tags size={14} /> },
@@ -224,8 +423,8 @@ const Sidebar = ({ collapsed }) => {
           roles: ['admin'],
           subItems: [
             { path: '/dashboard/guardians', name: 'Guardian List', icon: <List size={14} /> },
-            { path: '/dashboard/guardian-details/GDN-2026-001', name: 'Guardian Profile', icon: <Users size={14} /> },
-            { path: '/dashboard/edit-guardian/GDN-2026-001', name: 'Edit Guardian', icon: <Edit size={14} /> },
+            { path: `/dashboard/guardian-details/${localStorage.getItem('lastViewedGuardianId') || firstGuardianId}`, name: 'Guardian Profile', icon: <Users size={14} /> },
+            { path: `/dashboard/edit-guardian/${localStorage.getItem('lastViewedGuardianId') || firstGuardianId}`, name: 'Edit Guardian', icon: <Edit size={14} /> },
             { path: '/dashboard/add-guardian', name: 'Add Guardian', icon: <UserPlus size={14} /> }
           ]
         },
@@ -236,9 +435,9 @@ const Sidebar = ({ collapsed }) => {
           subItems: [
             { path: '/dashboard/teachers', name: 'Faculty List', icon: <List size={14} /> },
             { path: '/dashboard/teacher-info', name: 'Teacher Hub', icon: <Grid size={14} /> },
-            { path: '/dashboard/teacher-details/TCH-2026-001', name: 'Teacher Profile', icon: <User size={14} /> },
-            { path: '/dashboard/teacher-timetable/TCH-2026-001', name: 'Teacher Timetable', icon: <Clock size={14} /> },
-            { path: '/dashboard/edit-teacher/TCH-2026-001', name: 'Edit Teacher', icon: <Edit size={14} /> },
+            { path: `/dashboard/teacher-details/${localStorage.getItem('lastViewedTeacherId') || firstTeacherId}`, name: 'Teacher Profile', icon: <User size={14} /> },
+            { path: `/dashboard/teacher-timetable/${localStorage.getItem('lastViewedTeacherId') || firstTeacherId}`, name: 'Teacher Timetable', icon: <Clock size={14} /> },
+            { path: `/dashboard/edit-teacher/${localStorage.getItem('lastViewedTeacherId') || firstTeacherId}`, name: 'Edit Teacher', icon: <Edit size={14} /> },
             { path: '/dashboard/add-teacher', name: 'Add Teacher', icon: <UserPlus size={14} /> },
             { path: '/dashboard/teacher-attendance', name: 'Teacher Attendance', icon: <ClipboardCheck size={14} /> }
           ]
@@ -521,6 +720,39 @@ const Sidebar = ({ collapsed }) => {
     }
   ];
 
+  if (role !== 'admin') {
+    menuGroups.push({
+      title: 'My Portal',
+      items: [
+        role === 'student' ? {
+          name: 'My Profile',
+          icon: <User size={20} />,
+          roles: ['student'],
+          subItems: [
+            { path: `/dashboard/student-details/${resolvedId || localStorage.getItem('userStudentId') || 'ADM-2026-004'}`, name: 'View Profile', icon: <GraduationCap size={14} /> }
+          ]
+        } : null,
+        role === 'teacher' ? {
+          name: 'My Profile',
+          icon: <User size={20} />,
+          roles: ['teacher'],
+          subItems: [
+            { path: `/dashboard/teacher-details/${resolvedId || localStorage.getItem('userTeacherId') || 'TCH-2026-001'}`, name: 'View Profile', icon: <GraduationCap size={14} /> },
+            { path: `/dashboard/teacher-timetable/${resolvedId || localStorage.getItem('userTeacherId') || 'TCH-2026-001'}`, name: 'My Timetable', icon: <Clock size={14} /> }
+          ]
+        } : null,
+        role === 'parent' ? {
+          name: 'My Profile',
+          icon: <User size={20} />,
+          roles: ['parent'],
+          subItems: [
+            { path: `/dashboard/guardian-details/${resolvedId || localStorage.getItem('userParentId') || 'GDN-2026-001'}`, name: 'View Profile', icon: <Users size={14} /> }
+          ]
+        } : null
+      ].filter(Boolean)
+    });
+  }
+
   return (
     <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header" style={{ padding: collapsed ? '0' : '0 24px', justifyContent: collapsed ? 'center' : 'flex-start' }}>
@@ -545,33 +777,11 @@ const Sidebar = ({ collapsed }) => {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div style={{ width: '45px', height: '45px', borderRadius: '12px', backgroundColor: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, overflow: 'hidden' }}>
-                {role === 'admin' ? (
-                  <img 
-                    src={eleanorAvatar} 
-                    alt={userName} 
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                  />
-                ) : role === 'teacher' ? (
-                  <img 
-                    src={getTeacherProfilePic()} 
-                    alt={userName} 
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                  />
-                ) : role === 'parent' ? (
-                  <img 
-                    src={robertAvatar} 
-                    alt={userName} 
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                  />
-                ) : role === 'student' ? (
-                  <img 
-                    src={studentAvatar} 
-                    alt={userName} 
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                  />
-                ) : (
-                  userName.charAt(0)
-                )}
+                <img 
+                  src={adminAvatar} 
+                  alt={userName} 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                />
               </div>
               <div style={{ flex: 1 }}>
                 <h4 style={{ fontSize: '0.9rem', margin: 0, fontWeight: 800 }}>{userName}</h4>
@@ -579,7 +789,7 @@ const Sidebar = ({ collapsed }) => {
               </div>
               <ChevronDown size={14} className="text-muted" style={{ transform: isProfileOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: '0.3s' }} />
             </div>
-
+ 
             {/* Sidebar Profile Dropdown */}
             <AnimatePresence>
               {isProfileOpen && (
@@ -598,8 +808,9 @@ const Sidebar = ({ collapsed }) => {
                   <div 
                     onClick={() => { 
                       const path = role === 'admin' ? '/dashboard/admin-profile' : 
-                                   (role === 'teacher' ? '/dashboard/teacher-details/TCH-001' : 
-                                   (role === 'parent' ? '/dashboard/guardian-details/GDN-2026-001' : '/dashboard/student-details/1'));
+                                   (role === 'teacher' ? `/dashboard/teacher-details/${resolvedId || localStorage.getItem('userTeacherId') || 'TCH-2026-001'}` : 
+                                   (role === 'parent' ? `/dashboard/guardian-details/${resolvedId || localStorage.getItem('userParentId') || 'GDN-2026-001'}` : 
+                                   `/dashboard/student-details/${resolvedId || localStorage.getItem('userStudentId') || 'ADM-2026-004'}`));
                       navigate(path); 
                       setIsProfileOpen(false); 
                     }}

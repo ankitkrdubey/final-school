@@ -167,15 +167,54 @@ const LMSDashboard = () => {
   const [isCamActive, setIsCamActive] = useState(true);
 
   // Stateful Data Pools
-  const [enrolledCount, setEnrolledCount] = useState(500);
-  const [studentsCount, setStudentsCount] = useState(3570);
-  const [coursesList, setCoursesList] = useState([
-    { id: 1, name: 'React Performance Optimization', category: 'Development', students: 1250, instructor: 'Dr. Sarah Wilson' },
-    { id: 2, name: 'Advanced UI Design Patterns', category: 'Design', students: 2100, instructor: 'Emma Thompson' },
-    { id: 3, name: 'Data Analysis with Python', category: 'Science', students: 600, instructor: 'Michael Chen' },
-    { id: 4, name: 'Ethical Hacking Vectors', category: 'Development', students: 850, instructor: 'Prof. James Miller' }
-  ]);
-  const [earningsAmount, setEarningsAmount] = useState(67000);
+  const [coursesList, setCoursesList] = useState(() => {
+    const saved = localStorage.getItem('courses');
+    return saved ? JSON.parse(saved) : [
+      { id: 'CRS-001', name: 'Advanced React Architecture', instructor: 'Dr. Sarah Wilson', students: 1250, rating: 4.9, image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=400&auto=format&fit=crop', category: 'Development', isPublic: true },
+      { id: 'CRS-002', name: 'UI/UX Design Masterclass', instructor: 'Emma Thompson', students: 850, rating: 4.8, image: 'https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=400&auto=format&fit=crop', category: 'Design', isPublic: true },
+      { id: 'CRS-003', name: 'Data Analysis with Python', instructor: 'Michael Chen', students: 2100, rating: 4.7, image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=400&auto=format&fit=crop', category: 'Data Science', isPublic: true },
+      { id: 'CRS-004', name: 'Fullstack Web Development', instructor: 'James Miller', students: 1800, rating: 4.9, image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=400&auto=format&fit=crop', category: 'Development', isPublic: true },
+      { id: 'CRS-005', name: 'Cyber Security Fundamentals', instructor: 'Robert Fox', students: 540, rating: 4.6, image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=400&auto=format&fit=crop', category: 'Security', isPublic: false },
+      { id: 'CRS-006', name: 'Digital Marketing Strategy', instructor: 'Eleanor Pena', students: 920, rating: 4.5, image: 'https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?q=80&w=400&auto=format&fit=crop', category: 'Marketing', isPublic: true },
+      { id: 'CRS-007', name: 'Mobile App Dev (Flutter)', instructor: 'Guy Hawkins', students: 760, rating: 4.8, image: 'https://images.unsplash.com/photo-1526498460520-4c246339dccb?q=80&w=400&auto=format&fit=crop', category: 'Development', isPublic: false },
+      { id: 'CRS-008', name: 'Machine Learning Bootcamp', instructor: 'Jane Cooper', students: 1100, rating: 4.9, image: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=400&auto=format&fit=crop', category: 'Data Science', isPublic: true },
+      { id: 'CRS-009', name: 'Data Science with R', instructor: 'Dr. Emily Blunt', students: 640, rating: 4.7, image: 'https://images.unsplash.com/photo-1518186239747-d08efaa57396?q=80&w=400&auto=format&fit=crop', category: 'Data Science', isPublic: false },
+      { id: 'CRS-010', name: 'UI/UX Advanced Prototyping', instructor: 'Chris Evans', students: 430, rating: 4.8, image: 'https://images.unsplash.com/photo-1545235617-9465d2a55698?q=80&w=400&auto=format&fit=crop', category: 'Design', isPublic: false },
+      { id: 'CRS-011', name: 'Ethical Hacking Masterclass', instructor: 'Prof. James Miller', students: 1500, rating: 4.9, image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=400&auto=format&fit=crop', category: 'Security', isPublic: true },
+      { id: 'CRS-012', name: 'Blockchain Development', instructor: 'Mark Ruffalo', students: 890, rating: 4.6, image: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=400&auto=format&fit=crop', category: 'Development', isPublic: false }
+    ];
+  });
+
+  const [studentsCount, setStudentsCount] = useState(() => {
+    const saved = localStorage.getItem('studentsCount');
+    return saved ? parseInt(saved) : 3570;
+  });
+
+  const [earningsAmount, setEarningsAmount] = useState(() => {
+    const saved = localStorage.getItem('earningsAmount');
+    return saved ? parseInt(saved) : 67000;
+  });
+
+  const [enrolledCount, setEnrolledCount] = useState(() => {
+    const saved = localStorage.getItem('courses');
+    const list = saved ? JSON.parse(saved) : [];
+    return list.length > 0 
+      ? list.reduce((sum, c) => sum + (c.students || 0), 0)
+      : 12780;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('courses', JSON.stringify(coursesList));
+    setEnrolledCount(coursesList.reduce((sum, c) => sum + (c.students || 0), 0));
+  }, [coursesList]);
+
+  useEffect(() => {
+    localStorage.setItem('studentsCount', studentsCount.toString());
+  }, [studentsCount]);
+
+  useEffect(() => {
+    localStorage.setItem('earningsAmount', earningsAmount.toString());
+  }, [earningsAmount]);
 
   // Creation forms states
   const [newCourseName, setNewCourseName] = useState('');
@@ -264,26 +303,45 @@ const LMSDashboard = () => {
     let enrolledChange = "43.9";
     let studentsChange = "43.9";
     let coursesChange = "43.9";
-
     // Base subject configurations
     const subjectStats = {
-      All: { courses: coursesList.length, enrolled: enrolledCount, students: studentsCount, earnings: earningsAmount },
-      Development: { courses: coursesList.filter(c=>c.category==='Development').length, enrolled: Math.round(enrolledCount*0.45), students: Math.round(studentsCount*0.45), earnings: Math.round(earningsAmount*0.45) },
-      Design: { courses: coursesList.filter(c=>c.category==='Design').length, enrolled: Math.round(enrolledCount*0.3), students: Math.round(studentsCount*0.3), earnings: Math.round(earningsAmount*0.3) },
-      Marketing: { courses: coursesList.filter(c=>c.category==='Marketing').length, enrolled: Math.round(enrolledCount*0.12), students: Math.round(studentsCount*0.12), earnings: Math.round(earningsAmount*0.12) },
-      Business: { courses: coursesList.filter(c=>c.category==='Business').length, enrolled: Math.round(enrolledCount*0.08), students: Math.round(studentsCount*0.08), earnings: Math.round(earningsAmount*0.08) },
-      Science: { courses: coursesList.filter(c=>c.category==='Science').length, enrolled: Math.round(enrolledCount*0.05), students: Math.round(studentsCount*0.05), earnings: Math.round(earningsAmount*0.05) },
-      Art: { courses: coursesList.filter(c=>c.category==='Art').length, enrolled: Math.round(enrolledCount*0.02), students: Math.round(studentsCount*0.02), earnings: Math.round(earningsAmount*0.02) }
+      All: { courses: coursesList.length, enrolled: enrolledCount, students: studentsCount, earnings: earningsAmount }
     };
+    
+    const categories = ['Development', 'Design', 'Marketing', 'Business', 'Science', 'Art'];
+    categories.forEach(cat => {
+      const catCourses = coursesList.filter(c => 
+        c.category === cat || 
+        (cat === 'Science' && (c.category === 'Science' || c.category === 'Data Science' || c.category === 'Security'))
+      );
+      const catEnrolled = catCourses.reduce((sum, c) => sum + (c.students || 0), 0);
+      
+      subjectStats[cat] = {
+        courses: catCourses.length,
+        enrolled: catEnrolled,
+        students: Math.round(studentsCount * (catCourses.length / (coursesList.length || 1))),
+        earnings: Math.round(earningsAmount * (catEnrolled / (enrolledCount || 1)))
+      };
+    });
 
-    // Base instructor configurations
-    const instructorStats = {
-      'Dr. Sarah Wilson': { courses: coursesList.filter(c=>c.instructor==='Dr. Sarah Wilson').length, enrolled: Math.round(enrolledCount*0.38), students: 1250, earnings: Math.round(earningsAmount*0.38), subject: 'Development' },
-      'Prof. James Miller': { courses: coursesList.filter(c=>c.instructor==='Prof. James Miller').length, enrolled: Math.round(enrolledCount*0.22), students: 850, earnings: Math.round(earningsAmount*0.22), subject: 'Development' },
-      'Emma Thompson': { courses: coursesList.filter(c=>c.instructor==='Emma Thompson').length, enrolled: Math.round(enrolledCount*0.35), students: 2100, earnings: Math.round(earningsAmount*0.35), subject: 'Design' },
-      'Michael Chen': { courses: coursesList.filter(c=>c.instructor==='Michael Chen').length, enrolled: Math.round(enrolledCount*0.15), students: 600, earnings: Math.round(earningsAmount*0.15), subject: 'Science' }
-    };
+    // Dynamic instructor configurations
+    const instructorStats = {};
+    const uniqueInstructors = [...new Set(coursesList.map(c => c.instructor))];
+    uniqueInstructors.forEach(inst => {
+      const instCourses = coursesList.filter(c => c.instructor === inst);
+      const instEnrolled = instCourses.reduce((sum, c) => sum + (c.students || 0), 0);
+      const firstCourse = instCourses[0];
+      const category = firstCourse ? firstCourse.category : 'Development';
+      const subject = (category === 'Data Science' || category === 'Security' || category === 'Science') ? 'Science' : category;
 
+      instructorStats[inst] = {
+        courses: instCourses.length,
+        enrolled: instEnrolled,
+        students: instEnrolled,
+        earnings: Math.round(earningsAmount * (instEnrolled / (enrolledCount || 1))),
+        subject: subject
+      };
+    });
     let activeSubject = filters.subject;
     let activeInstructor = filters.instructor;
 
@@ -414,10 +472,30 @@ const LMSDashboard = () => {
 
   // Filter Chart: Subject Matrix
   const getFilteredSubjectDistribution = () => {
-    if (filters.subject === 'All') return subjectDistribution;
-    return subjectDistribution.map(item => {
+    const categories = ['Development', 'Design', 'Marketing', 'Business', 'Art', 'Science'];
+    const dist = categories.map(cat => {
+      const catCourses = coursesList.filter(c => 
+        c.category === cat || 
+        (cat === 'Science' && (c.category === 'Science' || c.category === 'Data Science' || c.category === 'Security'))
+      );
+      const coursesCount = catCourses.length;
+      const totalEnrolledInCat = catCourses.reduce((sum, c) => sum + (c.students || 0), 0);
+      
+      const valA = coursesCount > 0 ? Math.min(150, Math.round(totalEnrolledInCat / 20) + 50) : 30;
+      const valB = coursesCount > 0 ? Math.min(150, Math.round(catCourses.reduce((sum, c) => sum + (c.rating || 4.5), 0) / coursesCount * 25)) : 40;
+      
+      return {
+        subject: cat,
+        A: valA,
+        B: valB,
+        fullMark: 150
+      };
+    });
+
+    if (filters.subject === 'All') return dist;
+    return dist.map(item => {
       if (item.subject === filters.subject) {
-        return { ...item, A: 140, B: 135 }; 
+        return { ...item, A: Math.min(150, item.A + 20), B: Math.min(150, item.B + 15) }; 
       } else {
         return { ...item, A: Math.round(item.A * 0.25), B: Math.round(item.B * 0.2) }; 
       }
@@ -545,7 +623,13 @@ const LMSDashboard = () => {
       showToast('Student name cannot be blank!', 'info');
       return;
     }
-    setEnrolledCount(prev => prev + 1);
+    const updated = coursesList.map(c => {
+      if (c.name === quickEnrollCourse) {
+        return { ...c, students: (c.students || 0) + 1 };
+      }
+      return c;
+    });
+    setCoursesList(updated);
     setStudentsCount(prev => prev + 1);
     showToast(`Quick Enrolled ${quickEnrollName} into ${quickEnrollCourse} successfully!`, 'success');
     setQuickEnrollName('');
@@ -569,13 +653,18 @@ const LMSDashboard = () => {
       return;
     }
     const newCourseObj = {
-      id: Date.now(),
+      id: 'CRS-' + String(coursesList.length + 1).padStart(3, '0'),
       name: newCourseName,
       category: newCourseCategory,
       students: 0,
-      instructor: newCourseInstructor
+      rating: 5.0,
+      image: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=400&auto=format&fit=crop',
+      instructor: newCourseInstructor,
+      isPublic: true
     };
-    setCoursesList(prev => [...prev, newCourseObj]);
+    const updated = [...coursesList, newCourseObj];
+    setCoursesList(updated);
+    localStorage.setItem('courses', JSON.stringify(updated));
     showToast(`Statefully created new course: "${newCourseName}" under ${newCourseCategory}!`, 'success');
     setNewCourseName('');
     setShowCoursesModal(false);

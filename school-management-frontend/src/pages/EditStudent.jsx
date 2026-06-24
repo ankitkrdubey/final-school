@@ -5,10 +5,18 @@ import {
   Camera, ArrowLeft, RotateCw, ZoomIn, ZoomOut, Loader2, Check, CheckCircle2
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { updateStudent, getStudents } from '../services/service';
 
 const EditStudent = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+
+  useEffect(() => {
+    if (id) {
+      localStorage.setItem('lastViewedStudentId', id);
+    }
+  }, [id]);
+
   const fileInputRef = useRef(null);
   const [activeTab, setActiveTab] = useState('personal');
 
@@ -42,7 +50,7 @@ const EditStudent = () => {
         { student_id: 'STU104', name: 'Cody Fisher', email: 'cody.fisher@school.edu', phone: '+1 234 567 893', class_id: '12', section: 'B', rollNo: '14', admission_date: '2026-02-10', gender: 'Male', status: 'Inactive', avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&h=200&fit=crop', dob: '2008-04-12', bloodGroup: 'AB+', religion: 'Christianity', parentName: 'Fisher Sr.', parentOccupation: 'Business', parentPhone: '+1 987 654 324', parentEmail: 'fisher.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' },
         { student_id: 'STU105', name: 'Esther Howard', email: 'esther.howard@school.edu', phone: '+1 234 567 894', class_id: '10', section: 'A', rollNo: '15', admission_date: '2026-03-05', gender: 'Female', status: 'Active', avatar: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&h=200&fit=crop', dob: '2010-09-23', bloodGroup: 'O+', religion: 'Christianity', parentName: 'Howard Sr.', parentOccupation: 'Lawyer', parentPhone: '+1 987 654 325', parentEmail: 'howard.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' },
         { student_id: 'STU106', name: 'Brooklyn Simmons', email: 'brooklyn.simmons@school.edu', phone: '+1 234 567 895', class_id: '09', section: 'C', rollNo: '02', admission_date: '2026-03-12', gender: 'Female', status: 'Active', avatar: 'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=200&h=200&fit=crop', dob: '2011-03-12', bloodGroup: 'A+', religion: 'Christianity', parentName: 'Simmons Sr.', parentOccupation: 'Doctor', parentPhone: '+1 987 654 326', parentEmail: 'simmons.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' },
-        { student_id: 'STU107', name: 'Guy Hawkins', email: 'guy.hawkins@school.edu', phone: '+1 234 567 896', class_id: '11', section: 'B', rollNo: '05', admission_date: '2026-04-01', gender: 'Male', status: 'Active', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop', dob: '2009-04-01', bloodGroup: 'B-', religion: 'Christianity', parentName: 'Hawkins Sr.', parentOccupation: 'Accountant', parentPhone: '+1 987 654 327', parentEmail: 'hawkins.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' },
+        { student_id: 'STU107', name: 'Guy Hawkins', email: 'guy.custom@school.edu', phone: '+1 234 567 896', class_id: '11', section: 'B', rollNo: '05', admission_date: '2026-04-01', gender: 'Male', status: 'Active', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop', dob: '2009-04-01', bloodGroup: 'B-', religion: 'Christianity', parentName: 'Hawkins Sr.', parentOccupation: 'Accountant', parentPhone: '+1 987 654 327', parentEmail: 'hawkins.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' },
         { student_id: 'STU108', name: 'Leslie Alexander', email: 'leslie.alexander@school.edu', phone: '+1 234 567 897', class_id: '12', section: 'A', rollNo: '07', admission_date: '2026-04-15', gender: 'Female', status: 'Active', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop', dob: '2008-04-15', bloodGroup: 'AB-', religion: 'Christianity', parentName: 'Alexander Sr.', parentOccupation: 'Architect', parentPhone: '+1 987 654 328', parentEmail: 'alexander.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' },
         { student_id: 'STU109', name: 'Jenny Wilson', email: 'jenny.wilson@school.edu', phone: '+1 234 567 898', class_id: '10', section: 'D', rollNo: '11', admission_date: '2026-05-01', gender: 'Female', status: 'Active', avatar: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=200&h=200&fit=crop', dob: '2010-05-01', bloodGroup: 'O-', religion: 'Christianity', parentName: 'Wilson Sr.', parentOccupation: 'Teacher', parentPhone: '+1 987 654 329', parentEmail: 'wilson.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' },
         { student_id: 'STU110', name: 'Cameron Williamson', email: 'cameron.williamson@school.edu', phone: '+1 234 567 899', class_id: '11', section: 'A', rollNo: '18', admission_date: '2026-05-05', gender: 'Male', status: 'Active', avatar: 'https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=200&h=200&fit=crop', dob: '2009-05-05', bloodGroup: 'A+', religion: 'Christianity', parentName: 'Williamson Sr.', parentOccupation: 'Dentist', parentPhone: '+1 987 654 330', parentEmail: 'williamson.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' },
@@ -74,7 +82,7 @@ const EditStudent = () => {
         parentOccupation: found.parentOccupation || 'Engineer',
         parentPhone: found.parentPhone || '+1 987 654 321',
         parentEmail: found.parentEmail || 'robert.doe@example.com',
-        presentAddress: found.presentAddress || '123 School Lane, Education City',
+        presentAddress: found.presentAddress || found.address || '123 School Lane, Education City',
         permanentAddress: found.permanentAddress || '123 School Lane, Education City',
         phone: found.phone || '+1 234 567 890',
         email: found.email || 'john.doe@edupro.edu',
@@ -108,6 +116,49 @@ const EditStudent = () => {
       status: 'Active'
     };
   });
+
+  useEffect(() => {
+    const loadFreshData = async () => {
+      try {
+        const data = await getStudents();
+        if (data && data.length > 0) {
+          localStorage.setItem('students', JSON.stringify(data));
+          const found = data.find(s => s.student_id === id);
+          if (found) {
+            const names = found.name.split(' ');
+            const firstName = names[0] || '';
+            const lastName = names.slice(1).join(' ') || '';
+            setFormData({
+              firstName,
+              lastName,
+              gender: found.gender ? found.gender.toLowerCase() : 'male',
+              dob: found.dob ? found.dob.split('T')[0] : '2010-05-15',
+              bloodGroup: found.bloodGroup || found.blood_group || 'O+',
+              religion: found.religion || 'Christianity',
+              admissionId: found.student_id,
+              rollNo: found.rollNo || '15',
+              class: found.class_id || '10',
+              section: found.section || 'A',
+              parentName: found.parentName || 'Robert Doe',
+              parentOccupation: found.parentOccupation || 'Engineer',
+              parentPhone: found.parentPhone || '+1 987 654 321',
+              parentEmail: found.parentEmail || 'robert.doe@example.com',
+              presentAddress: found.presentAddress || found.address || '123 School Lane, Education City',
+              permanentAddress: found.permanentAddress || '123 School Lane, Education City',
+              phone: found.phone || '+1 234 567 890',
+              email: found.email || 'john.doe@edupro.edu',
+              admissionDate: found.admissionDate || (found.admission_date ? found.admission_date.split('T')[0] : '2025-09-01'),
+              avatar: found.avatar || '',
+              status: found.status || 'Active'
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load fresh student in edit:", err);
+      }
+    };
+    loadFreshData();
+  }, [id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -189,29 +240,9 @@ const EditStudent = () => {
       }, 1000);
       return () => clearTimeout(timer);
     } else {
-      const timer = setTimeout(() => {
+      const performUpdate = async () => {
         const targetId = id || 'STU101';
         const fullName = `${formData.firstName} ${formData.lastName}`.trim();
-
-        const stored = localStorage.getItem('students');
-        let list = [];
-        if (stored) {
-          list = JSON.parse(stored);
-        } else {
-          list = [
-            { student_id: 'STU101', name: 'Liam Fox', email: 'liam.fox@edupro.edu', phone: '+1 234 567 890', class_id: '10', section: 'A', rollNo: '24', admission_date: '2026-01-12', gender: 'Male', status: 'Active', avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&h=200&fit=crop', dob: '2010-05-12', bloodGroup: 'O+', religion: 'Christianity', parentName: 'Fox Sr.', parentOccupation: 'Engineer', parentPhone: '+1 987 654 321', parentEmail: 'fox.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' },
-            { student_id: 'STU102', name: 'Jane Cooper', email: 'jane.cooper@edupro.edu', phone: '+1 234 567 891', class_id: '11', section: 'A', rollNo: '12', admission_date: '2026-01-15', gender: 'Female', status: 'Active', avatar: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=200&h=200&fit=crop', dob: '2009-08-18', bloodGroup: 'A-', religion: 'Christianity', parentName: 'Cooper Sr.', parentOccupation: 'Executive', parentPhone: '+1 987 654 322', parentEmail: 'cooper.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' },
-            { student_id: 'STU103', name: 'Wade Warren', email: 'wade.warren@edupro.edu', phone: '+1 234 567 892', class_id: '10', section: 'A', rollNo: '08', admission_date: '2026-02-02', gender: 'Male', status: 'Active', avatar: 'https://images.unsplash.com/photo-1500048993953-d23a436266cf?w=200&h=200&fit=crop', dob: '2010-03-05', bloodGroup: 'B+', religion: 'Christianity', parentName: 'Warren Sr.', parentOccupation: 'Manager', parentPhone: '+1 987 654 323', parentEmail: 'warren.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' },
-            { student_id: 'STU104', name: 'Cody Fisher', email: 'cody.fisher@school.edu', phone: '+1 234 567 893', class_id: '12', section: 'B', rollNo: '14', admission_date: '2026-02-10', gender: 'Male', status: 'Inactive', avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&h=200&fit=crop', dob: '2008-04-12', bloodGroup: 'AB+', religion: 'Christianity', parentName: 'Fisher Sr.', parentOccupation: 'Business', parentPhone: '+1 987 654 324', parentEmail: 'fisher.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' },
-            { student_id: 'STU105', name: 'Esther Howard', email: 'esther.howard@school.edu', phone: '+1 234 567 894', class_id: '10', section: 'A', rollNo: '15', admission_date: '2026-03-05', gender: 'Female', status: 'Active', avatar: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&h=200&fit=crop', dob: '2010-09-23', bloodGroup: 'O+', religion: 'Christianity', parentName: 'Howard Sr.', parentOccupation: 'Lawyer', parentPhone: '+1 987 654 325', parentEmail: 'howard.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' },
-            { student_id: 'STU106', name: 'Brooklyn Simmons', email: 'brooklyn.simmons@school.edu', phone: '+1 234 567 895', class_id: '09', section: 'C', rollNo: '02', admission_date: '2026-03-12', gender: 'Female', status: 'Active', avatar: 'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=200&h=200&fit=crop', dob: '2011-03-12', bloodGroup: 'A+', religion: 'Christianity', parentName: 'Simmons Sr.', parentOccupation: 'Doctor', parentPhone: '+1 987 654 326', parentEmail: 'simmons.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' },
-            { student_id: 'STU107', name: 'Guy Hawkins', email: 'guy.hawkins@school.edu', phone: '+1 234 567 896', class_id: '11', section: 'B', rollNo: '05', admission_date: '2026-04-01', gender: 'Male', status: 'Active', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop', dob: '2009-04-01', bloodGroup: 'B-', religion: 'Christianity', parentName: 'Hawkins Sr.', parentOccupation: 'Accountant', parentPhone: '+1 987 654 327', parentEmail: 'hawkins.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' },
-            { student_id: 'STU108', name: 'Leslie Alexander', email: 'leslie.alexander@school.edu', phone: '+1 234 567 897', class_id: '12', section: 'A', rollNo: '07', admission_date: '2026-04-15', gender: 'Female', status: 'Active', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop', dob: '2008-04-15', bloodGroup: 'AB-', religion: 'Christianity', parentName: 'Alexander Sr.', parentOccupation: 'Architect', parentPhone: '+1 987 654 328', parentEmail: 'alexander.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' },
-            { student_id: 'STU109', name: 'Jenny Wilson', email: 'jenny.wilson@school.edu', phone: '+1 234 567 898', class_id: '10', section: 'D', rollNo: '11', admission_date: '2026-05-01', gender: 'Female', status: 'Active', avatar: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=200&h=200&fit=crop', dob: '2010-05-01', bloodGroup: 'O-', religion: 'Christianity', parentName: 'Wilson Sr.', parentOccupation: 'Teacher', parentPhone: '+1 987 654 329', parentEmail: 'wilson.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' },
-            { student_id: 'STU110', name: 'Cameron Williamson', email: 'cameron.williamson@school.edu', phone: '+1 234 567 899', class_id: '11', section: 'A', rollNo: '18', admission_date: '2026-05-05', gender: 'Male', status: 'Active', avatar: 'https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=200&h=200&fit=crop', dob: '2009-05-05', bloodGroup: 'A+', religion: 'Christianity', parentName: 'Williamson Sr.', parentOccupation: 'Dentist', parentPhone: '+1 987 654 330', parentEmail: 'williamson.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' },
-            { student_id: 'STU212', name: 'Sarah Williams', email: 'sarah.w@example.com', phone: '+1 234 567 891', class_id: '11', section: 'A', rollNo: '03', admission_date: '2026-11-14', gender: 'Female', status: 'Suspended', avatar: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=200&h=200&fit=crop', dob: '2009-11-14', bloodGroup: 'A+', religion: 'Christianity', parentName: 'Williams Sr.', parentOccupation: 'Doctor', parentPhone: '+1 987 654 326', parentEmail: 'williams.sr@example.com', presentAddress: '123 School Lane, Education City, NY 10001', permanentAddress: '456 West Avenue, Hometown, CA 90210' }
-          ];
-        }
 
         const updatedRecord = {
           student_id: targetId,
@@ -236,13 +267,26 @@ const EditStudent = () => {
           permanentAddress: formData.permanentAddress
         };
 
+        // Try API update
+        try {
+          await updateStudent(targetId, updatedRecord);
+        } catch (apiErr) {
+          console.warn("Backend API sync offline/failed, using fallback cache storage");
+        }
+
+        const stored = localStorage.getItem('students');
+        let list = [];
+        if (stored) {
+          list = JSON.parse(stored);
+        }
         const newList = list.map(s => s.student_id === targetId ? updatedRecord : s);
         localStorage.setItem('students', JSON.stringify(newList));
 
         setIsVerifying(false);
         navigate(`/dashboard/student-details/${targetId}`);
-      }, 1000);
-      return () => clearTimeout(timer);
+      };
+
+      performUpdate();
     }
   }, [isVerifying, verifyStep, id, formData, navigate]);
 

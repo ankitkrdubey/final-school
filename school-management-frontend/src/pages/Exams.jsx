@@ -8,11 +8,18 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const Exams = () => {
   // Core Exams Roster State
-  const [exams, setExams] = useState([
-    { id: 'EXM-001', name: 'Mid-Term Examination 2026', type: 'Main', startDate: '2026-05-15', endDate: '2026-05-25', status: 'Upcoming', students: 450, color: 'var(--primary)', room: 'Hall A', invigilators: ['Dr. Sarah Wilson'] },
-    { id: 'EXM-002', name: 'Weekly Quiz - Mathematics', type: 'Quiz', startDate: '2026-05-10', endDate: '2026-05-10', status: 'Ongoing', students: 42, color: '#10B981', room: 'Hall B', invigilators: ['Emma Thompson'] },
-    { id: 'EXM-003', name: 'Pre-Board Assessment', type: 'Internal', startDate: '2026-06-01', endDate: '2026-06-15', status: 'Scheduled', students: 120, color: '#F59E0B', room: 'Science Lab 3', invigilators: ['Prof. James Miller'] },
-  ]);
+  const [exams, setExams] = useState(() => {
+    const cached = localStorage.getItem('edupro_exams');
+    return cached ? JSON.parse(cached) : [
+      { id: 'EXM-001', name: 'Mid-Term Examination 2026', type: 'Main', startDate: '2026-05-15', endDate: '2026-05-25', status: 'Upcoming', students: 450, color: 'var(--primary)', room: 'Hall A', invigilators: ['Dr. Sarah Wilson'] },
+      { id: 'EXM-002', name: 'Weekly Quiz - Mathematics', type: 'Quiz', startDate: '2026-05-10', endDate: '2026-05-10', status: 'Ongoing', students: 42, color: '#10B981', room: 'Hall B', invigilators: ['Emma Thompson'] },
+      { id: 'EXM-003', name: 'Pre-Board Assessment', type: 'Internal', startDate: '2026-06-01', endDate: '2026-06-15', status: 'Scheduled', students: 120, color: '#F59E0B', room: 'Science Lab 3', invigilators: ['Prof. James Miller'] },
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('edupro_exams', JSON.stringify(exams));
+  }, [exams]);
 
   // Filtering & Dropdown States
   const [searchQuery, setSearchQuery] = useState('');

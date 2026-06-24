@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -6,6 +6,7 @@ import {
   Clock, Activity, MapPin, Calendar, Camera,
   Edit, Bell, Globe, Lock, CheckCircle, Award, Settings, X, Loader2, Save
 } from 'lucide-react';
+import { getProfile, updateProfile } from '../services/service';
 
 import eleanorAvatar from '../assets/eleanor_avatar.png';
 
@@ -13,8 +14,12 @@ const AdminProfile = () => {
   const navigate = useNavigate();
   
   // State variables for interactive elements
-  const [avatar, setAvatar] = useState(eleanorAvatar);
-  const [coverImage, setCoverImage] = useState(null);
+  const [avatar, setAvatar] = useState(() => {
+    return localStorage.getItem('admin_avatar') || eleanorAvatar;
+  });
+  const [coverImage, setCoverImage] = useState(() => {
+    return localStorage.getItem('admin_cover') || null;
+  });
   const [toast, setToast] = useState(null);
   const [showCredentialsModal, setShowCredentialsModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -35,17 +40,114 @@ const AdminProfile = () => {
     setTimeout(() => setToast(null), 4000);
   };
 
-  // Profile data
-  const adminData = {
-    name: 'Eleanor Pena',
-    role: 'Super Admin',
-    id: 'ADM-2026-001',
-    email: 'admin@edupro.elite',
-    phone: '+1 234 567 890',
-    location: 'California, USA',
-    joinDate: '12 January 2024',
-    lastLogin: '10 mins ago',
-    permissions: ['Full Access', 'Financial Management', 'System Config', 'User Control']
+  // Profile data (Stateful)
+  const [adminData, setAdminData] = useState(() => {
+    const stored = localStorage.getItem('admin_profile_data');
+    if (stored) return JSON.parse(stored);
+    return {
+      name: 'Eleanor Pena',
+      role: 'Super Admin',
+      id: 'ADM-2026-001',
+      email: 'admin@edupro.elite',
+      phone: '+1 234 567 890',
+      location: 'California, USA',
+      joinDate: '12 January 2024',
+      lastLogin: '10 mins ago',
+      permissions: ['Full Access', 'Financial Management', 'System Config', 'User Control'],
+      achievements: 'Supervising over 40 faculty members and managing institutional growth since 2024.'
+    };
+  });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await getProfile();
+        if (data) {
+          setAdminData(prev => ({
+            ...prev,
+            name: data.name || prev.name,
+            email: data.email || prev.email,
+            phone: data.phone || prev.phone,
+            location: data.location || prev.location,
+            achievements: data.achievements || prev.achievements,
+            permissions: data.permissions ? (typeof data.permissions === 'string' ? JSON.parse(data.permissions) : data.permissions) : prev.permissions,
+            lastLogin: data.lastLogin || prev.lastLogin,
+            id: data.id ? `ADM-2026-0${data.id}` : prev.id
+          }));
+          if (data.avatar) {
+            setAvatar(data.avatar);
+          }
+          if (data.coverImage) {
+            setCoverImage(data.coverImage);
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to fetch profile from database. Using local storage fallback.", err);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  // Edit details form state
+  const [showEditDetailsModal, setShowEditDetailsModal] = useState(false);
+  const [editForm, setEditForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    location: '',
+    achievements: ''
+  });
+
+  const openEditDetailsModal = () => {
+    setEditForm({
+      name: adminData.name,
+      email: adminData.email,
+      phone: adminData.phone,
+      location: adminData.location,
+      achievements: adminData.achievements || 'Supervising over 40 faculty members and managing institutional growth since 2024.'
+    });
+    setShowEditDetailsModal(true);
+  };
+
+  const handleSaveDetails = async (e) => {
+    e.preventDefault();
+    if (!editForm.name.trim() || !editForm.email.trim() || !editForm.phone.trim() || !editForm.location.trim()) {
+      triggerToast("All profile info fields are required.", "error");
+      return;
+    }
+
+    const updated = {
+      ...adminData,
+      name: editForm.name.trim(),
+      email: editForm.email.trim(),
+      phone: editForm.phone.trim(),
+      location: editForm.location.trim(),
+      achievements: editForm.achievements.trim()
+    };
+
+    try {
+      await updateProfile({
+        name: updated.name,
+        email: updated.email,
+        phone: updated.phone,
+        location: updated.location,
+        achievements: updated.achievements
+      });
+      setAdminData(updated);
+      localStorage.setItem('admin_profile_data', JSON.stringify(updated));
+      localStorage.setItem('userName', updated.name);
+      window.dispatchEvent(new Event('storage'));
+      setShowEditDetailsModal(false);
+      triggerToast("Profile details updated successfully!", "success");
+    } catch (err) {
+      console.error("Failed to update profile in database", err);
+      setAdminData(updated);
+      localStorage.setItem('admin_profile_data', JSON.stringify(updated));
+      localStorage.setItem('userName', updated.name);
+      window.dispatchEvent(new Event('storage'));
+      setShowEditDetailsModal(false);
+      triggerToast("Profile updated locally (offline).", "warning");
+    }
   };
 
   // Handle Avatar Selection
@@ -53,9 +155,21 @@ const AdminProfile = () => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatar(reader.result);
-        triggerToast("Profile picture updated successfully!", "success");
+      reader.onloadend = async () => {
+        const base64Img = reader.result;
+        try {
+          await updateProfile({ avatar: base64Img });
+          setAvatar(base64Img);
+          localStorage.setItem('admin_avatar', base64Img);
+          window.dispatchEvent(new Event('storage'));
+          triggerToast("Profile picture updated successfully!", "success");
+        } catch (err) {
+          console.error("Failed to upload avatar to database", err);
+          setAvatar(base64Img);
+          localStorage.setItem('admin_avatar', base64Img);
+          window.dispatchEvent(new Event('storage'));
+          triggerToast("Profile picture updated locally (offline).", "warning");
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -66,16 +180,28 @@ const AdminProfile = () => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setCoverImage(reader.result);
-        triggerToast("Cover banner updated successfully!", "success");
+      reader.onloadend = async () => {
+        const base64Img = reader.result;
+        try {
+          await updateProfile({ coverImage: base64Img });
+          setCoverImage(base64Img);
+          localStorage.setItem('admin_cover', base64Img);
+          window.dispatchEvent(new Event('storage'));
+          triggerToast("Cover banner updated successfully!", "success");
+        } catch (err) {
+          console.error("Failed to upload cover to database", err);
+          setCoverImage(base64Img);
+          localStorage.setItem('admin_cover', base64Img);
+          window.dispatchEvent(new Event('storage'));
+          triggerToast("Cover banner updated locally (offline).", "warning");
+        }
       };
       reader.readAsDataURL(file);
     }
   };
 
   // Handle Credentials Save
-  const handleUpdateCredentials = (e) => {
+  const handleUpdateCredentials = async (e) => {
     e.preventDefault();
     if (!passwords.current || !passwords.newPass || !passwords.confirmPass) {
       triggerToast("Please fill in all password fields.", "error");
@@ -87,12 +213,19 @@ const AdminProfile = () => {
     }
 
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      await updateProfile({ password: passwords.newPass });
       setIsSubmitting(false);
       setShowCredentialsModal(false);
       setPasswords({ current: '', newPass: '', confirmPass: '' });
       triggerToast("Security credentials successfully updated!", "success");
-    }, 1500);
+    } catch (err) {
+      console.error("Failed to update credentials in database", err);
+      setIsSubmitting(false);
+      setShowCredentialsModal(false);
+      setPasswords({ current: '', newPass: '', confirmPass: '' });
+      triggerToast("Failed to update credentials on server.", "error");
+    }
   };
 
   return (
@@ -231,8 +364,18 @@ const AdminProfile = () => {
          {/* Left Column - Quick Info */}
          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
             <div className="card" style={{ padding: '24px' }}>
-               <h3 style={{ fontSize: '1.1rem', fontWeight: 900, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <User size={18} color="var(--primary)" /> Profile Info
+               <h3 style={{ fontSize: '1.1rem', fontWeight: 900, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px', justifyContent: 'space-between', width: '100%' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><User size={18} color="var(--primary)" /> Profile Info</span>
+                   <button 
+                      onClick={openEditDetailsModal}
+                      style={{
+                         background: 'none', border: 'none', color: 'var(--primary)',
+                         cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px',
+                         fontSize: '0.85rem', fontWeight: 800
+                      }}
+                   >
+                      <Edit size={14} /> Edit
+                   </button>
                </h3>
                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                   {[
@@ -257,7 +400,7 @@ const AdminProfile = () => {
                   <Award size={18} /> Achievements
                </h3>
                <p style={{ fontSize: '0.85rem', opacity: 0.9, lineHeight: 1.6, marginBottom: '20px' }}>
-                  Supervising over 40 faculty members and managing institutional growth since 2024.
+                  {adminData.achievements || 'Supervising over 40 faculty members and managing institutional growth since 2024.'}
                </p>
                <div style={{ display: 'flex', gap: '12px' }}>
                   <div style={{ padding: '8px 12px', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: '10px', fontSize: '0.75rem', fontWeight: 800 }}>Admin of Year</div>
@@ -467,6 +610,144 @@ const AdminProfile = () => {
                         <Save size={16} /> Save Changes
                       </>
                     )}
+                  </button>
+                </div>
+              </form>
+
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Interactive Profile Details Edit Modal */}
+      <AnimatePresence>
+        {showEditDetailsModal && (
+          <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+            
+            {/* Modal Backdrop */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowEditDetailsModal(false)}
+              style={{ 
+                position: 'fixed', 
+                top: 0, 
+                left: 0, 
+                right: 0, 
+                bottom: 0, 
+                backgroundColor: 'rgba(15,23,42,0.6)', 
+                backdropFilter: 'blur(8px)',
+                zIndex: -1
+              }} 
+            />
+
+            {/* Modal Box */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              style={{
+                backgroundColor: 'var(--bg-card)',
+                borderRadius: '32px',
+                padding: '40px',
+                width: '500px',
+                maxWidth: '100%',
+                border: '1px solid var(--border-color)',
+                boxShadow: 'var(--shadow-xl)',
+                position: 'relative'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <User size={20} color="var(--primary)" />
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 900, color: 'var(--text-main)', margin: 0 }}>Edit Profile Details</h3>
+                </div>
+                <button 
+                  onClick={() => setShowEditDetailsModal(false)}
+                  style={{ background: 'var(--bg-body)', border: 'none', width: '32px', height: '32px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <form onSubmit={handleSaveDetails} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Full Name</label>
+                  <input 
+                    type="text"
+                    value={editForm.name}
+                    onChange={e => setEditForm({ ...editForm, name: e.target.value })}
+                    style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-body)', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: 600, outline: 'none' }}
+                    placeholder="Enter full name"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Email Address</label>
+                  <input 
+                    type="email"
+                    value={editForm.email}
+                    onChange={e => setEditForm({ ...editForm, email: e.target.value })}
+                    style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-body)', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: 600, outline: 'none' }}
+                    placeholder="Enter email address"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Phone Number</label>
+                  <input 
+                    type="text"
+                    value={editForm.phone}
+                    onChange={e => setEditForm({ ...editForm, phone: e.target.value })}
+                    style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-body)', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: 600, outline: 'none' }}
+                    placeholder="Enter phone number"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Location</label>
+                  <input 
+                    type="text"
+                    value={editForm.location}
+                    onChange={e => setEditForm({ ...editForm, location: e.target.value })}
+                    style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-body)', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: 600, outline: 'none' }}
+                    placeholder="Enter location"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Achievements Summary</label>
+                  <textarea 
+                    value={editForm.achievements}
+                    onChange={e => setEditForm({ ...editForm, achievements: e.target.value })}
+                    style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-body)', color: 'var(--text-main)', fontSize: '0.85rem', fontWeight: 600, outline: 'none', minHeight: '80px', resize: 'vertical' }}
+                    placeholder="Briefly describe admin accomplishments"
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
+                  <button 
+                    type="button"
+                    onClick={() => setShowEditDetailsModal(false)}
+                    style={{ flex: 1, padding: '14px', borderRadius: '14px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-card)', color: 'var(--text-main)', fontWeight: 800, fontSize: '0.85rem', cursor: 'pointer' }}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit"
+                    style={{ 
+                      flex: 2, padding: '14px', borderRadius: '14px', border: 'none', 
+                      backgroundColor: 'var(--primary)', color: 'white', fontWeight: 800, 
+                      fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', 
+                      justifyContent: 'center', gap: '8px' 
+                    }}
+                  >
+                    <Save size={16} /> Save Changes
                   </button>
                 </div>
               </form>

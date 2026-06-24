@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import MainLayout from '../layout/MainLayout';
 import Home from '../pages/Home';
 import AboutSchool from '../pages/AboutSchool';
@@ -141,10 +141,136 @@ import MessagingSettings from '../pages/MessagingSettings';
 import LoginPortal from '../pages/LoginPortal';
 
 // Helper to check authentication
+// Helper to check authentication
 const isAuthenticated = () => localStorage.getItem('isAuthenticated') === 'true';
 
+const roleRequiredForPath = (path, role) => {
+  const cleanPath = path.toLowerCase();
+  
+  if (role === 'admin') return true;
+
+  if (role === 'student') {
+    const studentAllowedPrefixes = [
+      '/dashboard/student',
+      '/dashboard/lms',
+      '/dashboard/learning',
+      '/dashboard/courses',
+      '/dashboard/assignments',
+      '/dashboard/quiz-center',
+      '/dashboard/e-library',
+      '/dashboard/learning-center',
+      '/dashboard/timetable',
+      '/dashboard/exams',
+      '/dashboard/exam-schedule',
+      '/dashboard/exam-result',
+      '/dashboard/student-attendance',
+      '/dashboard/fees',
+      '/dashboard/fees-record',
+      '/dashboard/transport',
+      '/dashboard/route-list',
+      '/dashboard/leave-request',
+      '/dashboard/hostel',
+      '/dashboard/mess-overview',
+      '/dashboard/mess-menu',
+      '/dashboard/mess-subscriptions',
+      '/dashboard/notices',
+      '/dashboard/events',
+      '/dashboard/event-calendar',
+      '/dashboard/ai',
+      '/dashboard/ai-hub',
+      '/dashboard/performance'
+    ];
+    
+    return studentAllowedPrefixes.some(prefix => cleanPath === prefix || cleanPath.startsWith(prefix + '/'));
+  }
+
+  if (role === 'parent') {
+    const parentAllowedPrefixes = [
+      '/dashboard/parent',
+      '/dashboard/guardian-details',
+      '/dashboard/student-details',
+      '/dashboard/fees',
+      '/dashboard/fees-record'
+    ];
+    
+    return parentAllowedPrefixes.some(prefix => cleanPath === prefix || cleanPath.startsWith(prefix + '/'));
+  }
+
+  if (role === 'teacher') {
+    const teacherAllowedPrefixes = [
+      '/dashboard/teacher',
+      '/dashboard/teacher-details',
+      '/dashboard/teacher-timetable',
+      '/dashboard/students',
+      '/dashboard/student-details',
+      '/dashboard/lms',
+      '/dashboard/learning',
+      '/dashboard/courses',
+      '/dashboard/assignments',
+      '/dashboard/quiz-center',
+      '/dashboard/e-library',
+      '/dashboard/learning-center',
+      '/dashboard/timetable',
+      '/dashboard/exams',
+      '/dashboard/exam-schedule',
+      '/dashboard/exam-result',
+      '/dashboard/classes',
+      '/dashboard/sections',
+      '/dashboard/subjects',
+      '/dashboard/classrooms',
+      '/dashboard/student-attendance',
+      '/dashboard/teacher-attendance',
+      '/dashboard/employee-attendance',
+      '/dashboard/certificates',
+      '/dashboard/id-cards',
+      '/dashboard/library',
+      '/dashboard/library-members',
+      '/dashboard/library-member-details',
+      '/dashboard/issue-return',
+      '/dashboard/transport',
+      '/dashboard/route-list',
+      '/dashboard/leave-request',
+      '/dashboard/notices',
+      '/dashboard/events',
+      '/dashboard/event-calendar',
+      '/dashboard/messaging',
+      '/dashboard/chat',
+      '/dashboard/ai',
+      '/dashboard/ai-hub',
+      '/dashboard/performance',
+      '/dashboard/faculty-ai',
+      '/dashboard/curriculum-ai'
+    ];
+    
+    return teacherAllowedPrefixes.some(prefix => cleanPath === prefix || cleanPath.startsWith(prefix + '/'));
+  }
+
+  return false;
+};
+
 const ProtectedRoute = ({ children }) => {
-  return isAuthenticated() ? children : <Navigate to="/login" replace />;
+  const location = useLocation();
+  const isAuth = isAuthenticated();
+
+  if (!isAuth) {
+    return <Navigate to="/login" replace />;
+  }
+
+  const role = localStorage.getItem('userRole') || 'admin';
+  const path = location.pathname;
+
+  if (role !== 'admin') {
+    const isAllowed = roleRequiredForPath(path, role);
+    if (!isAllowed) {
+      const targetPath = role === 'teacher' ? '/dashboard/teacher'
+        : role === 'student' ? '/dashboard/student'
+        : role === 'parent' ? '/dashboard/parent'
+        : '/dashboard';
+      return <Navigate to={targetPath} replace />;
+    }
+  }
+
+  return children;
 };
 
 const PublicRoute = ({ children }) => {

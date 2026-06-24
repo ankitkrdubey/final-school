@@ -10,6 +10,7 @@ import {
   ChevronDown, Upload, Eye, Trash2, Share2, Copy, Flag
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { getStudents, getParents } from '../services/service';
 import { LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip as RechartsTooltip, CartesianGrid } from 'recharts';
 import ActionDropdown from '../components/ActionDropdown';
 import { useToast, ToastRenderer } from '../hooks/useToast';
@@ -98,6 +99,69 @@ const StudentDetails = () => {
   const [activeTab, setActiveTab] = useState('details');
   const [downloadingDoc, setDownloadingDoc] = useState(null);
   const [selectedAttendanceMonth, setSelectedAttendanceMonth] = useState('May 2026');
+  const [dynamicStudent, setDynamicStudent] = useState(null);
+
+  React.useEffect(() => {
+    if (id) {
+      localStorage.setItem('lastViewedStudentId', id);
+    }
+  }, [id]);
+
+  React.useEffect(() => {
+    const role = localStorage.getItem('userRole');
+    const email = localStorage.getItem('userEmail');
+    const name = localStorage.getItem('userName');
+
+    const fetchFreshData = async () => {
+      try {
+        const data = await getStudents();
+        if (data && data.length > 0) {
+          localStorage.setItem('students', JSON.stringify(data));
+          
+          if (role === 'student') {
+            let myStudent = null;
+            if (email) myStudent = data.find(s => s.email && s.email.toLowerCase() === email.toLowerCase());
+            if (!myStudent && name) myStudent = data.find(s => s.name && s.name.toLowerCase() === name.toLowerCase());
+            
+            if (myStudent) {
+              const myId = myStudent.student_id;
+              if (id !== myId) {
+                navigate(`/dashboard/student-details/${myId}`, { replace: true });
+                return;
+              }
+            } else {
+              if (id !== data[0].student_id) {
+                navigate(`/dashboard/student-details/${data[0].student_id}`, { replace: true });
+                return;
+              }
+            }
+          } else if (role === 'parent') {
+            const parentsList = await getParents();
+            const myParentRecords = parentsList.filter(p => 
+              (p.email && p.email.toLowerCase() === email?.toLowerCase()) || 
+              (p.name && p.name.toLowerCase() === name?.toLowerCase())
+            );
+            
+            if (myParentRecords.length > 0) {
+              const linkedIds = myParentRecords.map(p => String(p.student_id));
+              if (!linkedIds.includes(String(id))) {
+                navigate(`/dashboard/student-details/${linkedIds[0]}`, { replace: true });
+                return;
+              }
+            }
+          }
+          
+          const match = data.find(s => s.student_id === id);
+          if (match) {
+            setDynamicStudent(match);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load fresh student details from backend:", err);
+      }
+    };
+    fetchFreshData();
+  }, [id, navigate]);
 
   // Dropdown open states
   const [isExamDropdownOpen, setIsExamDropdownOpen] = useState(false);
@@ -334,7 +398,7 @@ const StudentDetails = () => {
   ];
 
   // Look up student by ID — first check localStorage, then hostel pool for ADM-2026-xxx IDs
-  let resolvedStudent = parsedStudents.find(s => s.student_id === targetId);
+  let resolvedStudent = dynamicStudent || parsedStudents.find(s => s.student_id === targetId);
 
   // Check hostel pool for ADM-2026-xxx IDs not found in main students list
   if (!resolvedStudent && targetId.startsWith('ADM-2026-')) {
@@ -508,6 +572,31 @@ const StudentDetails = () => {
         };
       }
     }
+  }
+  
+  if (!resolvedStudent) {
+    resolvedStudent = {
+      student_id: targetId,
+      name: 'Loading Student...',
+      email: '',
+      phone: '',
+      class_id: '10',
+      section: 'A',
+      rollNo: '15',
+      gender: 'Male',
+      dob: '2010-05-12',
+      admission_date: '2026-01-01',
+      status: 'Active',
+      avatar: '',
+      bloodGroup: 'O+',
+      religion: 'Christianity',
+      presentAddress: '',
+      permanentAddress: '',
+      parentName: '',
+      parentOccupation: '',
+      parentPhone: '',
+      parentEmail: ''
+    };
   }
 
   if (resolvedStudent && (

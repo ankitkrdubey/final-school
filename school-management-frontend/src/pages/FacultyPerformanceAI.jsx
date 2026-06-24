@@ -16,6 +16,7 @@ import robertAvatar from '../assets/robert_avatar.png';
 import marcusAvatar from '../assets/marcus_avatar.png';
 import sophiaAvatar from '../assets/sophia_avatar.png';
 import elenaAvatar from '../assets/elena_avatar.png';
+import { getTeachers } from '../services/service';
 
 const FacultyPerformanceAI = () => {
   // 1. Initial Interactive Teacher Data
@@ -117,6 +118,80 @@ const FacultyPerformanceAI = () => {
   const [selectedDept, setSelectedDept] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [deptDropdownOpen, setDeptDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchTeachers = async () => {
+      try {
+        const data = await getTeachers();
+        if (data && data.length > 0) {
+          const mapped = data.map((t, index) => {
+            const hash = t.name.charCodeAt(0) + (t.name.charCodeAt(1) || 0);
+            const score = 70 + (hash % 28);
+            let status = 'On Track';
+            if (score >= 90) status = 'Exceeding';
+            else if (score < 80) status = 'Intervention';
+
+            const engagement = score >= 90 ? 'High' : (score >= 80 ? 'Optimal' : 'Fluctuating');
+            
+            const deptOptions = ['Science', 'Mathematics', 'History', 'Languages'];
+            const dept = t.subject ? (t.subject.toLowerCase().includes('math') ? 'Mathematics' : (t.subject.toLowerCase().includes('hist') ? 'History' : (t.subject.toLowerCase().includes('chem') || t.subject.toLowerCase().includes('phys') ? 'Science' : deptOptions[hash % 4]))) : deptOptions[hash % 4];
+            
+            const subject = t.subject || (dept === 'Mathematics' ? 'Pure Mathematics' : (dept === 'History' ? 'World History' : (dept === 'Science' ? 'General Science' : 'English Literature')));
+
+            const avatarOptions = [janeAvatar, devonAvatar, elenaAvatar, robertAvatar, ninaPatelAvatar, marcusAvatar, sophiaAvatar];
+            const avatar = avatarOptions[hash % avatarOptions.length];
+            
+            const colors = ['#6366f1', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4', '#14b8a6'];
+            const avatarColor = colors[hash % colors.length];
+
+            const lessonQuality = 75 + (hash % 23);
+            const techAdoption = 65 + (hash % 32);
+            const punctuality = 80 + (hash % 19);
+            const studentSentiment = 70 + (hash % 26);
+
+            const positive = 60 + (hash % 36);
+            const negative = Math.max(1, 10 - (hash % 9));
+            const neutral = 100 - positive - negative;
+
+            const quotes = [
+              "Fosters a positive and structured learning environment. Extremely dedicated.",
+              "Provides clear explanations and helpful reviews before exam sessions.",
+              "Creative in lessons plans and projects. Keeps the class highly motivated.",
+              "Students enjoy their storytelling approach to complex topics.",
+              "Provides great feedback on assignments and projects."
+            ];
+            const quote = quotes[hash % quotes.length];
+
+            const observations = [
+              "Highly structured slide design and clear voice modulation. Excellent checked understanding intervals.",
+              "Sound laboratory checks. Recommending extra interactive quiz tools to prompt active responses.",
+              "Warm classroom environment with active group discussions. Encourages voluntary speakers well."
+            ];
+            const observation = observations[hash % observations.length];
+
+            return {
+              teacher_id: t.teacher_id,
+              name: t.name,
+              subject: subject,
+              dept: dept,
+              score: score,
+              engagement: engagement,
+              status: status,
+              avatarColor: avatarColor,
+              avatar: avatar,
+              metrics: { lessonQuality, techAdoption, punctuality, studentSentiment },
+              feedback: { positive, neutral, negative, quote },
+              observation: observation
+            };
+          });
+          setTeachers(mapped);
+        }
+      } catch (err) {
+        console.error("Failed to load teachers from database", err);
+      }
+    };
+    fetchTeachers();
+  }, []);
 
   // 3. Modals & Side Drawers
   const [activeModal, setActiveModal] = useState(null); // 'pdf' | 'recalc' | 'teacher' | 'incentive' | 'training'

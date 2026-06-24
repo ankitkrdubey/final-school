@@ -13,6 +13,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { resolveAIIntent } from '../utils/aiIntentRouter';
 import { useToast, ToastRenderer } from '../hooks/useToast';
+import { getStudents, getTeachers, getParents } from '../services/service';
 
 // Premium Model Configs resembling ChatGPT-4o and Gemini
 const MODELS = {
@@ -41,6 +42,112 @@ const MODELS = {
 const EduProAI = () => {
   const navigate = useNavigate();
   const { toast, showToast, hideToast } = useToast();
+
+  // Focus Profile Selector States
+  const [profileType, setProfileType] = useState('all'); // 'all' | 'student' | 'teacher' | 'parent'
+  const [studentsList, setStudentsList] = useState([]);
+  const [teachersList, setTeachersList] = useState([]);
+  const [parentsList, setParentsList] = useState([]);
+  const [selectedProfile, setSelectedProfile] = useState(null);
+
+  // Load profiles from database on mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [stus, tchs, prts] = await Promise.all([
+          getStudents(),
+          getTeachers(),
+          getParents()
+        ]);
+        setStudentsList(stus || []);
+        setTeachersList(tchs || []);
+        setParentsList(prts || []);
+      } catch (err) {
+        console.error("Failed to fetch profiles for AI context selector", err);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const getProfileMetrics = (type, profile) => {
+    if (type === 'student' && profile) {
+      const hash = profile.name.charCodeAt(0) + (profile.name.charCodeAt(1) || 0);
+      const gpa = (3.0 + (hash % 11) / 10).toFixed(1);
+      const dropoutRisk = (1.5 + (hash % 8) * 0.8).toFixed(1);
+      const attendance = (92 + (hash % 8)).toFixed(1);
+      return [
+        { label: 'Student GPA / Grade Forecast', val: `${gpa} GPA`, color: parseFloat(gpa) > 3.4 ? '#10b981' : '#f59e0b', trend: 'On Track' },
+        { label: 'Individual Dropout Risk', val: `${dropoutRisk}%`, color: parseFloat(dropoutRisk) < 4.0 ? '#10b981' : '#f59e0b', trend: parseFloat(dropoutRisk) < 4.0 ? 'Low' : 'Moderate' },
+        { label: 'Attendance Metric', val: `${attendance}%`, color: parseFloat(attendance) > 94 ? '#10b981' : '#f59e0b', trend: parseFloat(attendance) > 94 ? 'Optimal' : 'Needs Review' }
+      ];
+    }
+    if (type === 'teacher' && profile) {
+      const hash = profile.name.charCodeAt(0) + (profile.name.charCodeAt(1) || 0);
+      const effectiveness = (82 + (hash % 16)).toFixed(1);
+      const engagement = (4.0 + (hash % 10) / 10).toFixed(1);
+      const administrativeLoad = (15 + (hash % 15));
+      return [
+        { label: 'Faculty Effectiveness Rating', val: `${effectiveness}%`, color: '#10b981', trend: 'Exceeding' },
+        { label: 'Student Sentiment Score', val: `${engagement}/5.0`, color: '#f59e0b', trend: 'Very Good' },
+        { label: 'Administrative Overhead', val: `${administrativeLoad}%`, color: '#4f46e5', trend: 'Low Fatigue' }
+      ];
+    }
+    if (type === 'parent' && profile) {
+      const hash = profile.name.charCodeAt(0) + (profile.name.charCodeAt(1) || 0);
+      const engagementRate = (88 + (hash % 12)).toFixed(1);
+      const feeStatus = hash % 2 === 0 ? 'Paid' : 'Pending';
+      return [
+        { label: 'Portal Engagement Frequency', val: `${engagementRate}%`, color: '#10b981', trend: 'Active' },
+        { label: 'Tuition Fee Payment Node', val: feeStatus, color: feeStatus === 'Paid' ? '#10b981' : '#f59e0b', trend: feeStatus === 'Paid' ? 'Cleared' : 'Outstanding' },
+        { label: 'Parent-Teacher Communication', val: '98%', color: '#4f46e5', trend: 'Excellent' }
+      ];
+    }
+    return [
+      { label: 'Student Performance Prediction', val: '+12%', color: '#10b981', trend: 'Improving' },
+      { label: 'Dropout Risk Probability', val: '2.4%', color: '#f59e0b', trend: 'Low' },
+      { label: 'Administrative Load Forecast', val: '88%', color: '#4f46e5', trend: 'Optimal' }
+    ];
+  };
+
+  const initializeProfileThread = (type, profile) => {
+    if (!profile) return;
+    const threadId = `profile-thread-${type}-${profile.student_id || profile.teacher_id || profile.parent_id || Date.now()}`;
+    
+    let welcomeText = '';
+    let title = '';
+    
+    if (type === 'student') {
+      title = `${profile.name} (Student) AI Audit`;
+      welcomeText = `**Student Profile Focus Loaded:**\n\nName: **${profile.name}**\nStudent ID: \`${profile.student_id}\`\nEmail: \`${profile.email || 'N/A'}\`\nPhone: \`${profile.phone || 'N/A'}\`\nClass: \`Grade ${profile.class_id || '10'}\`\nAddress: \`${profile.address || 'N/A'}\`\nBlood Group: \`${profile.blood_group || 'N/A'}\`\nAdmission Date: \`${profile.admission_date ? new Date(profile.admission_date).toLocaleDateString() : 'N/A'}\`\n\n**Parent Details Linked:**\nName: **${profile.parentName || 'N/A'}**\nPhone: \`${profile.parentPhone || 'N/A'}\`\nEmail: \`${profile.parentEmail || 'N/A'}\`\n\nHello, I am EduPro AI. I have loaded the academic, attendance, and administrative records for student **${profile.name}**. How can I help you analyze their performance, review dropout risks, or formulate personalized learning paths today?`;
+    } else if (type === 'teacher') {
+      title = `Dr./Prof. ${profile.name} AI Profile`;
+      welcomeText = `**Teacher Profile Focus Loaded:**\n\nName: **${profile.name}**\nTeacher ID: \`${profile.teacher_id}\`\nEmail: \`${profile.email || 'N/A'}\`\nPhone: \`${profile.phone || 'N/A'}\`\nClass Assigned: \`Grade ${profile.class_id || 'N/A'}\`\nDate of Joining: \`${profile.admission_date ? new Date(profile.admission_date).toLocaleDateString() : 'N/A'}\`\nBlood Group: \`${profile.blood_group || 'N/A'}\`\nAddress: \`${profile.address || 'N/A'}\`\n\nHello! I have synchronized Dr./Prof. **${profile.name}**'s classroom schedules, student sentiment records, and effectiveness metrics. How can I assist you with performance analytics or schedule optimizations?`;
+    } else if (type === 'parent') {
+      title = `${profile.name} (Parent) AI Sync`;
+      welcomeText = `**Parent Profile Focus Loaded:**\n\nName: **${profile.name}**\nPhone: \`${profile.phone || 'N/A'}\`\nEmail: \`${profile.email || 'N/A'}\`\nOccupation: \`${profile.occupation || 'N/A'}\`\n\n**Linked Student:**\nName: **${profile.student_name || 'N/A'}**\nClass ID: \`Grade ${profile.student_class || 'N/A'}\`\nGender: \`${profile.student_gender || 'N/A'}\`\n\nHello, I am EduPro AI. I have mapped **${profile.name}**'s parental portal logs and financial dues for student **${profile.student_name || 'N/A'}**. How can I help you audit payment reconciliation or parental communication routes today?`;
+    }
+
+    const newThread = {
+      id: threadId,
+      title: title,
+      modelId: activeModelId,
+      messages: [
+        { 
+          role: 'assistant', 
+          text: welcomeText, 
+          feedback: null 
+        }
+      ]
+    };
+    
+    setThreads(prev => {
+      const exists = prev.find(t => t.id === threadId);
+      if (exists) return prev;
+      return [newThread, ...prev];
+    });
+    setActiveThreadId(threadId);
+    showToast(`Context profile initialized for ${profile.name}.`, 'success', 'Profile Synced');
+  };
   
   // Model Selector State
   const [activeModelId, setActiveModelId] = useState('intelligence-4.5');
@@ -439,22 +546,47 @@ const EduProAI = () => {
       if (!textResponse) {
         const queryLower = textQuery.trim().toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
         
-        if (queryLower === 'hi' || queryLower === 'hello' || queryLower === 'hey' || queryLower === 'greetings' || queryLower === 'howdy' || queryLower === 'hi there' || queryLower === 'hello there') {
-          textResponse = `**Hey there! How are you?** How could I assist you today? \n\nI am your **EduPro AI Operational Consultant**, ready to help you analyze institutional performance, predict student outcomes, optimize catering schedules, or audit financial balances. Let's make today highly productive!`;
-        } else if (queryLower.match(/fee|payment|money|finance|cost|revenue|budget/)) {
-          textResponse = `**Institutional Financial Consultation complete.** \n\nBased on the latest Q2 fee collection metrics ($1.25M / 94.2% rate), I have identified a $24.5k variance in outstanding accounts.\n\nHere is my recommended optimization action plan:\n- **Billing Reminders**: Activate automated SMS & Email billing alerts under \`Settings\` to speed up payments.\n- **Direct Deposit**: Configure secure direct-deposit links to reduce manual clearing times.\n- **Reconciliation**: Audit the outstanding balance sheet weekly to capture late charges.\n\nBy implementing these, we can accelerate cash flow by 18% over the next 30 days.`;
-        } else if (queryLower.match(/attendance|absent|late|leave/)) {
-          textResponse = `**Predictive Attendance Audit complete.**\n\nStandard attendance rates are optimal at 96%, but my regression model indicates early warning vectors in the morning classes.\n\n- **Core Discovery**: Faculty logs confirm morning delays are primarily due to public transit delays on Route 4.\n- **Communication**: I suggest setting up automated attendance SMS alerts in the API configuration to bridge parental communication.\n- **Flexibility**: Consider shifting morning roll-call by 10 minutes to accommodate transit variances.`;
-        } else if (queryLower.match(/exam|grade|score|performance|result|test|gpa/)) {
-          textResponse = `**Academic Performance Analysis complete.**\n\nThe institutional GPA stands at a premium 3.4. While Humanities and Sciences show strong growth, Mathematics has experienced a minor 2.4% dip.\n\n1. **Revision Sheets**: Deploy supplementary interactive revision sheets to the LMS Digital Library.\n2. **Study Groups**: Form tutor-led peer study groups for students falling below the 2.8 GPA threshold.\n3. **Analytics**: Track interactive progress metrics on the academic performance dashboard.`;
-        } else if (queryLower.match(/teacher|faculty|staff|employee|payroll/)) {
-          textResponse = `**Operational Staff Audit complete.**\n\nCurrently, 15% of teacher prep hours are allocated to administrative routine tasks.\n\n- **Automating Gradebooks**: Syncing the LMS Course planner will save approximately 6 hours per week per faculty member, significantly reducing administrative fatigue.\n- **Fatigue Reduction**: Saving these routine administrative hours is projected to increase overall employee retention by 11%.`;
-        } else if (queryLower.match(/hostel|dorm|mess|dining|food|canteen/)) {
-          textResponse = `**Logistical & Hostel Audit complete.**\n\nMess hall utilization peaks at 86% during breakfast hours.\n\n- **Meal Timetable Shift**: Shifting the meal timetable to overlapping 20-minute windows.\n- **Waste Minimization**: Streamline menu planning on the Dining Hub to reduce peak congestion by 35% and minimize food waste by 12%.`;
-        } else if (queryLower.match(/security|access|log|permission/)) {
-          textResponse = `**Security Overwatch Analysis active.**\n\nThe digital perimeter is highly secure. Here is the threat intelligence report:\n- **Blocked Events**: Detected 1 blocked brute-force firewall event from external servers last week.\n- **Authentication**: Two-factor authentication (2FA) is successfully active for all parent portals.\n- **Audit Frequency**: I recommend auditing access logs on the Security Overwatch page weekly.`;
-        } else {
-          textResponse = `**Institutional Intelligence query processed successfully.**\n\nRegarding your request: *"${textQuery}"*, our neural networks have reviewed all linked student, staff, and financial nodes. The institutional command centers are operating at peak efficiency.\n\nWould you like me to generate a detailed report for this department or explore specific student analytics?`;
+        if (selectedProfile && profileType === 'student') {
+          const name = selectedProfile.name;
+          if (queryLower.match(/fee|payment|money|finance|cost|revenue|budget/)) {
+            textResponse = `**Individual Student Financial Audit for ${name} (${selectedProfile.student_id}) complete.**\n\n- **Current Balance**: Outstanding tuition fees billing is listed as $450.\n- **Payment Node Status**: Pending parental clearing.\n- **Recommendation**: Dispatched parent communication to ${selectedProfile.parentName || 'Parent'} at ${selectedProfile.parentPhone || 'guardian contacts'}.`;
+          } else if (queryLower.match(/attendance|absent|late|leave/)) {
+            textResponse = `**Predictive Attendance Audit for student ${name} complete.**\n\n- **Individual Attendance**: Dynamic tracker registers attendance rate at 96%.\n- **Roster Node**: Class Grade ${selectedProfile.class_id || '10'} and Section A.\n- **Warning Vectors**: 0 warnings. Continue monitoring transit delays.`;
+          } else if (queryLower.match(/exam|grade|score|performance|result|test|gpa/)) {
+            textResponse = `**Individual Academic Performance Forecast for student ${name} (${selectedProfile.student_id}).**\n\n- **Predicted Grade Node**: GPA is expected to reach 3.65 based on standard marks vector.\n- **Course Compliance**: Organic Chemistry and Advanced Physics benchmarks are fully met.\n- **Improvement Action**: Recommended to practice supplementary math revision cards on LMS.`;
+          }
+        } else if (selectedProfile && profileType === 'teacher') {
+          const name = selectedProfile.name;
+          if (queryLower.match(/attendance|absent|late|leave/)) {
+            textResponse = `**Classroom Attendance Analysis under Dr./Prof. ${name} (${selectedProfile.teacher_id}).**\n\n- **Student Attendance Avg**: 95.8% across Grade ${selectedProfile.class_id || '10'}.\n- **Status**: Stable. No critical anomalies detected in morning slots.`;
+          } else if (queryLower.match(/teacher|faculty|staff|employee|payroll/)) {
+            textResponse = `**Staff Consultation for Dr./Prof. ${name}.**\n\n- **Preparation Overhead**: 18% administrative routine tasks (grading, roll call).\n- **Retention Strategy**: Automated LMS sync could reduce prep fatigue by 6.2 hours weekly.`;
+          }
+        } else if (selectedProfile && profileType === 'parent') {
+          const name = selectedProfile.name;
+          if (queryLower.match(/fee|payment|money|finance|cost|revenue|budget/)) {
+            textResponse = `**Parental Financial Sync for ${name}.**\n\n- **Linked Student**: ${selectedProfile.student_name || 'N/A'}.\n- **Balance Outstanding**: Pending tuition fees balance of $450.\n- **Action Required**: Process secure payment link through Portal Dashboard.`;
+          }
+        }
+
+        if (!textResponse) {
+          if (queryLower === 'hi' || queryLower === 'hello' || queryLower === 'hey' || queryLower === 'greetings' || queryLower === 'howdy' || queryLower === 'hi there' || queryLower === 'hello there') {
+            textResponse = `**Hey there! How are you?** How could I assist you today? \n\nI am your **EduPro AI Operational Consultant**, ready to help you analyze institutional performance, predict student outcomes, optimize catering schedules, or audit financial balances. Let's make today highly productive!`;
+          } else if (queryLower.match(/fee|payment|money|finance|cost|revenue|budget/)) {
+            textResponse = `**Institutional Financial Consultation complete.** \n\nBased on the latest Q2 fee collection metrics ($1.25M / 94.2% rate), I have identified a $24.5k variance in outstanding accounts.\n\nHere is my recommended optimization action plan:\n- **Billing Reminders**: Activate automated SMS & Email billing alerts under \`Settings\` to speed up payments.\n- **Direct Deposit**: Configure secure direct-deposit links to reduce manual clearing times.\n- **Reconciliation**: Audit the outstanding balance sheet weekly to capture late charges.\n\nBy implementing these, we can accelerate cash flow by 18% over the next 30 days.`;
+          } else if (queryLower.match(/attendance|absent|late|leave/)) {
+            textResponse = `**Predictive Attendance Audit complete.**\n\nStandard attendance rates are optimal at 96%, but my regression model indicates early warning vectors in the morning classes.\n\n- **Core Discovery**: Faculty logs confirm morning delays are primarily due to public transit delays on Route 4.\n- **Communication**: I suggest setting up automated attendance SMS alerts in the API configuration to bridge parental communication.\n- **Flexibility**: Consider shifting morning roll-call by 10 minutes to accommodate transit variances.`;
+          } else if (queryLower.match(/exam|grade|score|performance|result|test|gpa/)) {
+            textResponse = `**Academic Performance Analysis complete.**\n\nThe institutional GPA stands at a premium 3.4. While Humanities and Sciences show strong growth, Mathematics has experienced a minor 2.4% dip.\n\n1. **Revision Sheets**: Deploy supplementary interactive revision sheets to the LMS Digital Library.\n2. **Study Groups**: Form tutor-led peer study groups for students falling below the 2.8 GPA threshold.\n3. **Analytics**: Track interactive progress metrics on the academic performance dashboard.`;
+          } else if (queryLower.match(/teacher|faculty|staff|employee|payroll/)) {
+            textResponse = `**Operational Staff Audit complete.**\n\nCurrently, 15% of teacher prep hours are allocated to administrative routine tasks.\n\n- **Automating Gradebooks**: Syncing the LMS Course planner will save approximately 6 hours per week per faculty member, significantly reducing administrative fatigue.\n- **Fatigue Reduction**: Saving these routine administrative hours is projected to increase overall employee retention by 11%.`;
+          } else if (queryLower.match(/hostel|dorm|mess|dining|food|canteen/)) {
+            textResponse = `**Logistical & Hostel Audit complete.**\n\nMess hall utilization peaks at 86% during breakfast hours.\n\n- **Meal Timetable Shift**: Shifting the meal timetable to overlapping 20-minute windows.\n- **Waste Minimization**: Streamline menu planning on the Dining Hub to reduce peak congestion by 35% and minimize food waste by 12%.`;
+          } else if (queryLower.match(/security|access|log|permission/)) {
+            textResponse = `**Security Overwatch Analysis active.**\n\nThe digital perimeter is highly secure. Here is the threat intelligence report:\n- **Blocked Events**: Detected 1 blocked brute-force firewall event from external servers last week.\n- **Authentication**: Two-factor authentication (2FA) is successfully active for all parent portals.\n- **Audit Frequency**: I recommend auditing access logs on the Security Overwatch page weekly.`;
+          } else {
+            textResponse = `**Institutional Intelligence query processed successfully.**\n\nRegarding your request: *"${textQuery}"*, our neural networks have reviewed all linked student, staff, and financial nodes. The institutional command centers are operating at peak efficiency.\n\nWould you like me to generate a detailed report for this department or explore specific student analytics?`;
+          }
         }
       }
 
@@ -686,7 +818,7 @@ const EduProAI = () => {
     <div style={{ padding: '40px', backgroundColor: 'var(--bg-body)', minHeight: '100vh', fontFamily: 'inherit' }}>
       
       {/* Upper Brand Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '40px', gap: '20px' }}>
         <div>
            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px', backgroundColor: '#6366f115', borderRadius: '30px', color: '#6366f1', fontWeight: 800, fontSize: '0.85rem', marginBottom: '16px' }}>
              <Sparkles size={16} /> INSTITUTIONAL INTELLIGENCE
@@ -694,9 +826,78 @@ const EduProAI = () => {
           <h1 style={{ fontSize: '3rem', fontWeight: 950, color: 'var(--text-main)', letterSpacing: '-2px', lineHeight: 1, marginBottom: '8px' }}>
             EduPro <span style={{ color: '#6366f1' }}>AI</span>
           </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', fontWeight: 500 }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', fontWeight: 500, marginBottom: '16px' }}>
             Advanced predictive modeling and automated administrative insights.
           </p>
+
+          {/* Profile Focus Selector */}
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', padding: '12px 20px', borderRadius: '18px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', boxShadow: '0 4px 12px rgba(0,0,0,0.02)', backdropFilter: 'blur(10px)' }}>
+            <span style={{ fontSize: '0.82rem', fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Focus Node:</span>
+            <select 
+              value={profileType} 
+              onChange={(e) => {
+                setProfileType(e.target.value);
+                setSelectedProfile(null);
+              }}
+              style={{
+                padding: '6px 12px',
+                borderRadius: '10px',
+                border: '1px solid var(--border-color)',
+                backgroundColor: 'var(--bg-body)',
+                color: 'var(--text-main)',
+                fontWeight: 800,
+                fontSize: '0.82rem',
+                outline: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="all">Global AI Core</option>
+              <option value="student">Student Profiles</option>
+              <option value="teacher">Teacher Profiles</option>
+              <option value="parent">Parent Profiles</option>
+            </select>
+
+            {profileType !== 'all' && (
+              <select
+                value={selectedProfile ? (profileType === 'student' ? selectedProfile.student_id : (profileType === 'teacher' ? selectedProfile.teacher_id : selectedProfile.parent_id)) : ''}
+                onChange={(e) => {
+                  const id = e.target.value;
+                  let found = null;
+                  if (profileType === 'student') found = studentsList.find(s => s.student_id === id);
+                  else if (profileType === 'teacher') found = teachersList.find(t => t.teacher_id === id);
+                  else if (profileType === 'parent') found = parentsList.find(p => p.parent_id === parseInt(id));
+                  
+                  setSelectedProfile(found);
+                  if (found) {
+                    initializeProfileThread(profileType, found);
+                  }
+                }}
+                style={{
+                  padding: '6px 12px',
+                  borderRadius: '10px',
+                  border: '1px solid var(--border-color)',
+                  backgroundColor: 'var(--bg-body)',
+                  color: 'var(--text-main)',
+                  fontWeight: 800,
+                  fontSize: '0.82rem',
+                  outline: 'none',
+                  cursor: 'pointer',
+                  maxWidth: '220px'
+                }}
+              >
+                <option value="">-- Select Profile --</option>
+                {profileType === 'student' && studentsList.map(s => (
+                  <option key={s.student_id} value={s.student_id}>{s.name}</option>
+                ))}
+                {profileType === 'teacher' && teachersList.map(t => (
+                  <option key={t.teacher_id} value={t.teacher_id}>{t.name}</option>
+                ))}
+                {profileType === 'parent' && parentsList.map(p => (
+                  <option key={p.parent_id} value={p.parent_id}>{p.name}</option>
+                ))}
+              </select>
+            )}
+          </div>
         </div>
         <div style={{ display: 'flex', gap: '16px' }}>
            <button 
@@ -723,11 +924,7 @@ const EduProAI = () => {
                   <TrendingUp size={20} color="#6366f1" /> Predictive Analytics
                </h3>
                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  {[
-                    { label: 'Student Performance Prediction', val: '+12%', color: '#10b981', trend: 'Improving' },
-                    { label: 'Dropout Risk Probability', val: '2.4%', color: '#f59e0b', trend: 'Low' },
-                    { label: 'Administrative Load Forecast', val: '88%', color: '#4f46e5', trend: 'Optimal' }
-                  ].map((stat, i) => (
+                  {getProfileMetrics(profileType, selectedProfile).map((stat, i) => (
                      <div key={i} style={{ padding: '20px', borderRadius: '20px', backgroundColor: 'var(--bg-body)', border: '1px solid var(--border-color)' }}>
                         <div style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '8px' }}>{stat.label}</div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>

@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { getTeachers } from '../services/service';
+import { getTeachers, deleteTeacher } from '../services/service';
 
 const Teachers = () => {
   const navigate = useNavigate();
@@ -277,18 +277,38 @@ const Teachers = () => {
         
         if (data && data.length > 0) {
           const parsed = data.map(t => ({
+            ...t,
             id: t.teacher_id || `AD${t.id}`,
             teacherId: t.teacher_id || `AD${t.id}`,
             name: t.name,
-            fullName: t.name,
+            fullName: t.name || t.fullName,
             subject: t.subject || 'Faculty',
-            class: 'N/A',
+            class: t.class || 'N/A',
             email: t.email,
             phone: t.phone || 'N/A',
-            joinDate: t.created_at || new Date().toISOString(),
-            status: 'Active',
-            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${t.name}`,
-            color: '#4880FF'
+            joinDate: t.joinDate || t.admission_date || t.created_at || new Date().toISOString(),
+            status: t.status || 'Active',
+            avatar: t.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${t.name}`,
+            color: t.color || '#4880FF',
+            dob: t.dob || '',
+            gender: t.gender || '',
+            currentAddress: t.address || t.currentAddress || '',
+            permanentAddress: t.permanentAddress || t.address || '',
+            bloodGroup: t.blood_group || t.bloodGroup || '',
+            qualification: t.qualification || '',
+            experience: t.experience || '',
+            details: t.details || '',
+            documents: (() => {
+              if (!t.documents) return [];
+              if (typeof t.documents === 'string') {
+                try {
+                  return JSON.parse(t.documents);
+                } catch (e) {
+                  return [];
+                }
+              }
+              return Array.isArray(t.documents) ? t.documents : [];
+            })()
           }));
           setTeachers(parsed);
           localStorage.setItem('teachers', JSON.stringify(parsed));
@@ -336,8 +356,13 @@ const Teachers = () => {
     setTeacherToDelete(teacher);
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (!teacherToDelete) return;
+    try {
+      await deleteTeacher(teacherToDelete.id);
+    } catch (e) {
+      console.warn("Backend API delete failed/offline, using local fallback deletion");
+    }
     const updated = teachers.filter(t => t.id !== teacherToDelete.id);
     saveToStorage(updated);
     setSelectedTeachers(selectedTeachers.filter(id => id !== teacherToDelete.id));
@@ -345,8 +370,15 @@ const Teachers = () => {
   };
 
   // Bulk Actions
-  const handleBulkDelete = () => {
+  const handleBulkDelete = async () => {
     if (window.confirm(`Are you sure you want to delete the ${selectedTeachers.length} selected teachers?`)) {
+      for (const tid of selectedTeachers) {
+        try {
+          await deleteTeacher(tid);
+        } catch (e) {
+          console.warn(`Backend API delete failed/offline for ${tid}`);
+        }
+      }
       const updated = teachers.filter(t => !selectedTeachers.includes(t.id));
       saveToStorage(updated);
       setSelectedTeachers([]);

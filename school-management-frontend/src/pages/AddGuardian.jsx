@@ -7,6 +7,7 @@ import {
   Check, RotateCw, ZoomIn, ZoomOut, Loader2, Info
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { addParent, updateParent } from '../services/service';
 
 const AddGuardian = ({ mode = 'add' }) => {
   const navigate = useNavigate();
@@ -322,13 +323,11 @@ const AddGuardian = ({ mode = 'add' }) => {
       return () => clearTimeout(timer);
     } else {
       // Completed, commit the changes!
-      const timer = setTimeout(() => {
+      const timer = setTimeout(async () => {
         const targetId = mode === 'edit' ? (id || 'GDN-2026-001') : `GDN-2026-00${Math.floor(Math.random() * 900) + 10}`;
         const fullName = `${formData.firstName} ${formData.lastName}`.trim();
         const avatarInitials = `${formData.firstName[0] || ''}${formData.lastName[0] || ''}`.toUpperCase() || 'GD';
 
-        // 1. Update Guardians Directory
-        const list = JSON.parse(localStorage.getItem('guardians') || '[]');
         const updatedRecord = {
           id: targetId,
           name: fullName,
@@ -351,6 +350,20 @@ const AddGuardian = ({ mode = 'add' }) => {
           avatarUrl: formData.img || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop',
           linkedStudents: formData.linkedStudents
         };
+
+        // 1. Sync to database
+        try {
+          if (mode === 'edit') {
+            await updateParent(targetId, updatedRecord);
+          } else {
+            await addParent(updatedRecord);
+          }
+        } catch (err) {
+          console.warn("Failed to sync parent to database:", err);
+        }
+
+        // 2. Update Guardians Directory
+        const list = JSON.parse(localStorage.getItem('guardians') || '[]');
 
         const newList = mode === 'edit'
           ? list.map(g => g.id === targetId ? updatedRecord : g)

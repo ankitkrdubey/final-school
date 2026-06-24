@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/purity */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast, ToastRenderer } from '../hooks/useToast';
 import { 
@@ -16,6 +16,7 @@ import {
   ArrowRight, Copy, X
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { getParents, updateParent } from '../services/service';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
   PieChart, Pie, Cell
@@ -39,6 +40,75 @@ const GuardianDetails = () => {
   const [resetPwdStep, setResetPwdStep] = useState(null); // null | 'confirm' | 'processing' | 'success'
   const [tempPassword, setTempPassword] = useState('');
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    const role = localStorage.getItem('userRole');
+    const email = localStorage.getItem('userEmail');
+    const name = localStorage.getItem('userName');
+
+    if (role === 'parent') {
+      const verifyAccess = async () => {
+        try {
+          const list = await getParents();
+          const myParent = list.find(g => 
+            (g.email && g.email.toLowerCase() === email?.toLowerCase()) || 
+            (g.name && g.name.toLowerCase() === name?.toLowerCase())
+          );
+          if (myParent) {
+            const myId = myParent.parent_id || myParent.id;
+            if (id !== String(myId)) {
+              navigate(`/dashboard/guardian-details/${myId}`, { replace: true });
+            }
+          } else {
+            if (id !== 'GDN-2026-001') {
+              navigate(`/dashboard/guardian-details/GDN-2026-001`, { replace: true });
+            }
+          }
+        } catch (e) {
+          console.error("Failed to check parent access:", e);
+        }
+      };
+      verifyAccess();
+    }
+  }, [id, navigate]);
+
+  useEffect(() => {
+    const syncDatabaseParents = async () => {
+      try {
+        const list = await getParents();
+        if (list && list.length > 0) {
+          const mapped = list.map(g => ({
+            id: g.parent_id || g.id || `GDN-2026-0${g.id || Math.floor(Math.random() * 100)}`,
+            name: g.name,
+            email: g.email || 'guardian@example.com',
+            phone: g.phone || '+1 (234) 567-8901',
+            relation: g.relation || 'Father',
+            status: g.status || 'active',
+            address: g.address || '123 School Lane, City, NY',
+            gender: g.gender || 'Male',
+            dob: g.dob || '1980-01-01',
+            occupation: g.occupation || 'Professional',
+            company: g.company || 'N/A',
+            joiningDate: g.joiningDate || '01 Jan 2020',
+            emergencyContact: g.emergencyContact || '+1 (234) 567-8999',
+            avatarUrl: g.avatarUrl || g.img || null,
+            img: g.avatarUrl || g.img || null,
+            linkedStudents: g.student_name ? [{ id: g.student_id, name: g.student_name, grade: g.student_class || '10A', attendance: '95%', perf: 'B+' }] : []
+          }));
+          localStorage.setItem('guardians', JSON.stringify(mapped));
+        }
+      } catch (err) {
+        console.warn("Failed to sync parents from database, using cached local storage data:", err);
+      }
+    };
+    syncDatabaseParents();
+  }, []);
+
+  useEffect(() => {
+    if (id) {
+      localStorage.setItem('lastViewedGuardianId', id);
+    }
+  }, [id]);
 
   // Edit Profile State
   const [editProfileOpen, setEditProfileOpen] = useState(false);
@@ -366,56 +436,68 @@ const GuardianDetails = () => {
     setEditProfileOpen(true);
   };
 
-  const handleSaveProfile = () => {
+  const handleSaveProfile = async () => {
     if (!editForm.name.trim() || !editForm.email.trim() || !editForm.phone.trim()) {
       showToast('Name, Email and Phone are required.', 'error', 'Validation Error');
       return;
     }
     setIsSavingProfile(true);
-    setTimeout(() => {
-      const targetId = id || 'GDN-2026-001';
-      const stored = localStorage.getItem('guardians');
-      let list = stored ? JSON.parse(stored) : [];
-      const idx = list.findIndex(g => g.id === targetId);
-      const updatedEntry = {
-        ...(idx >= 0 ? list[idx] : {}),
-        id: targetId,
-        name: editForm.name.trim(),
-        email: editForm.email.trim(),
-        phone: editForm.phone.trim(),
-        address: editForm.address.trim(),
-        gender: editForm.gender,
-        dob: editForm.dob,
-        occupation: editForm.occupation.trim(),
-        company: editForm.company.trim(),
-        emergencyContact: editForm.emergencyContact.trim(),
-        accountType: editForm.accountType.trim(),
-        status: editForm.status,
-        relation: editForm.relation
-      };
-      if (idx >= 0) {
-        list[idx] = updatedEntry;
-      } else {
-        list.push(updatedEntry);
-      }
-      localStorage.setItem('guardians', JSON.stringify(list));
+    
+    const targetId = id || 'GDN-2026-001';
+    const updatedEntry = {
+      id: targetId,
+      name: editForm.name.trim(),
+      email: editForm.email.trim(),
+      phone: editForm.phone.trim(),
+      address: editForm.address.trim(),
+      gender: editForm.gender,
+      dob: editForm.dob,
+      occupation: editForm.occupation.trim(),
+      company: editForm.company.trim(),
+      emergencyContact: editForm.emergencyContact.trim(),
+      accountType: editForm.accountType.trim(),
+      status: editForm.status,
+      relation: editForm.relation
+    };
 
-      // Log the edit action
-      addLogEntry(
-        'Profile Updated',
-        'Authorized',
-        `Guardian profile data was updated by institutional admin.`,
-        '#8B5CF6',
-        <Edit size={18} />
-      );
+    // 1. Sync to database
+    try {
+      await updateParent(targetId, updatedEntry);
+    } catch (err) {
+      console.warn("Failed to sync parent profile update to database:", err);
+    }
 
-      setIsSavingProfile(false);
-      setEditProfileOpen(false);
-      setSaveProfileToast(true);
-      setTimeout(() => setSaveProfileToast(false), 3500);
-      // Reload to reflect changes
-      setTimeout(() => window.location.reload(), 400);
-    }, 1200);
+    // 2. Fallback / Update local storage
+    const stored = localStorage.getItem('guardians');
+    let list = stored ? JSON.parse(stored) : [];
+    const idx = list.findIndex(g => g.id === targetId);
+    const fullUpdatedEntry = {
+      ...(idx >= 0 ? list[idx] : {}),
+      ...updatedEntry
+    };
+    
+    if (idx >= 0) {
+      list[idx] = fullUpdatedEntry;
+    } else {
+      list.push(fullUpdatedEntry);
+    }
+    localStorage.setItem('guardians', JSON.stringify(list));
+
+    // Log the edit action
+    addLogEntry(
+      'Profile Updated',
+      'Authorized',
+      `Guardian profile data was updated by institutional admin.`,
+      '#8B5CF6',
+      <Edit size={18} />
+    );
+
+    setIsSavingProfile(false);
+    setEditProfileOpen(false);
+    setSaveProfileToast(true);
+    setTimeout(() => setSaveProfileToast(false), 3500);
+    // Reload to reflect changes
+    setTimeout(() => window.location.reload(), 400);
   };
 
   const handleDownloadHistory = () => {

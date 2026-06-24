@@ -15,6 +15,7 @@ import {
   Settings, Save, PieChart, Camera
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { getTeachers, updateTeacher } from '../services/service';
 
 import eleanorAvatar from '../assets/eleanor_avatar.png';
 import robertAvatar from '../assets/robert_avatar.png';
@@ -44,7 +45,13 @@ const TeacherDetails = () => {
   // Toast feedback state
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
-  const updateTeacherInStorage = (updatedTeacher) => {
+  const updateTeacherInStorage = async (updatedTeacher) => {
+    try {
+      await updateTeacher(updatedTeacher.id || updatedTeacher.teacherId, updatedTeacher);
+    } catch (e) {
+      console.warn("Failed to sync teacher update to database", e);
+    }
+
     const stored = localStorage.getItem('teachers');
     let list = [];
     if (stored) {
@@ -425,134 +432,221 @@ const TeacherDetails = () => {
   ];
 
   useEffect(() => {
-    // Clear old storage if version is outdated to ensure distinct educator headshots load properly
-    const storedVersion = localStorage.getItem('teachers_version');
-    if (storedVersion !== '2026-v5') {
-      localStorage.removeItem('teachers');
-      localStorage.setItem('teachers_version', '2026-v5');
-    }
-
-    const stored = localStorage.getItem('teachers');
-    let record = null;
-    
-    if (stored) {
-      const list = JSON.parse(stored);
-      record = list.find(t => t.id === id);
-    }
-    
-    if (!record) {
-      // Find matching default mock teacher or create generic details
-      const defaultMatch = defaultTeachers.find(t => t.id === id);
-      if (defaultMatch) {
-        record = defaultMatch;
-      } else {
-        const idNum = id ? id.replace(/\D/g, '') : '999';
-        record = {
-          id: id || 'AD52365',
-          name: `Teacher ${id || ''}`,
-          fullName: `Teacher ${id || ''}`,
-          designation: 'Instructor',
-          dept: 'Science & Research',
-          status: 'Active',
-          rating: 4.8,
-          avatar: janeAvatar,
-          color: '#4880FF', 
-          contractType: 'Permanent',
-          shift: 'Day Shift',
-          joinDate: '2024-01-12',
-          experience: '5 Years',
-          qualification: 'M.Sc. in Education',
-          email: `teacher.${idNum}@edupro.com`,
-          phone: `+1 234 567 ${idNum.padStart(3, '0')}`,
-          currentAddress: 'Main Campus, Institutional Area',
-          permanentAddress: 'Main Campus, Institutional Area',
-          gender: 'Male',
-          dob: '1990-01-01',
-          maritalStatus: 'Unmarried',
-          fatherName: 'Parent Pena',
-          motherName: 'Parent Pena',
-          details: 'Dedicated educator working at the school.',
-          bankAccount: '123456789012',
-          bankName: 'Global Institutional Bank',
-          ifscCode: 'GIB000123',
-        };
+    const loadDetails = async () => {
+      // Clear old storage if version is outdated to ensure distinct educator headshots load properly
+      const storedVersion = localStorage.getItem('teachers_version');
+      if (storedVersion !== '2026-v5') {
+        localStorage.removeItem('teachers');
+        localStorage.setItem('teachers_version', '2026-v5');
       }
-    }
 
-    // Build complete high-fidelity profile with statistics & finance
-    const completeProfile = {
-      ...record,
-      name: record.name || record.fullName || 'Faculty Member',
-      designation: record.designation || `${record.subject || 'Specialist'} Lead Instructor`,
-      dept: record.dept || (record.subject === 'Mathematics' || record.subject === 'Physics' || record.subject === 'Chemistry' || record.subject === 'Biology' ? 'Science & Research' : 'Humanities & Languages'),
-      rating: record.rating || 4.8,
-      contractType: record.contractType || 'Permanent',
-      shift: record.shift || 'Day Shift',
-      joiningDate: record.joinDate ? new Date(record.joinDate).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) : '12 Jan 2024',
-      experience: record.experience || '8+ Years',
-      qualification: record.qualification || 'Masters Degree',
-      address: record.currentAddress || record.permanentAddress || '724 Oakmound Road, Chicago, IL',
-      bio: record.details || 'Dedicated faculty member committed to scholastic achievement and academic excellence.',
-      skills: record.skills || ['Curriculum Design', 'E-Learning Support', 'Classroom Leadership', 'Student Development'],
-      education: record.education || [
-        { year: '2012-2015', title: record.qualification || 'Advanced Master Studies', institute: 'Global State University' }
-      ],
-      experienceTimeline: record.experienceTimeline || [
-        { year: '2020-Present', role: record.designation || 'Lecturer', company: 'EduPro Global Academy' }
-      ],
-      finance: record.finance || {
-        basicSalary: 4500,
-        allowance: 800,
-        hra: 1200,
-        tax: 450,
-        netSalary: 6050,
-        bankName: record.bankName || 'Global Institutional Bank',
-        accountNumber: record.bankAccount ? `**** **** ${record.bankAccount.slice(-4)}` : '**** **** 5236',
-        ifsc: record.ifscCode || 'GIB000123'
-      },
-      payoutHistory: record.payoutHistory || [
-        { id: 'PS-523', month: 'April 2026', amount: 6050, date: '30 Apr 2026', basicSalary: 4500, allowance: 800, HRA: 1200, tax: 450 },
-        { id: 'PS-522', month: 'March 2026', amount: 6050, date: '31 Mar 2026', basicSalary: 4500, allowance: 800, HRA: 1200, tax: 450 }
-      ],
-      library: record.library || {
-        membershipId: `LIB-${record.id || 'TCH-001'}`,
-        status: 'Active',
-        borrowedCount: 2,
-        totalBorrowed: 45,
-        fine: 0
-      },
-      borrowedBooks: record.borrowedBooks || [
-        { id: 'BK-101', title: `${record.subject || 'Quantum'} Foundations`, author: 'Academic Publisher', due: '12 June 2026', issueDate: '29 May 2026' },
-        { id: 'BK-102', title: 'Modern Pedagogical Studies', author: 'EduPro Press', due: '25 June 2026', issueDate: '11 May 2026' }
-      ],
-      libraryHistory: record.libraryHistory || [
-        { id: 'BK-091', title: 'Introduction to Calculus', author: 'Oxford Press', borrowDate: '10 Jan 2026', returnDate: '24 Jan 2026', status: 'Returned' },
-        { id: 'BK-082', title: 'Advanced Quantum Mechanics', author: 'MIT Press', borrowDate: '02 Feb 2026', returnDate: '16 Feb 2026', status: 'Returned' },
-        { id: 'BK-075', title: 'The Art of Classroom Engagement', author: 'Stanford Pub', borrowDate: '05 Mar 2026', returnDate: '19 Mar 2026', status: 'Returned' },
-        { id: 'BK-063', title: 'Educational Psychology', author: 'Cambridge Press', borrowDate: '12 Apr 2026', returnDate: '26 Apr 2026', status: 'Returned' }
-      ],
-      leaveBalance: record.leaveBalance || [
-        { type: 'Casual Leave', total: 12, used: 4, remaining: 8, color: 'var(--primary)' },
-        { type: 'Sick Leave', total: 10, used: 2, remaining: 8, color: '#EF4444' },
-        { type: 'Earned Leave', total: 15, used: 5, remaining: 10, color: '#10B981' }
-      ],
-      leavesList: record.leavesList || [
-        { type: 'Casual Leave', duration: '05 May 2026 - 06 May 2026', reason: 'Family Function', status: 'Approved', color: '#10B981' },
-        { type: 'Sick Leave', duration: '12 Apr 2026 - 15 Apr 2026', reason: 'High Fever & Flu', status: 'Approved', color: '#10B981' }
-      ]
-    };
+      let data = [];
+      try {
+        data = await getTeachers();
+      } catch (e) {
+        console.warn("Backend API offline, utilizing fallback cache/mock data");
+      }
 
-    setTeacher(completeProfile);
-    setLoading(false);
+      let record = null;
+      let list = [];
 
-    // Save back if they weren't in storage to persist default leaves/books structure
-    if (stored) {
-      const list = JSON.parse(stored);
+      if (data && data.length > 0) {
+        list = data.map(t => ({
+          ...t,
+          id: t.teacher_id || `AD${t.id}`,
+          teacherId: t.teacher_id || `AD${t.id}`,
+          name: t.name,
+          fullName: t.name || t.fullName,
+          subject: t.subject || 'Faculty',
+          class: t.class || 'N/A',
+          email: t.email,
+          phone: t.phone || 'N/A',
+          joinDate: t.joinDate || t.admission_date || t.created_at || new Date().toISOString(),
+          status: t.status || 'Active',
+          avatar: t.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${t.name}`,
+          color: t.color || '#4880FF',
+          dob: t.dob || '',
+          gender: t.gender || '',
+          currentAddress: t.address || t.currentAddress || '',
+          permanentAddress: t.permanentAddress || t.address || '',
+          bloodGroup: t.blood_group || t.bloodGroup || '',
+          qualification: t.qualification || '',
+          experience: t.experience || '',
+          details: t.details || '',
+          documents: (() => {
+            if (!t.documents) return [];
+            if (typeof t.documents === 'string') {
+              try {
+                return JSON.parse(t.documents);
+              } catch (e) {
+                return [];
+              }
+            }
+            return Array.isArray(t.documents) ? t.documents : [];
+          })()
+        }));
+        localStorage.setItem('teachers', JSON.stringify(list));
+      } else {
+        const stored = localStorage.getItem('teachers');
+        if (stored) {
+          list = JSON.parse(stored);
+        } else {
+          list = defaultTeachers;
+          localStorage.setItem('teachers', JSON.stringify(list));
+        }
+      }
+
+      // Check if logged in user is a teacher and is trying to access another teacher's profile
+      const loggedInRole = localStorage.getItem('userRole');
+      const loggedInEmail = localStorage.getItem('userEmail');
+      const loggedInName = localStorage.getItem('userName');
+
+      if (loggedInRole === 'teacher') {
+        const myTeacher = list.find(t => 
+          (t.email && t.email.toLowerCase() === loggedInEmail?.toLowerCase()) || 
+          (t.name && t.name.toLowerCase() === loggedInName?.toLowerCase())
+        );
+        if (myTeacher) {
+          const myId = myTeacher.id || myTeacher.teacher_id;
+          if (id !== myId) {
+            navigate(`/dashboard/teacher-details/${myId}`, { replace: true });
+            return;
+          }
+        }
+      }
+
+      record = list.find(t => t.id === id);
+      if (record) {
+        if (typeof record.documents === 'string') {
+          try {
+            record.documents = JSON.parse(record.documents);
+          } catch (e) {
+            record.documents = [];
+          }
+        } else if (!record.documents) {
+          record.documents = [];
+        }
+      }
+
+      if (!record) {
+        // Find matching default mock teacher or create generic details
+        const defaultMatch = defaultTeachers.find(t => t.id === id);
+        if (defaultMatch) {
+          record = defaultMatch;
+        } else {
+          const idNum = id ? id.replace(/\D/g, '') : '999';
+          record = {
+            id: id || 'AD52365',
+            name: `Teacher ${id || ''}`,
+            fullName: `Teacher ${id || ''}`,
+            designation: 'Instructor',
+            dept: 'Science & Research',
+            status: 'Active',
+            rating: 4.8,
+            avatar: janeAvatar,
+            color: '#4880FF', 
+            contractType: 'Permanent',
+            shift: 'Day Shift',
+            joinDate: '2024-01-12',
+            experience: '5 Years',
+            qualification: 'M.Sc. in Education',
+            email: `teacher.${idNum}@edupro.com`,
+            phone: `+1 234 567 ${idNum.padStart(3, '0')}`,
+            currentAddress: 'Main Campus, Institutional Area',
+            permanentAddress: 'Main Campus, Institutional Area',
+            gender: 'Male',
+            dob: '1990-01-01',
+            maritalStatus: 'Unmarried',
+            fatherName: 'Parent Pena',
+            motherName: 'Parent Pena',
+            details: 'Dedicated educator working at the school.',
+            bankAccount: '123456789012',
+            bankName: 'Global Institutional Bank',
+            ifscCode: 'GIB000123',
+          };
+        }
+      }
+
+      // Build complete high-fidelity profile with statistics & finance
+      const completeProfile = {
+        ...record,
+        name: record.name || record.fullName || 'Faculty Member',
+        designation: record.designation || `${record.subject || 'Specialist'} Lead Instructor`,
+        dept: record.dept || (record.subject === 'Mathematics' || record.subject === 'Physics' || record.subject === 'Chemistry' || record.subject === 'Biology' ? 'Science & Research' : 'Humanities & Languages'),
+        rating: record.rating || 4.8,
+        contractType: record.contractType || 'Permanent',
+        shift: record.shift || 'Day Shift',
+        joiningDate: record.joinDate ? new Date(record.joinDate).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) : '12 Jan 2024',
+        experience: record.experience || '8+ Years',
+        qualification: record.qualification || 'Masters Degree',
+        address: record.currentAddress || record.permanentAddress || '724 Oakmound Road, Chicago, IL',
+        bio: record.details || 'Dedicated faculty member committed to scholastic achievement and academic excellence.',
+        skills: record.skills || ['Curriculum Design', 'E-Learning Support', 'Classroom Leadership', 'Student Development'],
+        education: record.education || [
+          { year: '2012-2015', title: record.qualification || 'Advanced Master Studies', institute: 'Global State University' }
+        ],
+        experienceTimeline: record.experienceTimeline || [
+          { year: '2020-Present', role: record.designation || 'Lecturer', company: 'EduPro Global Academy' }
+        ],
+        finance: record.finance || {
+          basicSalary: 4500,
+          allowance: 800,
+          hra: 1200,
+          tax: 450,
+          netSalary: 6050,
+          bankName: record.bankName || 'Global Institutional Bank',
+          accountNumber: record.bankAccount ? `**** **** ${record.bankAccount.slice(-4)}` : '**** **** 5236',
+          ifsc: record.ifscCode || 'GIB000123'
+        },
+        payoutHistory: record.payoutHistory || [
+          { id: 'PS-523', month: 'April 2026', amount: 6050, date: '30 Apr 2026', basicSalary: 4500, allowance: 800, HRA: 1200, tax: 450 },
+          { id: 'PS-522', month: 'March 2026', amount: 6050, date: '31 Mar 2026', basicSalary: 4500, allowance: 800, HRA: 1200, tax: 450 }
+        ],
+        library: record.library || {
+          membershipId: `LIB-${record.id || 'TCH-001'}`,
+          status: 'Active',
+          borrowedCount: 2,
+          totalBorrowed: 45,
+          fine: 0
+        },
+        borrowedBooks: record.borrowedBooks || [
+          { id: 'BK-101', title: `${record.subject || 'Quantum'} Foundations`, author: 'Academic Publisher', due: '12 June 2026', issueDate: '29 May 2026' },
+          { id: 'BK-102', title: 'Modern Pedagogical Studies', author: 'EduPro Press', due: '25 June 2026', issueDate: '11 May 2026' }
+        ],
+        libraryHistory: record.libraryHistory || [
+          { id: 'BK-091', title: 'Introduction to Calculus', author: 'Oxford Press', borrowDate: '10 Jan 2026', returnDate: '24 Jan 2026', status: 'Returned' },
+          { id: 'BK-082', title: 'Advanced Quantum Mechanics', author: 'MIT Press', borrowDate: '02 Feb 2026', returnDate: '16 Feb 2026', status: 'Returned' },
+          { id: 'BK-075', title: 'The Art of Classroom Engagement', author: 'Stanford Pub', borrowDate: '05 Mar 2026', returnDate: '19 Mar 2026', status: 'Returned' },
+          { id: 'BK-063', title: 'Educational Psychology', author: 'Cambridge Press', borrowDate: '12 Apr 2026', returnDate: '26 Apr 2026', status: 'Returned' }
+        ],
+        leaveBalance: record.leaveBalance || [
+          { type: 'Casual Leave', total: 12, used: 4, remaining: 8, color: 'var(--primary)' },
+          { type: 'Sick Leave', total: 10, used: 2, remaining: 8, color: '#EF4444' },
+          { type: 'Earned Leave', total: 15, used: 5, remaining: 10, color: '#10B981' }
+        ],
+        leavesList: record.leavesList || [
+          { type: 'Casual Leave', duration: '05 May 2026 - 06 May 2026', reason: 'Family Function', status: 'Approved', color: '#10B981' },
+          { type: 'Sick Leave', duration: '12 Apr 2026 - 15 Apr 2026', reason: 'High Fever & Flu', status: 'Approved', color: '#10B981' }
+        ]
+      };
+
+      setTeacher(completeProfile);
+      setLoading(false);
+
+      // Save back if they weren't in storage to persist default leaves/books structure
       const index = list.findIndex(t => t.id === record.id);
       if (index !== -1 && (!list[index].leavesList || !list[index].borrowedBooks)) {
         list[index] = { ...list[index], ...completeProfile };
         localStorage.setItem('teachers', JSON.stringify(list));
       }
+    };
+
+    loadDetails();
+  }, [id]);
+
+  useEffect(() => {
+    if (id) {
+      localStorage.setItem('lastViewedTeacherId', id);
     }
   }, [id]);
 

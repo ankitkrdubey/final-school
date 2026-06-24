@@ -1,50 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Building, Plus, Users, Layout, MapPin, Search, CheckCircle2, XCircle, X, Save, Clock, Cpu, Tv, Wind, Wifi, Terminal } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Classrooms = () => {
-  const [rooms, setRooms] = useState([
-    { 
-      id: 1, name: 'Room 101', wing: 'Main Block', capacity: 45, type: 'Lecture Hall', status: 'Available',
-      specs: { projector: true, ac: true, smartboard: false, wifi: true, computers: false, safetyKit: false },
-      schedule: [
-        { period: 'Period 1 (08:30 - 09:30)', subject: 'Mathematics', class: 'Class 10-A', teacher: 'Dr. Michael Chen' },
-        { period: 'Period 3 (11:00 - 12:00)', subject: 'English', class: 'Class 10-B', teacher: 'Ms. Emily Bronte' },
-        { period: 'Period 4 (01:00 - 02:00)', subject: 'History', class: 'Class 9-A', teacher: 'Dr. Yuval Noah' }
-      ]
-    },
-    { 
-      id: 2, name: 'Room 102', wing: 'Main Block', capacity: 40, type: 'Smart Class', status: 'Occupied',
-      specs: { projector: true, ac: true, smartboard: true, wifi: true, computers: false, safetyKit: false },
-      schedule: [
-        { period: 'Period 1 (08:30 - 09:30)', subject: 'Physics', class: 'Class 11-A', teacher: 'Prof. Robert Frost' },
-        { period: 'Period 2 (09:45 - 10:45)', subject: 'Computer Science', class: 'Class 12-A', teacher: 'Mr. Alan Turing' },
-        { period: 'Period 5 (02:15 - 03:15)', subject: 'Chemistry', class: 'Class 10-B', teacher: 'Dr. Michael Chen' }
-      ]
-    },
-    { 
-      id: 3, name: 'Lab 01', wing: 'Science Wing', capacity: 30, type: 'Computer Lab', status: 'Maintenance',
-      specs: { projector: true, ac: true, smartboard: false, wifi: true, computers: true, safetyKit: true },
-      schedule: [
-        { period: 'Period 2 (09:45 - 10:45)', subject: 'Coding Lab', class: 'Class 11-B', teacher: 'Mr. Alan Turing' },
-        { period: 'Period 4 (01:00 - 02:00)', subject: 'Database Lab', class: 'Class 12-B', teacher: 'Mr. Alan Turing' }
-      ]
-    },
-    { 
-      id: 4, name: 'Room 205', wing: 'East Wing', capacity: 50, type: 'Auditorium (S)', status: 'Available',
-      specs: { projector: true, ac: true, smartboard: true, wifi: true, computers: false, safetyKit: true },
-      schedule: [
-        { period: 'Period 3 (11:00 - 12:00)', subject: 'Guest Seminar', class: 'All Seniors', teacher: 'Prof. Robert Frost' }
-      ]
-    },
-    { 
-      id: 5, name: 'Room 301', wing: 'North Wing', capacity: 35, type: 'Discussion Room', status: 'Available',
-      specs: { projector: false, ac: false, smartboard: false, wifi: true, computers: false, safetyKit: false },
-      schedule: [
-        { period: 'Period 4 (01:00 - 02:00)', subject: 'Debate Prep', class: 'Class 8-C', teacher: 'Ms. Emily Bronte' }
-      ]
-    },
-  ]);
+  const [rooms, setRooms] = useState(() => {
+    const cached = localStorage.getItem('edupro_classrooms');
+    return cached ? JSON.parse(cached) : [
+      { 
+        id: 1, name: 'Room 101', wing: 'Main Block', capacity: 45, type: 'Lecture Hall', status: 'Available',
+        specs: { projector: true, ac: true, smartboard: false, wifi: true, computers: false, safetyKit: false },
+        schedule: [
+          { period: 'Period 1 (08:30 - 09:30)', subject: 'Mathematics', class: 'Class 10-A', teacher: 'Dr. Michael Chen' },
+          { period: 'Period 3 (11:00 - 12:00)', subject: 'English', class: 'Class 10-B', teacher: 'Ms. Emily Bronte' },
+          { period: 'Period 4 (01:00 - 02:00)', subject: 'History', class: 'Class 9-A', teacher: 'Dr. Yuval Noah' }
+        ]
+      },
+      { 
+        id: 2, name: 'Room 102', wing: 'Main Block', capacity: 40, type: 'Smart Class', status: 'Occupied',
+        specs: { projector: true, ac: true, smartboard: true, wifi: true, computers: false, safetyKit: false },
+        schedule: [
+          { period: 'Period 1 (08:30 - 09:30)', subject: 'Physics', class: 'Class 11-A', teacher: 'Prof. Robert Frost' },
+          { period: 'Period 2 (09:45 - 10:45)', subject: 'Computer Science', class: 'Class 12-A', teacher: 'Mr. Alan Turing' },
+          { period: 'Period 5 (02:15 - 03:15)', subject: 'Chemistry', class: 'Class 10-B', teacher: 'Dr. Michael Chen' }
+        ]
+      },
+      { 
+        id: 3, name: 'Lab 01', wing: 'Science Wing', capacity: 30, type: 'Computer Lab', status: 'Maintenance',
+        specs: { projector: true, ac: true, smartboard: false, wifi: true, computers: true, safetyKit: true },
+        schedule: [
+          { period: 'Period 2 (09:45 - 10:45)', subject: 'Coding Lab', class: 'Class 11-B', teacher: 'Mr. Alan Turing' },
+          { period: 'Period 4 (01:00 - 02:00)', subject: 'Database Lab', class: 'Class 12-B', teacher: 'Mr. Alan Turing' }
+        ]
+      },
+      { 
+        id: 4, name: 'Room 205', wing: 'East Wing', capacity: 50, type: 'Auditorium (S)', status: 'Available',
+        specs: { projector: true, ac: true, smartboard: true, wifi: true, computers: false, safetyKit: true },
+        schedule: [
+          { period: 'Period 3 (11:00 - 12:00)', subject: 'Guest Seminar', class: 'All Seniors', teacher: 'Prof. Robert Frost' }
+        ]
+      },
+      { 
+        id: 5, name: 'Room 301', wing: 'North Wing', capacity: 35, type: 'Discussion Room', status: 'Available',
+        specs: { projector: false, ac: false, smartboard: false, wifi: true, computers: false, safetyKit: false },
+        schedule: [
+          { period: 'Period 4 (01:00 - 02:00)', subject: 'Debate Prep', class: 'Class 8-C', teacher: 'Ms. Emily Bronte' }
+        ]
+      },
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('edupro_classrooms', JSON.stringify(rooms));
+  }, [rooms]);
 
   const wingsList = ['Main Block', 'Science Wing', 'East Wing', 'West Wing', 'North Wing', 'South Wing'];
   const typesList = ['Lecture Hall', 'Smart Class', 'Computer Lab', 'Physics Lab', 'Discussion Room', 'Auditorium (S)'];

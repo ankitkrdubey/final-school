@@ -70,6 +70,7 @@ const Login = () => {
         localStorage.setItem('userRole', detectedRole);
         localStorage.setItem('userId', `demo-${detectedRole}-001`);
         localStorage.setItem('userName', `Demo ${detectedRole.charAt(0).toUpperCase() + detectedRole.slice(1)}`);
+        localStorage.setItem('userEmail', email);
         localStorage.setItem('isAuthenticated', 'true');
         
         const targetPath = detectedRole === 'teacher' ? '/dashboard/teacher'

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BookOpen, Plus, Users, ChevronRight, X, Trash2, Save, User, UserCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import eleanorAvatar from '../assets/eleanor_avatar.png';
@@ -15,11 +15,18 @@ const teacherAvatars = {
 };
 
 const Classes = () => {
-  const [classesList, setClassesList] = useState([
-    { id: 1, name: 'Class 10', sections: ['Section A', 'Section B'], students: 45, teacher: 'Eleanor Pena' },
-    { id: 2, name: 'Class 9', sections: ['Section A', 'Section C'], students: 38, teacher: 'Robert Wilson' },
-    { id: 3, name: 'Class 8', sections: ['Section B'], students: 42, teacher: 'Emily Davis' },
-  ]);
+  const [classesList, setClassesList] = useState(() => {
+    const cached = localStorage.getItem('edupro_classes');
+    return cached ? JSON.parse(cached) : [
+      { id: 1, name: 'Class 10', sections: ['Section A', 'Section B'], students: 45, teacher: 'Eleanor Pena' },
+      { id: 2, name: 'Class 9', sections: ['Section A', 'Section C'], students: 38, teacher: 'Robert Wilson' },
+      { id: 3, name: 'Class 8', sections: ['Section B'], students: 42, teacher: 'Emily Davis' },
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('edupro_classes', JSON.stringify(classesList));
+  }, [classesList]);
 
   const teachersList = [
     'Eleanor Pena',

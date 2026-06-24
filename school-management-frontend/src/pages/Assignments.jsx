@@ -10,25 +10,39 @@ import { motion, AnimatePresence } from 'framer-motion';
 const Assignments = () => {
   const { toast, showToast, hideToast } = useToast();
   // Core Assignments State
-  const [assignments, setAssignments] = useState([
-    { id: 'ASN-001', title: 'Calculus III Problem Set', class: '10A', dueDate: '2026-05-15', status: 'Pending', type: 'Homework', priority: 'High', color: '#EF4444' },
-    { id: 'ASN-002', title: 'World War II Research Paper', class: '10B', dueDate: '2026-05-18', status: 'In Review', type: 'Project', priority: 'Medium', color: '#F59E0B' },
-    { id: 'ASN-003', title: 'Quantum Physics Lab Report', class: '10A', dueDate: '2026-05-12', status: 'Completed', type: 'Lab', priority: 'High', color: '#10B981' },
-    { id: 'ASN-004', title: 'Business Ethics Case Study', class: '12C', dueDate: '2026-05-20', status: 'Pending', type: 'Assignment', priority: 'Low', color: 'var(--primary)' },
-    { id: 'ASN-005', title: 'Organic Chemistry Synthesis', class: '11A', dueDate: '2026-05-22', status: 'Pending', type: 'Lab', priority: 'High', color: '#EF4444' },
-    { id: 'ASN-006', title: 'Shakespearean Sonnet Analysis', class: '09C', dueDate: '2026-05-14', status: 'Completed', type: 'Essay', priority: 'Medium', color: '#10B981' },
-    { id: 'ASN-007', title: 'Digital Marketing Campaign', class: '12B', dueDate: '2026-05-25', status: 'Pending', type: 'Project', priority: 'High', color: 'var(--primary)' },
-    { id: 'ASN-008', title: 'Macroeconomics Theory', class: '11B', dueDate: '2026-05-19', status: 'In Review', type: 'Homework', priority: 'Low', color: '#F59E0B' },
-  ]);
+  const [assignments, setAssignments] = useState(() => {
+    const saved = localStorage.getItem('assignments');
+    return saved ? JSON.parse(saved) : [
+      { id: 'ASN-001', title: 'Calculus III Problem Set', class: '10A', dueDate: '2026-05-15', status: 'Pending', type: 'Homework', priority: 'High', color: '#EF4444' },
+      { id: 'ASN-002', title: 'World War II Research Paper', class: '10B', dueDate: '2026-05-18', status: 'In Review', type: 'Project', priority: 'Medium', color: '#F59E0B' },
+      { id: 'ASN-003', title: 'Quantum Physics Lab Report', class: '10A', dueDate: '2026-05-12', status: 'Completed', type: 'Lab', priority: 'High', color: '#10B981' },
+      { id: 'ASN-004', title: 'Business Ethics Case Study', class: '12C', dueDate: '2026-05-20', status: 'Pending', type: 'Assignment', priority: 'Low', color: 'var(--primary)' },
+      { id: 'ASN-005', title: 'Organic Chemistry Synthesis', class: '11A', dueDate: '2026-05-22', status: 'Pending', type: 'Lab', priority: 'High', color: '#EF4444' },
+      { id: 'ASN-006', title: 'Shakespearean Sonnet Analysis', class: '09C', dueDate: '2026-05-14', status: 'Completed', type: 'Essay', priority: 'Medium', color: '#10B981' },
+      { id: 'ASN-007', title: 'Digital Marketing Campaign', class: '12B', dueDate: '2026-05-25', status: 'Pending', type: 'Project', priority: 'High', color: 'var(--primary)' },
+      { id: 'ASN-008', title: 'Macroeconomics Theory', class: '11B', dueDate: '2026-05-19', status: 'In Review', type: 'Homework', priority: 'Low', color: '#F59E0B' },
+    ];
+  });
 
   // Mock Student Submissions for Submission Log
-  const [submissions, setSubmissions] = useState([
-    { id: 'SUB-001', student: 'Alex Johnson', assignmentId: 'ASN-001', title: 'Calculus III Problem Set', class: '10A', submittedAt: 'Today, 10:24 AM', grade: 'Pending', file: 'calculus_set3_alex.pdf', score: '' },
-    { id: 'SUB-002', student: 'Maria Garcia', assignmentId: 'ASN-001', title: 'Calculus III Problem Set', class: '10A', submittedAt: 'Today, 09:15 AM', grade: 'A', file: 'calculus_iii_garcia.pdf', score: '95' },
-    { id: 'SUB-003', student: 'Kevin Lee', assignmentId: 'ASN-002', title: 'World War II Research Paper', class: '10B', submittedAt: 'Yesterday, 04:30 PM', grade: 'B+', file: 'ww2_paper_kevin.pdf', score: '88' },
-    { id: 'SUB-004', student: 'Sophia Chen', assignmentId: 'ASN-003', title: 'Quantum Physics Lab Report', class: '10A', submittedAt: 'May 12, 11:20 AM', grade: 'A+', file: 'quantum_lab_sophia.pdf', score: '100' },
-    { id: 'SUB-005', student: 'Daniel Ray', assignmentId: 'ASN-002', title: 'World War II Research Paper', class: '10B', submittedAt: 'May 17, 02:45 PM', grade: 'Pending', file: 'wwii_daniel_ray.pdf', score: '' },
-  ]);
+  const [submissions, setSubmissions] = useState(() => {
+    const saved = localStorage.getItem('submissions');
+    return saved ? JSON.parse(saved) : [
+      { id: 'SUB-001', student: 'Alex Johnson', assignmentId: 'ASN-001', title: 'Calculus III Problem Set', class: '10A', submittedAt: 'Today, 10:24 AM', grade: 'Pending', file: 'calculus_set3_alex.pdf', score: '' },
+      { id: 'SUB-002', student: 'Maria Garcia', assignmentId: 'ASN-001', title: 'Calculus III Problem Set', class: '10A', submittedAt: 'Today, 09:15 AM', grade: 'A', file: 'calculus_iii_garcia.pdf', score: '95' },
+      { id: 'SUB-003', student: 'Kevin Lee', assignmentId: 'ASN-002', title: 'World War II Research Paper', class: '10B', submittedAt: 'Yesterday, 04:30 PM', grade: 'B+', file: 'ww2_paper_kevin.pdf', score: '88' },
+      { id: 'SUB-004', student: 'Sophia Chen', assignmentId: 'ASN-003', title: 'Quantum Physics Lab Report', class: '10A', submittedAt: 'May 12, 11:20 AM', grade: 'A+', file: 'quantum_lab_sophia.pdf', score: '100' },
+      { id: 'SUB-005', student: 'Daniel Ray', assignmentId: 'ASN-002', title: 'World War II Research Paper', class: '10B', submittedAt: 'May 17, 02:45 PM', grade: 'Pending', file: 'wwii_daniel_ray.pdf', score: '' },
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('assignments', JSON.stringify(assignments));
+  }, [assignments]);
+
+  useEffect(() => {
+    localStorage.setItem('submissions', JSON.stringify(submissions));
+  }, [submissions]);
 
   // Filtering State
   const [searchQuery, setSearchQuery] = useState('');

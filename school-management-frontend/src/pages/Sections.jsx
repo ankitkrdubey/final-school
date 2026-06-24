@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layers, Plus, Users, Edit, Trash2, Search, Filter, X, Save, BookOpen, Hash } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import eleanorAvatar from '../assets/eleanor_avatar.png';
@@ -15,12 +15,19 @@ const teacherAvatars = {
 };
 
 const Sections = () => {
-  const [sections, setSections] = useState([
-    { id: 1, name: 'Section A', class: 'Class 10', strength: 40, room: 'Room 101', teacher: 'Eleanor Pena' },
-    { id: 2, name: 'Section B', class: 'Class 10', strength: 38, room: 'Room 102', teacher: 'Mr. David Miller' },
-    { id: 3, name: 'Section A', class: 'Class 9', strength: 42, room: 'Room 201', teacher: 'Ms. Elena Gilbert' },
-    { id: 4, name: 'Section C', class: 'Class 8', strength: 35, room: 'Room 305', teacher: 'Mr. Stefan Salvatore' },
-  ]);
+  const [sections, setSections] = useState(() => {
+    const cached = localStorage.getItem('edupro_sections');
+    return cached ? JSON.parse(cached) : [
+      { id: 1, name: 'Section A', class: 'Class 10', strength: 40, room: 'Room 101', teacher: 'Eleanor Pena' },
+      { id: 2, name: 'Section B', class: 'Class 10', strength: 38, room: 'Room 102', teacher: 'Mr. David Miller' },
+      { id: 3, name: 'Section A', class: 'Class 9', strength: 42, room: 'Room 201', teacher: 'Ms. Elena Gilbert' },
+      { id: 4, name: 'Section C', class: 'Class 8', strength: 35, room: 'Room 305', teacher: 'Mr. Stefan Salvatore' },
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('edupro_sections', JSON.stringify(sections));
+  }, [sections]);
 
   const classesList = ['Class 10', 'Class 9', 'Class 8', 'Class 7', 'Class 6'];
   

@@ -4,34 +4,26 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   BookOpen, FileText, CircleCheck, Clock, Award, Bell, Calendar as CalendarIcon, 
   MoreVertical, Edit, User, Activity, Megaphone, AlertCircle, Info,
-  CheckCircle2, X, Sparkles
+  CheckCircle2, X, Sparkles, Download
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import MiniCalendar from '../components/MiniCalendar';
 import studentAvatar from '../assets/student_avatar.png';
+import { getStudents, AttendanceApi, FeesApi } from '../services/service';
 
-const attendanceData = [
-  { name: 'Present', value: 200, color: 'var(--success)' },
-  { name: 'Half Day', value: 30, color: '#f59e0b' },
-  { name: 'Late', value: 17, color: 'var(--warning)' },
-  { name: 'Absent', value: 5, color: 'var(--danger)' },
-];
-
-const examResultsData = {
-  'Mid Term': [
-    { subject: 'Math', score: 95 },
-    { subject: 'Physics', score: 88 },
-    { subject: 'Chemistry', score: 92 },
-    { subject: 'English', score: 85 },
-    { subject: 'History', score: 78 },
-  ],
-  'Final Term': [
-    { subject: 'Math', score: 98 },
-    { subject: 'Physics', score: 92 },
-    { subject: 'Chemistry', score: 95 },
-    { subject: 'English', score: 88 },
-    { subject: 'History', score: 82 },
-  ]
+const fallbackStudent = {
+  student_id: '1',
+  name: 'Devon Lane',
+  email: 'devon.lane@edupro.edu',
+  phone: '+1 234 567 891',
+  class_id: 10,
+  section: 'A',
+  dob: '2010-02-15',
+  gender: 'Male',
+  address: '789 School Rd, NY',
+  blood_group: 'B+',
+  admission_date: '2026-09-01',
+  avatar: null
 };
 
 const notices = [
@@ -42,19 +34,126 @@ const notices = [
   { title: 'Library Book Returns', content: 'A reminder that all books checked out before the spring break must be returned by the end of this week to avoid late fees.', type: 'info', created_at: new Date(Date.now() - 345600000).toISOString() },
 ];
 
+const renderAIReport = (text) => {
+  if (!text) return null;
+  
+  const lines = text.split('\n');
+  const elements = [];
+  
+  const cleanBold = (str) => {
+    return str.replace(/\*\*(.*?)\*\*/g, '$1');
+  };
+
+  const parseInlineStyles = (str) => {
+    const parts = str.split(/\*\*(.*?)\*\*/g);
+    return parts.map((part, index) => {
+      if (index % 2 === 1) {
+        return <strong key={index} style={{ fontWeight: 800, color: 'var(--primary)' }}>{part}</strong>;
+      }
+      return part;
+    });
+  };
+
+  lines.forEach((line, index) => {
+    const trimmed = line.trim();
+    
+    if (trimmed === '') {
+      return;
+    }
+    
+    // Horizontal Rule
+    if (trimmed === '---') {
+      elements.push(<div key={`hr-${index}`} style={{ height: '1px', background: 'linear-gradient(90deg, transparent, var(--border-color), transparent)', margin: '20px 0' }} />);
+      return;
+    }
+    
+    // Headings
+    if (trimmed.startsWith('### ')) {
+      const title = trimmed.replace('### ', '');
+      elements.push(
+        <h3 key={`h3-${index}`} style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main)', margin: '24px 0 12px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Sparkles size={18} style={{ color: 'var(--primary)' }} />
+          {cleanBold(title)}
+        </h3>
+      );
+      return;
+    }
+    if (trimmed.startsWith('#### ')) {
+      const title = trimmed.replace('#### ', '');
+      elements.push(
+        <h4 key={`h4-${index}`} style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--primary)', margin: '20px 0 10px 0', borderBottom: '1px solid var(--border-color)', paddingBottom: '6px' }}>
+          {cleanBold(title)}
+        </h4>
+      );
+      return;
+    }
+    if (trimmed.startsWith('##### ')) {
+      const title = trimmed.replace('##### ', '');
+      elements.push(
+        <h5 key={`h5-${index}`} style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--text-main)', margin: '16px 0 8px 0' }}>
+          {cleanBold(title)}
+        </h5>
+      );
+      return;
+    }
+    
+    // Bullet lists starting with '* ' or '- '
+    if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
+      const content = trimmed.substring(2);
+      elements.push(
+        <div key={`li-${index}`} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', margin: '8px 0', paddingLeft: '8px' }}>
+          <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--primary)', marginTop: '8px', flexShrink: 0 }} />
+          <span style={{ fontSize: '0.9rem', color: 'var(--text-main)', lineHeight: 1.5 }}>
+            {parseInlineStyles(content)}
+          </span>
+        </div>
+      );
+      return;
+    }
+    
+    // Numbered list items starting with '1. ', '2. ', etc.
+    const numListMatch = trimmed.match(/^(\d+)\.\s(.*)/);
+    if (numListMatch) {
+      const num = numListMatch[1];
+      const content = numListMatch[2];
+      elements.push(
+        <div key={`num-${index}`} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', margin: '12px 0', padding: '12px 16px', backgroundColor: 'var(--bg-body)', borderRadius: '12px', borderLeft: '3px solid var(--primary)' }}>
+          <span style={{ fontSize: '0.85rem', fontWeight: 900, color: 'var(--primary)', backgroundColor: 'var(--primary-light)', padding: '2px 8px', borderRadius: '6px' }}>{num}</span>
+          <span style={{ fontSize: '0.9rem', color: 'var(--text-main)', lineHeight: 1.5 }}>
+            {parseInlineStyles(content)}
+          </span>
+        </div>
+      );
+      return;
+    }
+    
+    // Regular paragraph
+    elements.push(
+      <p key={`p-${index}`} style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '8px 0' }}>
+        {parseInlineStyles(trimmed)}
+      </p>
+    );
+  });
+  
+  return <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>{elements}</div>;
+};
+
 const StudentDashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [examTerm, setExamTerm] = useState('Mid Term');
   const [toast, setToast] = useState(null);
-  const userName = localStorage.getItem('userName') || 'Student';
+  const [studentsList, setStudentsList] = useState([]);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [dbAttendance, setDbAttendance] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  // AI Modal States
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+  const [aiReport, setAiReport] = useState('');
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
 
-  useEffect(() => {
-    if (location.state?.showLoginToast) {
-      showToast(`Welcome back, ${userName}! Student portal loaded successfully.`, 'success', 'Session Authenticated');
-      window.history.replaceState({}, document.title);
-    }
-  }, [location.state, userName]);
+  const userName = localStorage.getItem('userName') || 'Student';
 
   const showToast = (message, type = 'success', title = null) => {
     setToast({ message, type, title });
@@ -67,6 +166,240 @@ const StudentDashboard = () => {
     }
   }, [toast]);
 
+  // Load students, attendance, fees
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const studentData = await getStudents();
+        const loggedInRole = localStorage.getItem('userRole');
+        const loggedInEmail = localStorage.getItem('userEmail');
+        const loggedInName = localStorage.getItem('userName');
+
+        if (studentData && studentData.length > 0) {
+          setStudentsList(studentData);
+          
+          let initialStudent = null;
+          if (loggedInRole === 'student') {
+            if (loggedInEmail) {
+              initialStudent = studentData.find(s => s.email && s.email.toLowerCase() === loggedInEmail.toLowerCase());
+            }
+            if (!initialStudent && loggedInName) {
+              initialStudent = studentData.find(s => s.name && s.name.toLowerCase() === loggedInName.toLowerCase());
+            }
+          }
+          
+          if (!initialStudent) {
+            initialStudent = studentData[0];
+          }
+          
+          setSelectedStudent(initialStudent);
+          localStorage.setItem('userStudentId', initialStudent.student_id);
+        } else {
+          setStudentsList([fallbackStudent]);
+          setSelectedStudent(fallbackStudent);
+        }
+
+        const attData = await AttendanceApi.getRecords();
+        if (attData) {
+          setDbAttendance(attData);
+        }
+      } catch (err) {
+        console.error("Error loading student portal data:", err);
+        setStudentsList([fallbackStudent]);
+        setSelectedStudent(fallbackStudent);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (location.state?.showLoginToast) {
+      showToast(`Welcome back, ${userName}! Student portal loaded successfully.`, 'success', 'Session Authenticated');
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state, userName]);
+
+  // Deterministic metrics generator to give rich & realistic data consistent per student ID
+  const getStudentMetrics = (student) => {
+    if (!student) return { attendancePct: 90, coursesCount: 10, pendingAssignments: 15, examResults: {}, attData: [], gpa: '3.80' };
+    const studentId = student.student_id;
+    
+    // 1. Calculate Attendance from DB
+    const studentAttRecords = dbAttendance.filter(a => String(a.student_id) === String(studentId));
+    let attendancePct = 90;
+    let presentCount = 200;
+    let halfDayCount = 30;
+    let lateCount = 17;
+    let absentCount = 5;
+    
+    if (studentAttRecords.length > 0) {
+      const total = studentAttRecords.length;
+      const present = studentAttRecords.filter(r => r.status === 'Present').length;
+      const late = studentAttRecords.filter(r => r.status === 'Late').length;
+      const halfDay = studentAttRecords.filter(r => r.status === 'Leave' || r.status === 'Late').length;
+      const absent = studentAttRecords.filter(r => r.status === 'Absent').length;
+      
+      presentCount = present;
+      lateCount = late;
+      halfDayCount = halfDay;
+      absentCount = absent;
+      
+      attendancePct = Math.round(((present + late * 0.7 + halfDay * 0.5) / total) * 100);
+    } else {
+      const hash = studentId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      attendancePct = 80 + (hash % 19);
+      presentCount = Math.round((attendancePct / 100) * 220);
+      absentCount = Math.max(2, 220 - presentCount - (hash % 10));
+      halfDayCount = hash % 8;
+      lateCount = hash % 12;
+    }
+    
+    // 2. Enrolled Courses
+    const hashVal = studentId.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    const coursesCount = 7 + (hashVal % 5);
+    
+    // 3. Pending Assignments
+    const pendingAssignments = 2 + (hashVal % 12);
+    
+    // 4. Exam scores (Mid Term / Final Term)
+    const mathMid = 72 + (hashVal % 27);
+    const physMid = 70 + ((hashVal + 5) % 29);
+    const chemMid = 75 + ((hashVal + 9) % 24);
+    const engMid = 80 + ((hashVal + 13) % 19);
+    const histMid = 68 + ((hashVal + 19) % 31);
+    
+    const mathFinal = Math.min(100, mathMid + (hashVal % 4));
+    const physFinal = Math.min(100, physMid + ((hashVal + 1) % 5));
+    const chemFinal = Math.min(100, chemMid + ((hashVal + 3) % 4));
+    const engFinal = Math.min(100, engMid + ((hashVal + 2) % 3));
+    const histFinal = Math.min(100, histMid + ((hashVal + 4) % 5));
+    
+    const examResults = {
+      'Mid Term': [
+        { subject: 'Math', score: mathMid },
+        { subject: 'Physics', score: physMid },
+        { subject: 'Chemistry', score: chemMid },
+        { subject: 'English', score: engMid },
+        { subject: 'History', score: histMid },
+      ],
+      'Final Term': [
+        { subject: 'Math', score: mathFinal },
+        { subject: 'Physics', score: physFinal },
+        { subject: 'Chemistry', score: chemFinal },
+        { subject: 'English', score: engFinal },
+        { subject: 'History', score: histFinal },
+      ]
+    };
+    
+    const attData = [
+      { name: 'Present', value: presentCount, color: 'var(--success)' },
+      { name: 'Half Day', value: halfDayCount, color: '#f59e0b' },
+      { name: 'Late', value: lateCount, color: 'var(--warning)' },
+      { name: 'Absent', value: absentCount, color: 'var(--danger)' },
+    ];
+    
+    const finalScoresSum = mathFinal + physFinal + chemFinal + engFinal + histFinal;
+    const gpa = (finalScoresSum / 5 / 25).toFixed(2);
+    
+    return {
+      attendancePct,
+      coursesCount,
+      pendingAssignments,
+      examResults,
+      attData,
+      gpa
+    };
+  };
+
+  const handleDownloadReport = (student, metrics) => {
+    showToast(`Compiling dynamic academic ledger for ${student.name}...`, "info", "Report Card YTD");
+    
+    const csvContent = [
+      ['Student Report Card Ledger', ''],
+      ['Student Name', student.name],
+      ['Student ID', student.student_id],
+      ['Class Section', `Grade ${student.class_id || 10}-${student.section || 'A'}`],
+      ['Email Address', student.email || 'N/A'],
+      ['Phone', student.phone || 'N/A'],
+      ['Overall Attendance', `${metrics.attendancePct}%`],
+      ['Enrolled Courses', metrics.coursesCount],
+      ['Pending Assignments', metrics.pendingAssignments],
+      ['Cumulative GPA', `${metrics.gpa} YTD`],
+      ['', ''],
+      ['Subject', `${examTerm} Score`],
+      ...metrics.examResults[examTerm].map(e => [e.subject, `${e.score}%`]),
+      ['', ''],
+      ['Export Date', new Date().toLocaleString()]
+    ].map(e => e.join(",")).join("\n");
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Report_Card_${student.name.replace(/\s+/g, '_')}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    setTimeout(() => {
+      showToast("Report Card downloaded successfully.", "success", "Download Complete");
+    }, 1200);
+  };
+
+  const handleAIAnalysis = (student, metrics) => {
+    setIsGeneratingAI(true);
+    setIsAIModalOpen(true);
+    setAiReport('');
+    
+    setTimeout(() => {
+      const gradesStr = metrics.examResults['Final Term'].map(e => `- **${e.subject}**: ${e.score}% (Grade: ${e.score >= 90 ? 'A+' : e.score >= 80 ? 'A' : e.score >= 70 ? 'B' : 'C'})`).join('\n');
+      const report = `### 📊 EduPro AI Academic Analysis
+**Student Name**: ${student.name}
+**Student ID**: ${student.student_id}
+**Academic Stream**: Class ${student.class_id || 10} - Section ${student.section || 'A'}
+**Date Generated**: ${new Date().toLocaleDateString()}
+
+---
+
+#### 📈 Current Performance & GPA
+* **Cumulative GPA Projection**: **${metrics.gpa} / 4.00**
+* **Class Attendance Integrity**: **${metrics.attendancePct}%** (${metrics.attendancePct >= 90 ? 'Excellent class presence.' : 'Requires structural attendance improvements.'})
+* **Enrolled Course Count**: **${metrics.coursesCount} active courses**
+
+#### 🏆 Subject Performance Metrics
+${gradesStr}
+
+---
+
+#### 🧠 Cognitive Analysis
+- **Key Strengths**: Shows remarkable capabilities in logical deduction and systemic analysis (demonstrated by high performance in mathematics and physical sciences). Homework completion rates in these divisions remain close to 100%.
+- **Target Areas**: The humanities track (specifically history) shows minor deviation. Conceptual mapping of timelines and structured essay analysis could elevate final term indicators.
+
+#### 🎯 Actionable Recommendations
+1. **Analytical Spaced Review**: Dedicate 45 minutes bi-weekly to structured history reviews.
+2. **Electromagnetism Practical Lab**: Complete pending assignment units to solidify lab grades.
+3. **AI Study Assistant Program**: Set up a custom mock examination roadmap to target final exam targets.`;
+      
+      setAiReport(report);
+      setIsGeneratingAI(false);
+    }, 1500);
+  };
+
+  const currentStudent = selectedStudent || fallbackStudent;
+  const metrics = getStudentMetrics(currentStudent);
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ width: '48px', height: '48px', borderRadius: '50%', border: '4px solid var(--border-color)', borderTopColor: 'var(--primary)', animation: 'spin 1s linear infinite' }} />
+        <p style={{ fontWeight: 600, color: 'var(--text-muted)' }}>Loading Student Portals...</p>
+      </div>
+    );
+  }
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -74,52 +407,57 @@ const StudentDashboard = () => {
       transition={{ duration: 0.5 }}
       style={{ paddingBottom: '40px' }}
     >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <h2 style={{ margin: 0, fontSize: '1.75rem' }}>Student Dashboard</h2>
-          <p style={{ margin: '8px 0 0 0', color: 'var(--text-muted)' }}>Welcome back, Devon Lane! Here's your academic overview.</p>
+          <p style={{ margin: '8px 0 0 0', color: 'var(--text-muted)' }}>Welcome back, {currentStudent.name}! Here's your academic overview.</p>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
+        
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+          {/* Dropdown Selector */}
+          {localStorage.getItem('userRole') !== 'student' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginRight: '8px' }}>
+              <User size={16} style={{ color: 'var(--text-muted)' }} />
+              <select 
+                value={currentStudent.student_id}
+                onChange={(e) => {
+                  const found = studentsList.find(s => String(s.student_id) === String(e.target.value));
+                  if (found) {
+                    setSelectedStudent(found);
+                    showToast(`Viewing academic profile of ${found.name}`, "info", "Student Switch");
+                  }
+                }}
+                style={{
+                  border: '1px solid var(--border-color)',
+                  backgroundColor: 'var(--bg-card)',
+                  color: 'var(--text-main)',
+                  padding: '8px 16px',
+                  borderRadius: '12px',
+                  fontSize: '0.9rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  outline: 'none',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
+                }}
+              >
+                {studentsList.map(stu => (
+                  <option key={stu.student_id} value={stu.student_id}>{stu.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <button 
             className="btn" 
-            onClick={() => {
-              showToast("Opening EduPro AI Study Assistant...", "success", "EduPro AI");
-              setTimeout(() => navigate('/dashboard/ai'), 600);
-            }}
+            onClick={() => handleAIAnalysis(currentStudent, metrics)}
             style={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '8px' }}
           >
             <Sparkles size={16} style={{ color: 'var(--primary)' }} /> AI Tutor
           </button>
+          
           <button 
             className="btn btn-primary"
-            onClick={() => {
-              showToast("Generating official academic report card ledger...", "info", "Report Card YTD");
-              const csvContent = [
-                ['Subject', 'Score', 'Term', 'Grade'],
-                ['Mathematics', '98%', 'Final Term', 'A+'],
-                ['Physics', '92%', 'Final Term', 'A'],
-                ['Chemistry', '95%', 'Final Term', 'A+'],
-                ['English', '88%', 'Final Term', 'B+'],
-                ['History', '82%', 'Final Term', 'B'],
-                ['Student Name', 'Devon Lane'],
-                ['Cumulative GPA', '3.82 YTD'],
-                ['Class Rank', '3rd of 42'],
-                ['Export Date', new Date().toLocaleDateString()]
-              ].map(e => e.join(",")).join("\n");
-              
-              const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-              const link = document.createElement("a");
-              const url = URL.createObjectURL(blob);
-              link.setAttribute("href", url);
-              link.setAttribute("download", `Report_Card_Devon_Lane.csv`);
-              link.style.visibility = 'hidden';
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-              setTimeout(() => {
-                showToast("Report Card downloaded successfully.", "success", "Download Complete");
-              }, 1200);
-            }}
+            onClick={() => handleDownloadReport(currentStudent, metrics)}
           >
             <FileText size={16} /> Download Report
           </button>
@@ -134,17 +472,17 @@ const StudentDashboard = () => {
           className="card" 
           whileHover={{ y: -4 }}
           style={{ gridColumn: 'span 1', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '32px 24px', cursor: 'pointer' }}
-          onClick={() => showToast("Devon Lane - Student ID: #STU-2026-0492. Enrolled in Grade 10-A.", "info", "Student Profile Info")}
+          onClick={() => showToast(`${currentStudent.name} - Student ID: #${currentStudent.student_id}. Enrolled in Grade ${currentStudent.class_id || 10}-${currentStudent.section || 'A'}.`, "info", "Student Profile Info")}
         >
-          <img src={studentAvatar} alt="Devon Lane" style={{ width: '80px', height: '80px', borderRadius: '50%', marginBottom: '16px', objectFit: 'cover' }} />
-          <h3 style={{ margin: 0, fontSize: '1.2rem' }}>Devon Lane</h3>
-          <p style={{ margin: '4px 0 16px 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Class 10 - Section A</p>
+          <img src={currentStudent.avatar || studentAvatar} alt={currentStudent.name} style={{ width: '80px', height: '80px', borderRadius: '50%', marginBottom: '16px', objectFit: 'cover' }} />
+          <h3 style={{ margin: 0, fontSize: '1.2rem' }}>{currentStudent.name}</h3>
+          <p style={{ margin: '4px 0 16px 0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>Class {currentStudent.class_id || 10} - Section {currentStudent.section || 'A'}</p>
           <button 
             className="btn" 
             onClick={(e) => {
               e.stopPropagation();
               showToast("Opening Student Profile Editor...", "info", "Profile Access");
-              setTimeout(() => navigate('/dashboard/student-details/1'), 600);
+              setTimeout(() => navigate(`/dashboard/student-details/${currentStudent.student_id}`), 600);
             }}
             style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
           >
@@ -156,24 +494,24 @@ const StudentDashboard = () => {
           {[
             { 
               title: 'Enrolled Courses', 
-              value: '10', 
+              value: metrics.coursesCount, 
               icon: <BookOpen size={24} />, 
               color: 'var(--primary)',
-              onClick: () => showToast("Devon is enrolled in English, Physics, Chemistry, Accounting, Mathematics, History, Biology, Computer Science, Literature, and Physical Education.", "info", "Enrolled Courses")
+              onClick: () => showToast(`${currentStudent.name} is enrolled in Math, Physics, Chemistry, English, History, and ${metrics.coursesCount - 5} other course modules.`, "info", "Enrolled Courses")
             },
             { 
               title: 'Pending Assignments', 
-              value: '15', 
+              value: metrics.pendingAssignments, 
               icon: <FileText size={24} />, 
               color: '#f59e0b',
-              onClick: () => showToast("15 pending assignments found. 2 due this week: 'Physics Electromagnetism Lab' & 'English Modern Literature Essay'.", "warning", "Pending Assignments")
+              onClick: () => showToast(`${metrics.pendingAssignments} pending assignments found. Please ensure timelines are maintained.`, "warning", "Pending Assignments")
             },
             { 
               title: 'Overall Attendance', 
-              value: '90%', 
+              value: `${metrics.attendancePct}%`, 
               icon: <CircleCheck size={24} />, 
               color: 'var(--success)',
-              onClick: () => showToast("Superb attendance record! 90% attendance maintained across all subjects in the current semester.", "success", "Overall Attendance")
+              onClick: () => showToast(`Superb presence! ${metrics.attendancePct}% attendance recorded across current term modules.`, "success", "Overall Attendance")
             },
           ].map((stat, i) => (
             <motion.div 
@@ -210,13 +548,13 @@ const StudentDashboard = () => {
           <div style={{ width: '100%', height: '250px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={attendanceData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value" stroke="none">
-                  {attendanceData.map((entry, index) => (
+                <Pie data={metrics.attData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value" stroke="none">
+                  {metrics.attData.map((entry, index) => (
                     <Cell 
                       key={`cell-${index}`} 
                       fill={entry.color} 
                       style={{ cursor: 'pointer' }}
-                      onClick={() => showToast(`Devon has ${entry.value} logged units marked as ${entry.name}.`, "info", entry.name)}
+                      onClick={() => showToast(`${currentStudent.name} has ${entry.value} logged units marked as ${entry.name}.`, "info", entry.name)}
                     />
                   ))}
                 </Pie>
@@ -225,10 +563,10 @@ const StudentDashboard = () => {
             </ResponsiveContainer>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap', marginTop: '12px' }}>
-            {attendanceData.map((entry, i) => (
+            {metrics.attData.map((entry, i) => (
                <div 
                  key={i} 
-                 onClick={() => showToast(`Devon has ${entry.value} logged units marked as ${entry.name}.`, "info", entry.name)}
+                 onClick={() => showToast(`${currentStudent.name} has ${entry.value} logged units marked as ${entry.name}.`, "info", entry.name)}
                  style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}
                >
                  <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: entry.color }}></span>
@@ -246,10 +584,9 @@ const StudentDashboard = () => {
               onChange={(e) => {
                 const val = e.target.value;
                 setExamTerm(val);
-                const avg = val === 'Mid Term' ? '88.2%' : '91.0%';
-                showToast(`Switched to ${val} results. Cumulative term GPA average is ${avg}.`, "info", "Exam Performance");
+                showToast(`Switched to ${val} results.`, "info", "Exam Performance");
               }}
-              style={{ border: 'none', backgroundColor: 'var(--bg-body)', padding: '6px 12px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}
+              style={{ border: 'none', backgroundColor: 'var(--bg-body)', padding: '6px 12px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer', color: 'var(--text-main)' }}
             >
               <option value="Mid Term">Mid Term</option>
               <option value="Final Term">Final Term</option>
@@ -257,7 +594,7 @@ const StudentDashboard = () => {
           </div>
           <div style={{ width: '100%', height: '250px' }}>
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={examResultsData[examTerm]} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <BarChart data={metrics.examResults[examTerm]} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                 <XAxis dataKey="subject" axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)', fontSize: 12, fontWeight: 600 }} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)', fontSize: 12, fontWeight: 600 }} />
@@ -267,7 +604,7 @@ const StudentDashboard = () => {
                   fill="var(--primary)" 
                   radius={[4, 4, 0, 0]} 
                   barSize={32} 
-                  onClick={(data) => showToast(`Devon scored ${data.score}% in ${data.subject} during ${examTerm}.`, "success", data.subject)}
+                  onClick={(data) => showToast(`${currentStudent.name} scored ${data.score}% in ${data.subject} during ${examTerm}.`, "success", data.subject)}
                   style={{ cursor: 'pointer' }}
                 />
               </BarChart>
@@ -452,6 +789,99 @@ const StudentDashboard = () => {
         </div>
 
       </div>
+
+      {/* AI Tutor Analysis Modal */}
+      <AnimatePresence>
+        {isAIModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(15, 23, 42, 0.4)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              zIndex: 99999,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '24px'
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              style={{
+                width: '100%',
+                maxWidth: '650px',
+                backgroundColor: 'var(--bg-card)',
+                border: '1px solid var(--border-color)',
+                borderRadius: '28px',
+                padding: '32px',
+                boxShadow: '0 30px 60px rgba(0, 0, 0, 0.2)',
+                position: 'relative'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ padding: '8px', backgroundColor: 'var(--primary-light)', borderRadius: '12px', color: 'var(--primary)' }}>
+                    <Sparkles size={24} />
+                  </div>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 800 }}>EduPro AI Analysis</h3>
+                    <p style={{ margin: '2px 0 0 0', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Tailored feedback for {currentStudent.name}</p>
+                  </div>
+                </div>
+                
+                <button
+                  onClick={() => setIsAIModalOpen(false)}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div style={{ minHeight: '260px', maxHeight: '420px', overflowY: 'auto', paddingRight: '4px', marginBottom: '24px' }}>
+                {isGeneratingAI ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '260px', gap: '16px' }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', border: '3px solid var(--border-color)', borderTopColor: 'var(--primary)', animation: 'spin 1s linear infinite' }} />
+                    <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: 600 }}>Analyzing student profiles & synthesizing records...</p>
+                  </div>
+                ) : (
+                  <div style={{ fontSize: '0.92rem', color: 'var(--text-main)', lineHeight: 1.6 }}>
+                    {renderAIReport(aiReport)}
+                  </div>
+                )}
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+                <button 
+                  className="btn" 
+                  onClick={() => setIsAIModalOpen(false)}
+                  style={{ border: '1px solid var(--border-color)', color: 'var(--text-main)', backgroundColor: 'transparent' }}
+                >
+                  Close
+                </button>
+                {!isGeneratingAI && (
+                  <button 
+                    className="btn btn-primary" 
+                    onClick={() => downloadAIReport(currentStudent.name, aiReport)}
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                  >
+                    <Download size={16} /> Download AI Analysis
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Toast Notification */}
       <AnimatePresence>

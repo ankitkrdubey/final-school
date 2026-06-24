@@ -68,6 +68,7 @@ const Students = () => {
       });
       setStudents(parsed);
       localStorage.setItem('students', JSON.stringify(parsed));
+      localStorage.setItem('students_version', '2026-v9');
     } catch (err) { 
       console.error(err);
     } finally { 

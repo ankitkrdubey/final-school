@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Calendar, Clock, BookOpen, MapPin, Search, Filter, 
   Download, Plus, ChevronLeft, ChevronRight, Layout,
@@ -8,16 +8,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const ExamSchedule = () => {
   // Core Schedules State
-  const [schedules, setSchedules] = useState([
-    { id: 1, subject: 'Mathematics', date: '2026-05-15', time: '09:00 AM - 12:00 PM', venue: 'Hall A', class: '10A', invigilator: 'Dr. Sarah Wilson', examGroup: 'Mid-Term 2026' },
-    { id: 2, subject: 'Physics', date: '2026-05-17', time: '09:00 AM - 12:00 PM', venue: 'Hall B', class: '10A', invigilator: 'Prof. James Miller', examGroup: 'Mid-Term 2026' },
-    { id: 3, subject: 'Chemistry', date: '2026-05-19', time: '09:00 AM - 12:00 PM', venue: 'Hall A', class: '10A', invigilator: 'Emma Thompson', examGroup: 'Mid-Term 2026' },
-    { id: 4, subject: 'English', date: '2026-05-21', time: '01:00 PM - 04:00 PM', venue: 'Hall C', class: '10A', invigilator: 'Michael Chen', examGroup: 'Mid-Term 2026' },
-    { id: 5, subject: 'Biology', date: '2026-06-10', time: '09:00 AM - 12:00 PM', venue: 'Hall B', class: '11B', invigilator: 'Dr. Sarah Wilson', examGroup: 'Final-Term 2026' },
-    { id: 6, subject: 'History', date: '2026-06-12', time: '01:00 PM - 04:00 PM', venue: 'Hall C', class: '11B', invigilator: 'Emma Thompson', examGroup: 'Final-Term 2026' },
-    { id: 7, subject: 'Algebra Quiz', date: '2026-05-08', time: '10:00 AM - 11:30 AM', venue: 'Room 204', class: '10A', invigilator: 'Dr. Sarah Wilson', examGroup: 'Weekly Quiz' },
-    { id: 8, subject: 'Mechanics Quiz', date: '2026-05-09', time: '10:00 AM - 11:30 AM', venue: 'Room 205', class: '12A', invigilator: 'Prof. James Miller', examGroup: 'Weekly Quiz' }
-  ]);
+  const [schedules, setSchedules] = useState(() => {
+    const cached = localStorage.getItem('edupro_exam_schedules');
+    return cached ? JSON.parse(cached) : [
+      { id: 1, subject: 'Mathematics', date: '2026-05-15', time: '09:00 AM - 12:00 PM', venue: 'Hall A', class: '10A', invigilator: 'Dr. Sarah Wilson', examGroup: 'Mid-Term 2026' },
+      { id: 2, subject: 'Physics', date: '2026-05-17', time: '09:00 AM - 12:00 PM', venue: 'Hall B', class: '10A', invigilator: 'Prof. James Miller', examGroup: 'Mid-Term 2026' },
+      { id: 3, subject: 'Chemistry', date: '2026-05-19', time: '09:00 AM - 12:00 PM', venue: 'Hall A', class: '10A', invigilator: 'Emma Thompson', examGroup: 'Mid-Term 2026' },
+      { id: 4, subject: 'English', date: '2026-05-21', time: '01:00 PM - 04:00 PM', venue: 'Hall C', class: '10A', invigilator: 'Michael Chen', examGroup: 'Mid-Term 2026' },
+      { id: 5, subject: 'Biology', date: '2026-06-10', time: '09:00 AM - 12:00 PM', venue: 'Hall B', class: '11B', invigilator: 'Dr. Sarah Wilson', examGroup: 'Final-Term 2026' },
+      { id: 6, subject: 'History', date: '2026-06-12', time: '01:00 PM - 04:00 PM', venue: 'Hall C', class: '11B', invigilator: 'Emma Thompson', examGroup: 'Final-Term 2026' },
+      { id: 7, subject: 'Algebra Quiz', date: '2026-05-08', time: '10:00 AM - 11:30 AM', venue: 'Room 204', class: '10A', invigilator: 'Dr. Sarah Wilson', examGroup: 'Weekly Quiz' },
+      { id: 8, subject: 'Mechanics Quiz', date: '2026-05-09', time: '10:00 AM - 11:30 AM', venue: 'Room 205', class: '12A', invigilator: 'Prof. James Miller', examGroup: 'Weekly Quiz' }
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('edupro_exam_schedules', JSON.stringify(schedules));
+  }, [schedules]);
 
   // Filtering States
   const [selectedExam, setSelectedExam] = useState('Mid-Term 2026');

@@ -10,23 +10,37 @@ import { useToast, ToastRenderer } from '../hooks/useToast';
 const QuizCenter = () => {
   // Core Quiz State
   const { toast, showToast, hideToast } = useToast();
-  const [quizzes, setQuizzes] = useState([
-    { id: 'QZ-001', title: 'Advanced Algebra Weekly', subject: 'Mathematics', questions: 2, time: '20 mins', timeLimitSec: 1200, difficulty: 'Medium', status: 'Available', color: 'var(--primary)' },
-    { id: 'QZ-002', title: 'Quantum Physics Intro', subject: 'Physics', questions: 2, time: '15 mins', timeLimitSec: 900, difficulty: 'Hard', status: 'Ongoing', color: '#EF4444' },
-    { id: 'QZ-003', title: 'World War II Summary', subject: 'History', questions: 2, time: '30 mins', timeLimitSec: 1800, difficulty: 'Easy', status: 'Completed', color: '#10B981' },
-    { id: 'QZ-004', title: 'Organic Chemistry Basics', subject: 'Chemistry', questions: 2, time: '18 mins', timeLimitSec: 1080, difficulty: 'Hard', status: 'Available', color: '#F59E0B' },
-    { id: 'QZ-005', title: 'Differential Calculus', subject: 'Mathematics', questions: 2, time: '25 mins', timeLimitSec: 1500, difficulty: 'Hard', status: 'Available', color: '#EF4444' },
-    { id: 'QZ-006', title: 'Global Geography Trivia', subject: 'Geography', questions: 2, time: '15 mins', timeLimitSec: 900, difficulty: 'Easy', status: 'Available', color: '#10B981' },
-    { id: 'QZ-007', title: 'Cyber Security Ethics', subject: 'Technology', questions: 2, time: '20 mins', timeLimitSec: 1200, difficulty: 'Medium', status: 'Available', color: 'var(--primary)' },
-    { id: 'QZ-008', title: 'Business Law Essentials', subject: 'Business', questions: 2, time: '30 mins', timeLimitSec: 1800, difficulty: 'Hard', status: 'Ongoing', color: '#F59E0B' },
-  ]);
+  const [quizzes, setQuizzes] = useState(() => {
+    const saved = localStorage.getItem('quizzes');
+    return saved ? JSON.parse(saved) : [
+      { id: 'QZ-001', title: 'Advanced Algebra Weekly', subject: 'Mathematics', questions: 2, time: '20 mins', timeLimitSec: 1200, difficulty: 'Medium', status: 'Available', color: 'var(--primary)' },
+      { id: 'QZ-002', title: 'Quantum Physics Intro', subject: 'Physics', questions: 2, time: '15 mins', timeLimitSec: 900, difficulty: 'Hard', status: 'Ongoing', color: '#EF4444' },
+      { id: 'QZ-003', title: 'World War II Summary', subject: 'History', questions: 2, time: '30 mins', timeLimitSec: 1800, difficulty: 'Easy', status: 'Completed', color: '#10B981' },
+      { id: 'QZ-004', title: 'Organic Chemistry Basics', subject: 'Chemistry', questions: 2, time: '18 mins', timeLimitSec: 1080, difficulty: 'Hard', status: 'Available', color: '#F59E0B' },
+      { id: 'QZ-005', title: 'Differential Calculus', subject: 'Mathematics', questions: 2, time: '25 mins', timeLimitSec: 1500, difficulty: 'Hard', status: 'Available', color: '#EF4444' },
+      { id: 'QZ-006', title: 'Global Geography Trivia', subject: 'Geography', questions: 2, time: '15 mins', timeLimitSec: 900, difficulty: 'Easy', status: 'Available', color: '#10B981' },
+      { id: 'QZ-007', title: 'Cyber Security Ethics', subject: 'Technology', questions: 2, time: '20 mins', timeLimitSec: 1200, difficulty: 'Medium', status: 'Available', color: 'var(--primary)' },
+      { id: 'QZ-008', title: 'Business Law Essentials', subject: 'Business', questions: 2, time: '30 mins', timeLimitSec: 1800, difficulty: 'Hard', status: 'Ongoing', color: '#F59E0B' },
+    ];
+  });
 
   // Sidebar Recent Results State
-  const [recentResults, setRecentResults] = useState([
-    { id: 'RES-001', user: 'Alex Johnson', quizTitle: 'Advanced Algebra Weekly', score: '15/15', accuracy: 100, color: '#10B981', date: 'Today, 10:45 AM' },
-    { id: 'RES-002', user: 'Sarah Williams', quizTitle: 'World War II Summary', score: '14/15', accuracy: 93, color: '#10B981', date: 'Today, 09:20 AM' },
-    { id: 'RES-003', user: 'Michael Brown', quizTitle: 'Quantum Physics Intro', score: '08/15', accuracy: 53, color: '#EF4444', date: 'Yesterday, 04:15 PM' },
-  ]);
+  const [recentResults, setRecentResults] = useState(() => {
+    const saved = localStorage.getItem('quiz_recentResults');
+    return saved ? JSON.parse(saved) : [
+      { id: 'RES-001', user: 'Alex Johnson', quizTitle: 'Advanced Algebra Weekly', score: '15/15', accuracy: 100, color: '#10B981', date: 'Today, 10:45 AM' },
+      { id: 'RES-002', user: 'Sarah Williams', quizTitle: 'World War II Summary', score: '14/15', accuracy: 93, color: '#10B981', date: 'Today, 09:20 AM' },
+      { id: 'RES-003', user: 'Michael Brown', quizTitle: 'Quantum Physics Intro', score: '08/15', accuracy: 53, color: '#EF4444', date: 'Yesterday, 04:15 PM' },
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('quizzes', JSON.stringify(quizzes));
+  }, [quizzes]);
+
+  useEffect(() => {
+    localStorage.setItem('quiz_recentResults', JSON.stringify(recentResults));
+  }, [recentResults]);
 
   // Leaderboard State
   const [leaderboard, setLeaderboard] = useState([

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Printer, Download, Clock, MapPin, Users, BookOpen, FileText, CheckCircle2 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { getTeachers } from '../services/service';
 
 const TeacherTimetable = () => {
   const navigate = useNavigate();
@@ -21,14 +22,80 @@ const TeacherTimetable = () => {
   };
 
   useEffect(() => {
-    const stored = localStorage.getItem('teachers');
-    if (stored) {
-      const list = JSON.parse(stored);
+    const loadTimetableData = async () => {
+      let data = [];
+      try {
+        data = await getTeachers();
+      } catch (e) {
+        console.warn("Backend API offline, utilizing fallback cache/mock data");
+      }
+      
+      let list = [];
+      if (data && data.length > 0) {
+        list = data.map(t => ({
+          ...t,
+          id: t.teacher_id || `AD${t.id}`,
+          teacherId: t.teacher_id || `AD${t.id}`,
+          name: t.name,
+          fullName: t.name || t.fullName,
+          subject: t.subject || 'Faculty',
+          class: t.class || 'N/A',
+          email: t.email,
+          phone: t.phone || 'N/A',
+          joinDate: t.joinDate || t.admission_date || t.created_at || new Date().toISOString(),
+          status: t.status || 'Active',
+          avatar: t.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${t.name}`,
+          color: t.color || '#4880FF',
+          dob: t.dob || '',
+          gender: t.gender || '',
+          currentAddress: t.address || t.currentAddress || '',
+          permanentAddress: t.permanentAddress || t.address || '',
+          bloodGroup: t.blood_group || t.bloodGroup || '',
+          qualification: t.qualification || '',
+          experience: t.experience || '',
+          details: t.details || '',
+          documents: (() => {
+            if (!t.documents) return [];
+            if (typeof t.documents === 'string') {
+              try {
+                return JSON.parse(t.documents);
+              } catch (e) {
+                return [];
+              }
+            }
+            return Array.isArray(t.documents) ? t.documents : [];
+          })()
+        }));
+        localStorage.setItem('teachers', JSON.stringify(list));
+      } else {
+        const stored = localStorage.getItem('teachers');
+        if (stored) {
+          list = JSON.parse(stored);
+        }
+      }
+      
       const record = list.find(t => t.id === id);
       if (record) {
+        if (typeof record.documents === 'string') {
+          try {
+            record.documents = JSON.parse(record.documents);
+          } catch (e) {
+            record.documents = [];
+          }
+        } else if (!record.documents) {
+          record.documents = [];
+        }
         setTeacherName(record.fullName || record.name);
         setTeacherRole(record.designation || `${record.subject || 'Faculty'} Instructor`);
       }
+    };
+    
+    loadTimetableData();
+  }, [id]);
+
+  useEffect(() => {
+    if (id) {
+      localStorage.setItem('lastViewedTeacherId', id);
     }
   }, [id]);
 
