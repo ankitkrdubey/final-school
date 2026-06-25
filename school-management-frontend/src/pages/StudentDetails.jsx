@@ -1,14 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  User, GraduationCap, MapPin, Phone, Mail, Calendar, 
-  Award, BookOpen, Clock, CreditCard, Shield, 
-  FileText, ArrowLeft, Download, Printer, Edit,
-  ShieldAlert, MoreVertical, Building2, Heart, Landmark,
-  ChevronRight, Library, Home, Activity, Wallet, 
-  TrendingUp, CircleCheck, CalendarDays, Loader2, Lock,
-  ChevronDown, Upload, Eye, Trash2, Share2, Copy, Flag
-} from 'lucide-react';
+import { User, GraduationCap, MapPin, Phone, Mail, Calendar, Award, BookOpen, Clock, CreditCard, Shield, FileText, ArrowLeft, Download, Printer, Edit, ShieldAlert, MoreVertical, Building2, Heart, Landmark, ChevronRight, Library, Home, Activity, Wallet, TrendingUp, CircleCheck, CalendarDays, Loader2, Lock, ChevronDown, Upload, Eye, Trash2, Share2, Copy, Flag } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getStudents, getParents } from '../services/service';
 import { LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip as RechartsTooltip, CartesianGrid } from 'recharts';
@@ -867,13 +859,13 @@ Principal Signature: ____________________________
               <img src="${student.avatar}" />
             </div>
             <div class="content" style="margin-top: 70px;">
-              <h3 style="font-size: 20px; margin: 0 0 4px 0;">${student.name}</h3>
+              <h3 style="font-size: 20px; margin: 0 0 4px 0;">₹{student.name}</h3>
               <span style="background: ${student.color}20; color: ${student.color}; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 800;">STUDENT</span>
               <div class="info">
-                <div class="info-row"><span class="label">Student ID:</span><span class="value">${student.admissionNo}</span></div>
+                <div class="info-row"><span class="label">Student ID:</span><span class="value">₹{student.admissionNo}</span></div>
                 <div class="info-row"><span class="label">Class:</span><span class="value">Class ${student.class}-${student.section}</span></div>
-                <div class="info-row"><span class="label">Blood Group:</span><span class="value" style="color: #ef4444;">${student.bloodGroup}</span></div>
-                <div class="info-row"><span class="label">Phone:</span><span class="value">${student.phone}</span></div>
+                <div class="info-row"><span class="label">Blood Group:</span><span class="value" style="color: #ef4444;">₹{student.bloodGroup}</span></div>
+                <div class="info-row"><span class="label">Phone:</span><span class="value">₹{student.phone}</span></div>
               </div>
             </div>
           </div>
@@ -893,7 +885,7 @@ Principal Signature: ____________________________
     const printWindow = window.open('', '_blank');
     if (!printWindow) return;
     
-    const formattedAmount = typeof item.amount === 'number' ? `$${item.amount.toFixed(2)}` : item.amount;
+    const formattedAmount = typeof item.amount === 'number' ? `₹${item.amount.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : item.amount;
     const isPaid = item.status === 'Paid';
     const statusBg = isPaid ? 'rgba(40, 167, 69, 0.08)' : 'rgba(220, 53, 69, 0.08)';
     const statusColor = isPaid ? '#2e7d32' : '#c62828';
@@ -1246,8 +1238,8 @@ Principal Signature: ____________________________
                 </div>
               </div>
               <div class="invoice-meta">
-                <span class="receipt-badge">${item.status}</span>
-                <h2 class="invoice-title">${item.id}</h2>
+                <span class="receipt-badge">₹{item.status}</span>
+                <h2 class="invoice-title">₹{item.id}</h2>
                 <div class="meta-details">
                   <div><strong>Date Issued:</strong> ${item.date !== '-' ? item.date : new Date().toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
                   <div><strong>Transaction Reference:</strong> TXN-${barcodeText}</div>
@@ -1261,11 +1253,11 @@ Principal Signature: ____________________________
                 <div class="info-card">
                   <div class="info-row">
                     <span class="info-label">Full Name:</span>
-                    <span class="info-value">${student.name}</span>
+                    <span class="info-value">₹{student.name}</span>
                   </div>
                   <div class="info-row">
                     <span class="info-label">Admission No:</span>
-                    <span class="info-value">${student.admissionNo}</span>
+                    <span class="info-value">₹{student.admissionNo}</span>
                   </div>
                   <div class="info-row">
                     <span class="info-label">Class & Section:</span>
@@ -1273,7 +1265,7 @@ Principal Signature: ____________________________
                   </div>
                   <div class="info-row">
                     <span class="info-label">Academic Year:</span>
-                    <span class="info-value">${student.academicYear}</span>
+                    <span class="info-value">₹{student.academicYear}</span>
                   </div>
                 </div>
               </div>
@@ -1282,19 +1274,19 @@ Principal Signature: ____________________________
                 <div class="info-card">
                   <div class="info-row">
                     <span class="info-label">Payment Date:</span>
-                    <span class="info-value">${dateCleared}</span>
+                    <span class="info-value">₹{dateCleared}</span>
                   </div>
                   <div class="info-row">
                     <span class="info-label">Payment Method:</span>
-                    <span class="info-value">${paymentMethodText}</span>
+                    <span class="info-value">₹{paymentMethodText}</span>
                   </div>
                   <div class="info-row">
                     <span class="info-label">Gateway Status:</span>
-                    <span class="info-value" style="color: ${statusColor}; font-weight: 800;">${isPaid ? 'SUCCESS / CLEARED' : 'UNPAID / OUTSTANDING'}</span>
+                    <span class="info-value" style="color: ${statusColor}; font-weight: 800;">₹{isPaid ? 'SUCCESS / CLEARED' : 'UNPAID / OUTSTANDING'}</span>
                   </div>
                   <div class="info-row">
                     <span class="info-label">Account Balance:</span>
-                    <span class="info-value" style="color: ${isPaid ? '#2e7d32' : '#c62828'}">${isPaid ? '$0.00' : formattedAmount}</span>
+                    <span class="info-value" style="color: ${isPaid ? '#2e7d32' : '#c62828'}">₹{isPaid ? '₹0.00' : formattedAmount}</span>
                   </div>
                 </div>
               </div>
@@ -1318,8 +1310,8 @@ Principal Signature: ____________________________
                       <small style="color: #64748b; font-weight: 400; font-size: 11px;">Official institutional fee item billed for Class ${student.class}</small>
                     </td>
                     <td style="text-align: center; font-weight: 500;">1</td>
-                    <td style="text-align: right; font-weight: 500;">${formattedAmount}</td>
-                    <td style="text-align: right; font-weight: 700;">${formattedAmount}</td>
+                    <td style="text-align: right; font-weight: 500;">₹{formattedAmount}</td>
+                    <td style="text-align: right; font-weight: 700;">₹{formattedAmount}</td>
                   </tr>
                 </tbody>
               </table>
@@ -1328,19 +1320,19 @@ Principal Signature: ____________________________
             <div class="total-section">
               <div class="total-row">
                 <span class="total-label">Subtotal:</span>
-                <span class="total-val">${formattedAmount}</span>
+                <span class="total-val">₹{formattedAmount}</span>
               </div>
               <div class="total-row">
                 <span class="total-label">Tax / Processing Fee:</span>
-                <span class="total-val">$0.00</span>
+                <span class="total-val">₹0.00</span>
               </div>
               <div class="total-row">
                 <span class="total-label">Discount:</span>
-                <span class="total-val">$0.00</span>
+                <span class="total-val">₹0.00</span>
               </div>
               <div class="total-row grand-total">
-                <span class="total-label">${isPaid ? 'Amount Paid:' : 'Amount Due:'}</span>
-                <span class="total-val">${formattedAmount}</span>
+                <span class="total-label">₹{isPaid ? 'Amount Paid:' : 'Amount Due:'}</span>
+                <span class="total-val">₹{formattedAmount}</span>
               </div>
             </div>
             
@@ -1389,7 +1381,7 @@ Principal Signature: ____________________________
                     <rect x="176" y="5" width="2" height="35"/>
                     <rect x="180" y="5" width="3" height="35"/>
                   </g>
-                  <text x="100" y="53" font-family="'Courier New', Courier, monospace" font-size="8" text-anchor="middle" letter-spacing="2">${barcodeText}</text>
+                  <text x="100" y="53" font-family="'Courier New', Courier, monospace" font-size="8" text-anchor="middle" letter-spacing="2">₹{barcodeText}</text>
                 </svg>
               </div>
               <div class="auth-sign-area">
@@ -1430,15 +1422,15 @@ Principal Signature: ____________________________
 
   // Reactive Fee Ledger States
   const [feeLedger, setFeeLedger] = useState([
-    { id: '#INV-9821', type: 'Tuition Fee (May)', amount: 450.00, date: '05 May 2026', status: 'Paid', method: 'Online' },
-    { id: '#INV-9742', type: 'Transport Fee (May)', amount: 80.00, date: '05 May 2026', status: 'Paid', method: 'Online' },
-    { id: '#INV-9610', type: 'Tuition Fee (April)', amount: 450.00, date: '02 Apr 2026', status: 'Paid', method: 'Cash' },
-    { id: '#INV-9501', type: 'Examination Fee', amount: 120.00, date: '15 Mar 2026', status: 'Paid', method: 'Bank Transfer' },
-    { id: '#INV-9411', type: 'Registration Fee', amount: 150.00, date: '01 Jan 2026', status: 'Paid', method: 'Cash' },
-    { id: '#INV-PEND', type: 'Tuition Fee (June)', amount: 450.00, date: '-', status: 'Pending', method: '-' },
+    { id: '#INV-9821', type: 'Tuition Fee (May)', amount: 36000.00, date: '05 May 2026', status: 'Paid', method: 'Online' },
+    { id: '#INV-9742', type: 'Transport Fee (May)', amount: 6400.00, date: '05 May 2026', status: 'Paid', method: 'Online' },
+    { id: '#INV-9610', type: 'Tuition Fee (April)', amount: 36000.00, date: '02 Apr 2026', status: 'Paid', method: 'Cash' },
+    { id: '#INV-9501', type: 'Examination Fee', amount: 9600.00, date: '15 Mar 2026', status: 'Paid', method: 'Bank Transfer' },
+    { id: '#INV-9411', type: 'Registration Fee', amount: 12000.00, date: '01 Jan 2026', status: 'Paid', method: 'Cash' },
+    { id: '#INV-PEND', type: 'Tuition Fee (June)', amount: 36000.00, date: '-', status: 'Pending', method: '-' },
   ]);
-  const [totalPaid, setTotalPaid] = useState(2850.00);
-  const [totalDue, setTotalDue] = useState(450.00);
+  const [totalPaid, setTotalPaid] = useState(228000.00);
+  const [totalDue, setTotalDue] = useState(36000.00);
 
   const [selectedExam, setSelectedExam] = useState('Annual Exam 2025-26');
 
@@ -2033,19 +2025,19 @@ Principal Signature: ____________________________
                         <div>
                            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Current Balance</div>
                            <div style={{ fontSize: '1.8rem', fontWeight: 900, color: totalDue === 0 ? 'var(--success)' : 'var(--danger)' }}>
-                             ${totalDue.toFixed(2)}
+                             ₹{totalDue.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                            </div>
                         </div>
                         <div style={{ display: 'flex', gap: '12px' }}>
                            <div style={{ flex: 1 }}>
                               <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)' }}>PAID</div>
                               <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--success)' }}>
-                                ${totalPaid.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}
+                                ₹{totalPaid.toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 0})}
                               </div>
                            </div>
                            <div style={{ flex: 1 }}>
                               <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)' }}>DISCOUNT</div>
-                              <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--primary)' }}>$150</div>
+                              <div style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--primary)' }}>₹12,000</div>
                            </div>
                         </div>
                      </div>
@@ -2057,7 +2049,7 @@ Principal Signature: ____________________________
                               <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>{fee.id}</span>
                             </div>
                             <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                               <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>${fee.amount.toFixed(2)}</span>
+                               <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>₹{fee.amount.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                                <span style={{ fontSize: '0.65rem', fontWeight: 900, color: fee.status === 'Paid' ? 'var(--success)' : 'var(--danger)', padding: '4px 8px', backgroundColor: fee.status === 'Paid' ? 'var(--success-light)' : 'var(--danger-light)', borderRadius: '6px' }}>{fee.status}</span>
                             </div>
                           </div>
@@ -2425,9 +2417,9 @@ Principal Signature: ____________________________
                   {/* Fee Summary Cards */}
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', marginBottom: '32px' }}>
                     {[
-                      { label: 'Total Paid', value: `$${totalPaid.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, color: 'var(--success)' },
-                      { label: 'Total Due', value: `$${totalDue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, color: 'var(--danger)' },
-                      { label: 'Total Discount', value: '$150.00', color: 'var(--primary)' }
+                      { label: 'Total Paid', value: `₹${totalPaid.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, color: 'var(--success)' },
+                      { label: 'Total Due', value: `₹${totalDue.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`, color: 'var(--danger)' },
+                      { label: 'Total Discount', value: '₹12,000.00', color: 'var(--primary)' }
                     ].map((stat, i) => (
                       <div key={i} className="card" style={{ padding: '24px', backgroundColor: 'var(--bg-body)', border: 'none', textAlign: 'center' }}>
                         <div style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>{stat.label}</div>
@@ -2459,7 +2451,7 @@ Principal Signature: ____________________________
                             <tr key={i} style={{ borderBottom: '1px solid var(--border-color)', transition: '0.2s' }}>
                               <td style={{ padding: '16px 20px', fontWeight: 700, color: 'var(--primary)' }}>{item.id}</td>
                               <td style={{ padding: '16px 20px', fontWeight: 700 }}>{item.type}</td>
-                              <td style={{ padding: '16px 20px', fontWeight: 800 }}>${item.amount.toFixed(2)}</td>
+                              <td style={{ padding: '16px 20px', fontWeight: 800 }}>₹{item.amount.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                               <td style={{ padding: '16px 20px', fontWeight: 600, color: 'var(--text-muted)' }}>{item.date}</td>
                               <td style={{ padding: '16px 20px' }}>
                                 <span style={{ 
@@ -2478,7 +2470,7 @@ Principal Signature: ____________________________
                                    <Printer size={16} />
                                  </button>
                                  <button 
-                                   onClick={() => handleDownloadReceipt(item.id, item.type, `$${item.amount.toFixed(2)}`)}
+                                   onClick={() => handleDownloadReceipt(item.id, item.type, `₹${item.amount.toFixed(2)}`)}
                                    disabled={downloadingDoc !== null}
                                    style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}
                                    title="Download Receipt"
@@ -2725,7 +2717,7 @@ Principal Signature: ____________________________
                     {[
                       { label: 'Books Borrowed', value: '12', color: 'var(--primary)', icon: <BookOpen size={20} /> },
                       { label: 'Currently With Student', value: '2', color: 'var(--warning)', icon: <Clock size={20} /> },
-                      { label: 'Total Fines Paid', value: '$25.00', color: 'var(--success)', icon: <CreditCard size={20} /> }
+                      { label: 'Total Fines Paid', value: '₹2,000.00', color: 'var(--success)', icon: <CreditCard size={20} /> }
                     ].map((stat, i) => (
                       <div key={i} className="card" style={{ padding: '24px', backgroundColor: 'var(--bg-body)', border: 'none', textAlign: 'center' }}>
                         <div style={{ width: '40px', height: '40px', borderRadius: '10px', backgroundColor: `${stat.color}15`, color: stat.color, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>{stat.icon}</div>
@@ -3367,7 +3359,7 @@ Principal Signature: ____________________________
                         <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>Tuition Fee (June)</div>
                         <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>Grade 10 - Academic 2025-26</div>
                       </div>
-                      <div style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--danger)' }}>$450.00</div>
+                      <div style={{ fontSize: '1.4rem', fontWeight: 900, color: 'var(--danger)' }}>₹36,000.00</div>
                     </div>
                   </div>
 
@@ -3568,7 +3560,7 @@ Principal Signature: ____________________________
                   <div style={{ width: '100%', padding: '20px', backgroundColor: 'var(--bg-body)', borderRadius: '20px', border: '1px solid var(--border-color)', marginBottom: '28px', display: 'flex', flexDirection: 'column', gap: '10px', textAlign: 'left' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
                       <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Amount Paid:</span>
-                      <strong style={{ fontWeight: 800 }}>$450.00</strong>
+                      <strong style={{ fontWeight: 800 }}>₹36,000.00</strong>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
                       <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Method:</span>
@@ -3583,7 +3575,7 @@ Principal Signature: ____________________________
                   <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
                     <button 
                       className="btn" 
-                      onClick={() => handleDownloadReceipt('#INV-PEND', 'Tuition Fee (June)', '$450.00')}
+                      onClick={() => handleDownloadReceipt('#INV-PEND', 'Tuition Fee (June)', '₹36,000.00')}
                       style={{ flex: 1, backgroundColor: 'var(--bg-body)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                     >
                       <Download size={16} /> Download Receipt

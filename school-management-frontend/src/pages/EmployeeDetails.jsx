@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useToast, ToastRenderer } from '../hooks/useToast';
-import { User, Mail, Phone, MapPin, Calendar, Briefcase, Award, ShieldCheck, Clock, FileText, Edit, MoreVertical, ChevronLeft, Download, Building, CheckCircle2, Plus, ArrowUpRight, DollarSign, X, Save, Flag } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Calendar, Briefcase, Award, ShieldCheck, Clock, FileText, Edit, MoreVertical, ChevronLeft, Download, Building, CheckCircle2, Plus, ArrowUpRight, IndianRupee, X, Save, Flag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
 import ActionDropdown from '../components/ActionDropdown';
@@ -27,15 +27,15 @@ const EmployeeDetails = () => {
     if (!employee) return;
     const headers = ['Category', 'Amount'];
     const rows = [
-      ['Basic Salary', '$6,000.00'],
-      ['HRA', '$1,200.00'],
-      ['Conveyance', '$300.00'],
-      ['Special Allowance', '$583.33'],
-      ['Gross Pay', employee.salary || '$8,083.33 / month'],
-      ['Income Tax', '-$800.00'],
-      ['Provident Fund', '-$200.00'],
-      ['Health Insurance', '-$50.00'],
-      ['Net Take-home', '$7,033.33']
+      ['Basic Salary', '₹6,000.00'],
+      ['HRA', '₹1,200.00'],
+      ['Conveyance', '₹300.00'],
+      ['Special Allowance', '₹583.33'],
+      ['Gross Pay', employee.salary || '₹8,083.33 / month'],
+      ['Income Tax', '-₹800.00'],
+      ['Provident Fund', '-₹200.00'],
+      ['Health Insurance', '-₹50.00'],
+      ['Net Take-home', '₹7,033.33']
     ];
     const csvContent = [headers.join(','), ...rows.map(r => r.map(v => `"${v}"`).join(','))].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -64,15 +64,15 @@ const EmployeeDetails = () => {
     if (!employee) return;
     const win = window.open('', '_blank');
     win.document.write(`
-      <html><head><title>${doc.name}</title><style>body{font-family:sans-serif;padding:40px;color:#1e293b;background:#f8fafc}</style></head>
+      <html><head><title>₹{doc.name}</title><style>body{font-family:sans-serif;padding:40px;color:#1e293b;background:#f8fafc}</style></head>
       <body>
         <div style="max-width:600px;margin:50px auto;background:white;padding:40px;border-radius:12px;box-shadow:0 4px 6px rgba(0,0,0,0.05)">
-          <h2 style="color:#4880FF;margin-top:0">${doc.name}</h2>
+          <h2 style="color:#4880FF;margin-top:0">₹{doc.name}</h2>
           <hr style="border:0;border-top:1px solid #e2e8f0;margin:20px 0">
           <p><strong>Document Type:</strong> ${doc.type}</p>
           <p><strong>File Size:</strong> ${doc.size}</p>
           <p><strong>Verification Date:</strong> ${doc.date}</p>
-          <p><strong>Status:</strong> <span style="color:${doc.status === 'Verified' ? '#10B981' : '#F59E0B'}">${doc.status}</span></p>
+          <p><strong>Status:</strong> <span style="color:${doc.status === 'Verified' ? '#10B981' : '#F59E0B'}">₹{doc.status}</span></p>
           <p style="margin-top:40px;font-style:italic;color:#64748b">This is an officially verified institutional record for ${employee.name}.</p>
         </div>
       </body></html>
@@ -128,7 +128,7 @@ const EmployeeDetails = () => {
         email: 'r.carter@school.edu', 
         phone: '+1 234-567-8901',
         address: '452 Academic Circle, Science District, NY 10001',
-        salary: '$85,000 / annum',
+        salary: '₹85,000 / annum',
         biography: 'Dr. Carter has been a cornerstone of the Mathematics department for over 4 years. He specializes in advanced calculus and linear algebra, contributing significantly to the curriculum development and student mentorship programs.',
         education: [
           { degree: 'Ph.D. in Pure Mathematics', institution: 'Stanford University', year: '2018', result: 'GPA 4.0' },
@@ -152,7 +152,7 @@ const EmployeeDetails = () => {
         email: 's.jenkins@school.edu',
         phone: '+1 234-567-8902',
         address: '102 Main Administration Block, NY 10002',
-        salary: '$55,000 / annum',
+        salary: '₹55,000 / annum',
         biography: 'Sarah Jenkins coordinates departmental synchronization and schedules.',
         education: [
           { degree: 'MBA in Operations', institution: 'Columbia University', year: '2020', result: 'GPA 3.8' },
@@ -173,7 +173,7 @@ const EmployeeDetails = () => {
         email: 'm.obrien@school.edu',
         phone: '+1 234-567-8903',
         address: 'Room 305, Tech Lab Wing, NY 10001',
-        salary: '$62,000 / annum',
+        salary: '₹62,000 / annum',
         biography: 'Michael ensures campus hardware and network capabilities are functioning.',
         education: [
           { degree: 'B.Sc. in Computer Engineering', institution: 'Georgia Tech', year: '2019', result: 'First Class' }
@@ -193,7 +193,7 @@ const EmployeeDetails = () => {
         email: 'e.gilbert@school.edu',
         phone: '+1 234-567-8904',
         address: 'Building C, Student Counseling Suite, NY 10003',
-        salary: '$48,000 / annum',
+        salary: '₹48,000 / annum',
         biography: 'Elena Gilbert coordinates support and student mental hygiene programs.',
         education: [
           { degree: 'M.Sc. in Child Psychology', institution: 'Boston University', year: '2021', result: 'GPA 3.9' }
@@ -213,7 +213,7 @@ const EmployeeDetails = () => {
         email: 'r.taylor@school.edu',
         phone: '+1 234-567-8905',
         address: 'Garage & Transport Bay, NY 10004',
-        salary: '$58,000 / annum',
+        salary: '₹58,000 / annum',
         biography: 'Robert coordinates institutional logistics, transport routing, and vehicle registry logs.',
         education: [
           { degree: 'B.Sc. in Logistics & Supply Chain', institution: 'Rutgers University', year: '2018', result: 'GPA 3.7' }
@@ -233,7 +233,7 @@ const EmployeeDetails = () => {
         email: 'l.anderson@school.edu',
         phone: '+1 234-567-8906',
         address: 'Central Cafeteria Kitchen, NY 10001',
-        salary: '$50,000 / annum',
+        salary: '₹50,000 / annum',
         biography: 'Linda designs culinary menus and directs cafeteria kitchen staff.',
         education: [
           { degree: 'Associate Degree in Culinary Arts', institution: 'Culinary Institute of America', year: '2016', result: 'Honor Roll' }
@@ -253,7 +253,7 @@ const EmployeeDetails = () => {
         email: 'm.brown@school.edu',
         phone: '+1 234-567-8907',
         address: 'Server Room 202, Admin Wing, NY 10001',
-        salary: '$66,000 / annum',
+        salary: '₹66,000 / annum',
         biography: 'Michael maintains institution servers, cloud frameworks, and hardware systems.',
         education: [
           { degree: 'B.Sc. in Computer Science', institution: 'Penn State University', year: '2020', result: 'First Class' }
@@ -273,7 +273,7 @@ const EmployeeDetails = () => {
         email: 'a.white@school.edu',
         phone: '+1 234-567-8908',
         address: 'HR Desk, Administration Building, NY 10002',
-        salary: '$54,000 / annum',
+        salary: '₹54,000 / annum',
         biography: 'Angela coordinates staff recruitments, files, benefits registry, and organizational culture.',
         education: [
           { degree: 'B.A. in Human Resources', institution: 'Temple University', year: '2019', result: 'GPA 3.6' }
@@ -293,7 +293,7 @@ const EmployeeDetails = () => {
         email: 't.harris@school.edu',
         phone: '+1 234-567-8909',
         address: 'Facilities & Workshop Area, NY 10005',
-        salary: '$52,000 / annum',
+        salary: '₹52,000 / annum',
         biography: 'Thomas leads maintenance personnel and facilities repair/renovations.',
         education: [
           { degree: 'Vocational Degree in Building Tech', institution: 'Apex Technical School', year: '2015', result: 'Certified Operator' }
@@ -332,7 +332,7 @@ const EmployeeDetails = () => {
         email: `emp.${idNum}@school.edu`,
         phone: `+1 234-567-${idNum.padStart(4, '0')}`,
         address: 'Main Campus Building, NY 10001',
-        salary: '$50,000 / annum',
+        salary: '₹50,000 / annum',
         biography: `Staff member at school, registered under ID ${id}.`,
         education: [
           { degree: 'B.Sc. in General Education', institution: 'State University', year: '2018', result: 'Second Class' }
@@ -698,10 +698,10 @@ const EmployeeDetails = () => {
                               <h4 style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '24px', letterSpacing: '1px' }}>Salary Breakdown</h4>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                                  {[
-                                    { label: 'Basic Salary', value: '$6,000.00' },
-                                    { label: 'House Rent Allowance (HRA)', value: '$1,200.00' },
-                                    { label: 'Conveyance Allowance', value: '$300.00' },
-                                    { label: 'Special Allowance', value: '$583.33' }
+                                    { label: 'Basic Salary', value: '₹6,000.00' },
+                                    { label: 'House Rent Allowance (HRA)', value: '₹1,200.00' },
+                                    { label: 'Conveyance Allowance', value: '₹300.00' },
+                                    { label: 'Special Allowance', value: '₹583.33' }
                                  ].map((item, idx) => (
                                     <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '12px', borderBottom: '1px solid var(--border-color)' }}>
                                        <span style={{ fontWeight: 700, color: 'var(--text-muted)', fontSize: '0.9rem' }}>{item.label}</span>
@@ -718,9 +718,9 @@ const EmployeeDetails = () => {
                               <h4 style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '24px', letterSpacing: '1px' }}>Deductions & Net Pay</h4>
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                                  {[
-                                    { label: 'Income Tax (TDS)', value: '-$800.00', color: '#EF4444' },
-                                    { label: 'Provident Fund (PF)', value: '-$200.00', color: '#EF4444' },
-                                    { label: 'Health Insurance', value: '-$50.00', color: '#EF4444' }
+                                    { label: 'Income Tax (TDS)', value: '-₹800.00', color: '#EF4444' },
+                                    { label: 'Provident Fund (PF)', value: '-₹200.00', color: '#EF4444' },
+                                    { label: 'Health Insurance', value: '-₹50.00', color: '#EF4444' }
                                  ].map((item, idx) => (
                                     <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '12px', borderBottom: '1px solid var(--border-color)' }}>
                                        <span style={{ fontWeight: 700, color: 'var(--text-muted)', fontSize: '0.9rem' }}>{item.label}</span>
@@ -729,7 +729,7 @@ const EmployeeDetails = () => {
                                  ))}
                                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', padding: '16px', backgroundColor: 'var(--bg-body)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
                                     <span style={{ fontWeight: 900, fontSize: '1.1rem' }}>Net Monthly Take-home</span>
-                                    <span style={{ fontWeight: 950, fontSize: '1.1rem', color: 'var(--primary)' }}>$7,033.33</span>
+                                    <span style={{ fontWeight: 950, fontSize: '1.1rem', color: 'var(--primary)' }}>₹7,033.33</span>
                                  </div>
                               </div>
                            </div>

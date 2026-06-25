@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  CreditCard, Search, Filter, Plus, MoreVertical, Star, 
-  DollarSign, Clock, CheckCircle2, FileText, ChevronRight,
-  User, Wallet, ArrowUpRight, TrendingUp, AlertCircle,
-  BarChart, Zap, Building, Save, Printer, X
-} from 'lucide-react';
+import { CreditCard, Search, Filter, Plus, MoreVertical, Star, IndianRupee, Clock, CheckCircle2, FileText, ChevronRight, User, Wallet, ArrowUpRight, TrendingUp, AlertCircle, BarChart, Zap, Building, Save, Printer, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -62,18 +57,18 @@ const FeesCollection = () => {
   const [studentList, setStudentList] = useState(() => {
     const stored = localStorage.getItem('students_fees');
     const initial = [
-      { id: 'STU-2026-001', name: 'Devon Lane', class: '10A', balance: '$450.00', status: 'Partially Paid', lastPayment: '2026-04-12' },
-      { id: 'STU-2026-002', name: 'Sarah Williams', class: '10B', balance: '$0.00', status: 'Fully Paid', lastPayment: '2026-05-01' },
-      { id: 'STU-2026-003', name: 'Michael Brown', class: '09A', balance: '$1,200.00', status: 'Unpaid', lastPayment: '-' },
-      { id: 'STU-2026-004', name: 'Emily Davis', class: '12C', balance: '$250.00', status: 'Partially Paid', lastPayment: '2026-05-02' },
-      { id: 'STU-2026-005', name: 'Robert Fox', class: '11A', balance: '$600.00', status: 'Unpaid', lastPayment: '-' },
-      { id: 'STU-2026-006', name: 'Jane Lane', class: '08B', balance: '$0.00', status: 'Fully Paid', lastPayment: '2026-04-28' },
-      { id: 'STU-2026-007', name: 'Cody Fisher', class: '10A', balance: '$850.00', status: 'Partially Paid', lastPayment: '2026-05-03' },
-      { id: 'STU-2026-008', name: 'Arlene McCoy', class: '12B', balance: '$1,500.00', status: 'Unpaid', lastPayment: '-' },
-      { id: 'STU-2026-009', name: 'Jerome Bell', class: '09C', balance: '$320.00', status: 'Partially Paid', lastPayment: '2026-05-01' },
-      { id: 'STU-2026-010', name: 'Eleanor Pena', class: '11B', balance: '$0.00', status: 'Fully Paid', lastPayment: '2026-05-05' },
-      { id: 'STU-2026-011', name: 'Marvin McKinney', class: '10B', balance: '$450.00', status: 'Unpaid', lastPayment: '-' },
-      { id: 'STU-2026-012', name: 'Kathryn Murphy', class: '12A', balance: '$120.00', status: 'Partially Paid', lastPayment: '2026-04-30' },
+      { id: 'STU-2026-001', name: 'Devon Lane', class: '10A', balance: '₹450.00', status: 'Partially Paid', lastPayment: '2026-04-12' },
+      { id: 'STU-2026-002', name: 'Sarah Williams', class: '10B', balance: '₹0.00', status: 'Fully Paid', lastPayment: '2026-05-01' },
+      { id: 'STU-2026-003', name: 'Michael Brown', class: '09A', balance: '₹1,200.00', status: 'Unpaid', lastPayment: '-' },
+      { id: 'STU-2026-004', name: 'Emily Davis', class: '12C', balance: '₹250.00', status: 'Partially Paid', lastPayment: '2026-05-02' },
+      { id: 'STU-2026-005', name: 'Robert Fox', class: '11A', balance: '₹600.00', status: 'Unpaid', lastPayment: '-' },
+      { id: 'STU-2026-006', name: 'Jane Lane', class: '08B', balance: '₹0.00', status: 'Fully Paid', lastPayment: '2026-04-28' },
+      { id: 'STU-2026-007', name: 'Cody Fisher', class: '10A', balance: '₹850.00', status: 'Partially Paid', lastPayment: '2026-05-03' },
+      { id: 'STU-2026-008', name: 'Arlene McCoy', class: '12B', balance: '₹1,500.00', status: 'Unpaid', lastPayment: '-' },
+      { id: 'STU-2026-009', name: 'Jerome Bell', class: '09C', balance: '₹320.00', status: 'Partially Paid', lastPayment: '2026-05-01' },
+      { id: 'STU-2026-010', name: 'Eleanor Pena', class: '11B', balance: '₹0.00', status: 'Fully Paid', lastPayment: '2026-05-05' },
+      { id: 'STU-2026-011', name: 'Marvin McKinney', class: '10B', balance: '₹450.00', status: 'Unpaid', lastPayment: '-' },
+      { id: 'STU-2026-012', name: 'Kathryn Murphy', class: '12A', balance: '₹120.00', status: 'Partially Paid', lastPayment: '2026-04-30' },
     ];
     if (stored) {
       try {
@@ -102,8 +97,8 @@ const FeesCollection = () => {
       return JSON.parse(stored);
     } else {
       const initial = [
-        { id: 'TRX-9821', student: 'Robert Fox', amount: '$450.00', time: '12m ago' },
-        { id: 'TRX-9820', student: 'Jane Cooper', amount: '$450.00', time: '45m ago' },
+        { id: 'TRX-9821', student: 'Robert Fox', amount: '₹450.00', time: '12m ago' },
+        { id: 'TRX-9820', student: 'Jane Cooper', amount: '₹450.00', time: '45m ago' },
       ];
       localStorage.setItem('fees_recent_activity', JSON.stringify(initial));
       return initial;
@@ -199,12 +194,12 @@ Authorized Stamp: School Management System
     
     const currentBal = parseFloat(selectedStudent.balance.replace(/[^0-9.]/g, '')) || 0;
     if (amountVal > currentBal) {
-      showToast(`Payment amount ($${amountVal}) cannot exceed outstanding balance ($${currentBal}).`, 'error', 'Exceeds Balance');
+      showToast(`Payment amount (₹${amountVal}) cannot exceed outstanding balance (₹${currentBal}).`, 'error', 'Exceeds Balance');
       return;
     }
 
     const newBal = currentBal - amountVal;
-    const formattedNewBal = '$' + newBal.toLocaleString('en-US', { minimumFractionDigits: 2 });
+    const formattedNewBal = '₹' + newBal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
     
     const updatedList = studentList.map(s => {
       if (s.id === selectedStudent.id) {
@@ -232,7 +227,7 @@ Authorized Stamp: School Management System
     const newActivity = {
       id: newTrxId,
       student: selectedStudent.name,
-      amount: '$' + amountVal.toLocaleString('en-US', { minimumFractionDigits: 2 }),
+      amount: '₹' + amountVal.toLocaleString('en-IN', { minimumFractionDigits: 2 }),
       time: 'Just now'
     };
     
@@ -247,7 +242,7 @@ Authorized Stamp: School Management System
         id: newTrxId,
         title: `Fee Payment - ${selectedStudent.name}`,
         category: 'Academic',
-        amount: '$' + amountVal.toLocaleString('en-US', { minimumFractionDigits: 2 }),
+        amount: '₹' + amountVal.toLocaleString('en-IN', { minimumFractionDigits: 2 }),
         type: 'Income',
         date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
         method: selectedMethod
@@ -256,7 +251,7 @@ Authorized Stamp: School Management System
     ];
     localStorage.setItem('institutional_transactions', JSON.stringify(updatedMasterTrx));
 
-    showToast(`Payment of $${amountVal.toLocaleString()} processed for ${selectedStudent.name}!`, 'success', 'Payment Confirmed');
+    showToast(`Payment of ₹${amountVal.toLocaleString()} processed for ${selectedStudent.name}!`, 'success', 'Payment Confirmed');
     setCollectAmount('');
   };
 
@@ -278,7 +273,7 @@ Authorized Stamp: School Management System
 
     const currentBal = parseFloat(target.balance.replace(/[^0-9.]/g, '')) || 0;
     const newBal = currentBal + amountVal;
-    const formattedNewBal = '$' + newBal.toLocaleString('en-US', { minimumFractionDigits: 2 });
+    const formattedNewBal = '₹' + newBal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
 
     const updatedList = studentList.map(s => {
       if (s.id === target.id) {
@@ -302,7 +297,7 @@ Authorized Stamp: School Management System
       }));
     }
 
-    showToast(`Invoice for $${amountVal.toLocaleString()} issued for ${target.name}. Dues updated to ${formattedNewBal}.`, 'success', 'Invoice Created');
+    showToast(`Invoice for ₹${amountVal.toLocaleString()} issued for ${target.name}. Dues updated to ${formattedNewBal}.`, 'success', 'Invoice Created');
     setShowInvoiceModal(false);
     setInvoiceStudent('');
     setInvoiceAmount('');
@@ -364,10 +359,10 @@ Authorized Stamp: School Management System
       {/* 1. Summary Statistics */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
          {[
-           { label: 'Today\'s Collection', value: '$8,450', change: '+12%', isPositive: true, color: 'var(--primary)' },
-           { label: 'Pending Dues', value: '$24,200', change: '-5%', isPositive: false, color: '#EF4444' },
+           { label: 'Today\'s Collection', value: '₹8,450', change: '+12%', isPositive: true, color: 'var(--primary)' },
+           { label: 'Pending Dues', value: '₹24,200', change: '-5%', isPositive: false, color: '#EF4444' },
            { label: 'Active Discounts', value: '42', change: '+2', isPositive: true, color: '#F59E0B' },
-           { label: 'Revenue Growth', value: '$125.4k', change: '+18%', isPositive: true, color: '#10B981' }
+           { label: 'Revenue Growth', value: '₹125.4k', change: '+18%', isPositive: true, color: '#10B981' }
          ].map((stat, i) => (
             <div key={i} className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>{stat.label}</div>
@@ -435,7 +430,7 @@ Authorized Stamp: School Management System
                            </div>
                         </div>
                         <div style={{ textAlign: 'right' }}>
-                           <div style={{ fontSize: '1rem', fontWeight: 950, color: stu.balance === '$0.00' ? 'var(--success)' : '#EF4444' }}>{stu.balance}</div>
+                           <div style={{ fontSize: '1rem', fontWeight: 950, color: stu.balance === '₹0.00' ? 'var(--success)' : '#EF4444' }}>{stu.balance}</div>
                            <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Balance Due</div>
                         </div>
                      </motion.div>
@@ -480,7 +475,7 @@ Authorized Stamp: School Management System
                      <div>
                         <label style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>Amount to Collect</label>
                         <div style={{ position: 'relative' }}>
-                           <DollarSign size={18} style={{ position: 'absolute', left: '16px', top: '13px', color: 'var(--text-muted)' }} />
+                           <IndianRupee size={18} style={{ position: 'absolute', left: '16px', top: '13px', color: 'var(--text-muted)' }} />
                            <input 
                               type="number" 
                               placeholder="0.00" 
@@ -521,7 +516,7 @@ Authorized Stamp: School Management System
                      <div>
                         <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary)' }}>GRAND TOTAL</div>
                         <div style={{ fontSize: '1.5rem', fontWeight: 950, color: 'var(--primary)' }}>
-                           {collectAmount ? '$' + parseFloat(collectAmount).toLocaleString('en-US', { minimumFractionDigits: 2 }) : '$0.00'}
+                           {collectAmount ? '₹' + parseFloat(collectAmount).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '₹0.00'}
                         </div>
                      </div>
                      <button 
@@ -567,7 +562,7 @@ Authorized Stamp: School Management System
                      </defs>
                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                      <XAxis dataKey="time" axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--text-muted)' }} />
-                     <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--text-muted)' }} tickFormatter={(v) => `$${v/1000}k`} />
+                     <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--text-muted)' }} tickFormatter={(v) => `₹${v/1000}k`} />
                      <Tooltip contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: 'var(--shadow-xl)' }} />
                      <Area type="step" dataKey="amount" stroke="var(--primary)" strokeWidth={4} fillOpacity={1} fill="url(#colorVelocity)" />
                   </AreaChart>
@@ -596,11 +591,11 @@ Authorized Stamp: School Management System
             <div style={{ marginTop: '16px', display: 'flex', justifyContent: 'space-between' }}>
                <div>
                   <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 800 }}>HIGHEST</div>
-                  <div style={{ fontWeight: 900, color: 'var(--primary)' }}>Class 12 ($21k)</div>
+                  <div style={{ fontWeight: 900, color: 'var(--primary)' }}>Class 12 (₹21k)</div>
                </div>
                <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 800 }}>LOWEST</div>
-                  <div style={{ fontWeight: 900, color: '#8B5CF6' }}>Class 9 ($12.5k)</div>
+                  <div style={{ fontWeight: 900, color: '#8B5CF6' }}>Class 9 (₹12.5k)</div>
                </div>
             </div>
          </div>
@@ -797,7 +792,7 @@ Authorized Stamp: School Management System
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Invoice Amount (USD)</label>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Invoice Amount (Rupees)</label>
                   <input 
                      type="number" 
                      required

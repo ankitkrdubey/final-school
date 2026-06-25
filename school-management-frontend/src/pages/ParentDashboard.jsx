@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Users, CreditCard, MessageSquare, BookOpen, CircleCheck, Clock, Calendar as CalendarIcon, 
-  MoreVertical, Edit, FileText, Bell, Megaphone, AlertCircle, Info, DollarSign,
-  CheckCircle2, X, Sparkles, Download
-} from 'lucide-react';
+import { Users, CreditCard, MessageSquare, BookOpen, CircleCheck, Clock, Calendar as CalendarIcon, MoreVertical, Edit, FileText, Bell, Megaphone, AlertCircle, Info, IndianRupee, CheckCircle2, X, Sparkles, Download } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 import MiniCalendar from '../components/MiniCalendar';
 import studentAvatar from '../assets/student_avatar.png';
@@ -34,10 +30,10 @@ const notices = [
 ];
 
 const feeHistoryFallback = [
-  { type: 'Term 1 Tuition', date: '01 Sep 2025', amount: '$1,200', status: 'Paid', color: 'var(--success)', remarks: 'Paid on 01 Sep 2025. Receipt Audit: #TXN-9029-A.' },
-  { type: 'Bus Fee', date: '01 Sep 2025', amount: '$150', status: 'Paid', color: 'var(--success)', remarks: 'Paid on 01 Sep 2025. Receipt Audit: #TXN-9029-B.' },
-  { type: 'Term 2 Tuition', date: '15 Jan 2026', amount: '$1,200', status: 'Pending', color: '#f59e0b', remarks: 'Awaiting checkout confirmation.' },
-  { type: 'Library Fine', date: '05 Feb 2026', amount: '$15', status: 'Unpaid', color: 'var(--danger)', remarks: 'Overdue textbooks fine.' }
+  { type: 'Term 1 Tuition', date: '01 Sep 2025', amount: '₹1,200', status: 'Paid', color: 'var(--success)', remarks: 'Paid on 01 Sep 2025. Receipt Audit: #TXN-9029-A.' },
+  { type: 'Bus Fee', date: '01 Sep 2025', amount: '₹150', status: 'Paid', color: 'var(--success)', remarks: 'Paid on 01 Sep 2025. Receipt Audit: #TXN-9029-B.' },
+  { type: 'Term 2 Tuition', date: '15 Jan 2026', amount: '₹1,200', status: 'Pending', color: '#f59e0b', remarks: 'Awaiting checkout confirmation.' },
+  { type: 'Library Fine', date: '05 Feb 2026', amount: '₹15', status: 'Unpaid', color: 'var(--danger)', remarks: 'Overdue textbooks fine.' }
 ];
 
 const renderAIReport = (text) => {
@@ -289,7 +285,7 @@ const ParentDashboard = () => {
       list = parentFees.map(f => ({
         type: f.category,
         date: new Date(f.due_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
-        amount: `$${Number(f.amount).toLocaleString()}`,
+        amount: `₹${Number(f.amount).toLocaleString()}`,
         status: f.status === 'Paid' ? 'Paid' : 'Pending',
         color: f.status === 'Paid' ? 'var(--success)' : '#f59e0b',
         remarks: `Due: ${new Date(f.due_date).toLocaleDateString()}. Status: ${f.status}.`
@@ -307,7 +303,7 @@ const ParentDashboard = () => {
     }
 
     return {
-      pendingAmtStr: `$${pendingAmt.toLocaleString()}`,
+      pendingAmtStr: `₹${pendingAmt.toLocaleString()}`,
       list,
       parentFees
     };
@@ -373,7 +369,7 @@ const ParentDashboard = () => {
       records = pFees.map(f => [
         new Date(f.due_date).toLocaleDateString(),
         f.category,
-        `$${f.amount}`,
+        `₹${f.amount}`,
         f.status,
         f.payment_method || 'Online'
       ]);
@@ -567,7 +563,7 @@ ${childSummary}
             { 
               title: 'Pending Fees', 
               value: feeMetrics.pendingAmtStr, 
-              icon: <DollarSign size={24} />, 
+              icon: <IndianRupee size={24} />, 
               color: '#f59e0b',
               onClick: () => showToast(`Outstanding Dues Balance: ${feeMetrics.pendingAmtStr}. Checkouts can be made via billing links.`, "warning", "Dues Outstanding")
             },

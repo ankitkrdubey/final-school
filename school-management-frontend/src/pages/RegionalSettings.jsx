@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Globe, Clock, DollarSign, Calendar, MapPin, 
+  Globe, Clock, IndianRupee, Calendar, MapPin, 
   Languages, Ruler, Save, RefreshCw, Info,
   CheckCircle2, ChevronDown, Flag, AlertCircle, X
 } from 'lucide-react';
@@ -73,7 +73,7 @@ const RegionalSettings = () => {
     },
     {
       title: 'Currency & Units',
-      icon: <DollarSign size={24} color="#10b981" />,
+      icon: <IndianRupee size={24} color="#10b981" />,
       desc: 'Financial and physical measurement standards.',
       fields: [
         { key: 'currency', label: 'Primary Currency', value: settings.currency, type: 'select', options: ['USD ($)', 'EUR (€)', 'GBP (£)', 'INR (₹)', 'AED (د.إ)'] },

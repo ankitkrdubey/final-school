@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  BookOpen, Users, GraduationCap, DollarSign, ArrowUpRight, ArrowDownRight, 
-  MoreVertical, Filter, Download, Star, ChevronRight, Calendar, Clock, 
-  Video, CircleCheck, Play, FileText, UserPlus, Globe, Link, Share2, MessageCircle, AtSign,
-  Mail, Phone, MapPin, ExternalLink, Activity, Zap, TrendingUp, X, CheckCircle2, AlertCircle, Sparkles, Printer, ShieldAlert
-} from 'lucide-react';
+import { BookOpen, Users, GraduationCap, IndianRupee, ArrowUpRight, ArrowDownRight, MoreVertical, Filter, Download, Star, ChevronRight, Calendar, Clock, Video, CircleCheck, Play, FileText, UserPlus, Globe, Link, Share2, MessageCircle, AtSign, Mail, Phone, MapPin, ExternalLink, Activity, Zap, TrendingUp, X, CheckCircle2, AlertCircle, Sparkles, Printer, ShieldAlert } from 'lucide-react';
 import { 
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, LineChart, Line, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -77,9 +72,9 @@ const courseActivityStats = [
 ];
 
 const recentEnrolled = [
-  { id: 1, name: 'Cloud Architecture', student: 'Daniel Ray', date: 'May 08, 2026', price: '$120' },
-  { id: 2, name: 'Ethical Hacking', student: 'Lisa Wong', date: 'May 07, 2026', price: '$150' },
-  { id: 3, name: 'Mobile App Dev', student: 'John Smith', date: 'May 07, 2026', price: '$99' },
+  { id: 1, name: 'Cloud Architecture', student: 'Daniel Ray', date: 'May 08, 2026', price: '₹12,000' },
+  { id: 2, name: 'Ethical Hacking', student: 'Lisa Wong', date: 'May 07, 2026', price: '₹15,000' },
+  { id: 3, name: 'Mobile App Dev', student: 'John Smith', date: 'May 07, 2026', price: '₹9,900' },
 ];
 
 const StatCard = ({ title, value, change, isPositive, icon: Icon, color, sparkData, onClick }) => (
@@ -352,7 +347,7 @@ const LMSDashboard = () => {
           enrolledCourses: "0",
           totalStudents: "0",
           totalCourses: 0,
-          totalEarnings: "$0",
+          totalEarnings: "₹0",
           enrolledChange: "0.0",
           studentsChange: "0.0",
           coursesChange: "0.0",
@@ -435,7 +430,7 @@ const LMSDashboard = () => {
       enrolledCourses: displayEnrolled.toLocaleString(),
       totalStudents: displayStudents.toLocaleString(),
       totalCourses,
-      totalEarnings: `$${displayEarnings.toLocaleString()}`,
+      totalEarnings: `₹${displayEarnings.toLocaleString()}`,
       enrolledChange,
       studentsChange,
       coursesChange,
@@ -673,9 +668,9 @@ const LMSDashboard = () => {
   // Financial Ledger exporter csv download
   const handleExportEarningsCSV = () => {
     let content = `Invoice Reference,Student Registrant,Course Name,Base Price,Tax VAT,Total Value\n`;
-    content += `#LMS-ENR-193939-TXN,Daniel Ray,Cloud Architecture,$101.69,$18.31,$120.00\n`;
-    content += `#LMS-ENR-293939-TXN,Lisa Wong,Ethical Hacking,$127.12,$22.88,$150.00\n`;
-    content += `#LMS-ENR-393939-TXN,John Smith,Mobile App Dev,$83.90,$15.10,$99.00\n`;
+    content += `#LMS-ENR-193939-TXN,Daniel Ray,Cloud Architecture,₹10,200.00,₹1,800.00,₹12,000.00\n`;
+    content += `#LMS-ENR-293939-TXN,Lisa Wong,Ethical Hacking,₹12,750.00,₹2,250.00,₹15,000.00\n`;
+    content += `#LMS-ENR-393939-TXN,John Smith,Mobile App Dev,₹8,415.00,₹1,485.00,₹9,900.00\n`;
     
     handleExportText(content, 'LMS_Earnings_Ledger_Invoice.csv');
     showToast('Earnings financial statement exported successfully!', 'success');
@@ -1005,7 +1000,7 @@ const LMSDashboard = () => {
           value={metrics.totalEarnings} 
           change={metrics.earningsChange} 
           isPositive={metrics.isEarningsPositive} 
-          icon={DollarSign} 
+          icon={IndianRupee} 
           color="var(--success)" 
           sparkData={metrics.sparklines.earnings} 
           onClick={() => setShowEarningsModal(true)}
@@ -1434,8 +1429,8 @@ const LMSDashboard = () => {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 13, fill: 'var(--text-muted)', fontWeight: 600 }} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 13, fill: 'var(--text-muted)', fontWeight: 600 }} tickFormatter={(v) => `$${v.toLocaleString()}`} />
-                <Tooltip contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: 'var(--shadow-xl)', backgroundColor: 'var(--bg-card)' }} formatter={(v) => [`$${v.toLocaleString()}`, 'Earnings']} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 13, fill: 'var(--text-muted)', fontWeight: 600 }} tickFormatter={(v) => `₹${v.toLocaleString()}`} />
+                <Tooltip contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: 'var(--shadow-xl)', backgroundColor: 'var(--bg-card)' }} formatter={(v) => [`₹${v.toLocaleString()}`, 'Earnings']} />
                 <Area type="monotone" dataKey="earnings" stroke="var(--primary)" strokeWidth={4} fillOpacity={1} fill="url(#colorEarnings)" />
               </AreaChart>
             </ResponsiveContainer>
@@ -1581,15 +1576,15 @@ const LMSDashboard = () => {
           <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15, 23, 42, 0.4)', backdropFilter: 'blur(12px)', zIndex: 6000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} style={{ width: '100%', maxWidth: '500px', backgroundColor: 'var(--bg-card, white)', border: '1px solid var(--border-color)', borderRadius: '32px', padding: '40px', color: 'var(--text-main)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                <h3 style={{ fontSize: '1.4rem', fontWeight: 950, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}><DollarSign color="var(--success)" /> LMS Ledger Invoices</h3>
+                <h3 style={{ fontSize: '1.4rem', fontWeight: 950, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}><IndianRupee color="var(--success)" /> LMS Ledger Invoices</h3>
                 <button onClick={() => setShowEarningsModal(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><X size={20} /></button>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '28px' }}>
                 {[
-                  { ref: '#LMS-ENR-193939', item: 'Cloud Architecture', student: 'Daniel Ray', val: '$120' },
-                  { ref: '#LMS-ENR-293939', item: 'Ethical Hacking', student: 'Lisa Wong', val: '$150' },
-                  { ref: '#LMS-ENR-393939', item: 'Mobile App Dev', student: 'John Smith', val: '$99' },
+                  { ref: '#LMS-ENR-193939', item: 'Cloud Architecture', student: 'Daniel Ray', val: '₹12,000' },
+                  { ref: '#LMS-ENR-293939', item: 'Ethical Hacking', student: 'Lisa Wong', val: '₹15,000' },
+                  { ref: '#LMS-ENR-393939', item: 'Mobile App Dev', student: 'John Smith', val: '₹9,900' },
                 ].map((item, idx) => (
                   <div key={idx} style={{ padding: '14px 18px', borderRadius: '16px', backgroundColor: 'var(--bg-body)', border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem' }}>
                     <div>
@@ -1809,11 +1804,11 @@ const LMSDashboard = () => {
                 <div style={{ borderTop: '1px dashed #e2e8f0', borderBottom: '1px dashed #e2e8f0', padding: '16px 0', display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '8px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span>Curriculum Base Price:</span>
-                    <span>${(parseFloat(activeInvoice.price.replace('$','')) * 0.85).toFixed(2)}</span>
+                    <span>₹{(parseFloat(activeInvoice.price.replace(/[₹,]/g,'')) * 0.85).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span>Calculated VAT Tax (18%):</span>
-                    <span>${(parseFloat(activeInvoice.price.replace('$','')) * 0.15).toFixed(2)}</span>
+                    <span>₹{(parseFloat(activeInvoice.price.replace(/[₹,]/g,'')) * 0.15).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   </div>
                 </div>
 

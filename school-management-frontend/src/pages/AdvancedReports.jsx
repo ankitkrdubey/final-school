@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FileText, BarChart3, PieChart, Users, 
-  Landmark, GraduationCap, Clock, Download,
-  ExternalLink, FileSpreadsheet, FileJson, Search,
-  Filter, ChevronRight, Activity, Calendar, Check,
-  X, Eye, Box, Printer
-} from 'lucide-react';
+import { FileText, BarChart3, PieChart, Users, Landmark, GraduationCap, Clock, Download, ExternalLink, FileSpreadsheet, FileJson, Search, Filter, ChevronRight, Activity, Calendar, Check, X, Eye, Box, Printer } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, 
@@ -120,10 +114,10 @@ const AdvancedReports = () => {
         subtitle: 'Quarterly financial reconciliation, fee collections audits, and payroll outflows',
         category: 'Finance & Accounts',
         stats: [
-          { s: 'Tuition Fee Collection Rate', m: '$142,500', v: '+8.2%', e: 'Optimal' },
-          { s: 'Transport Fleet Subscriptions', m: '$24,200', v: '-1.5%', e: 'Optimal' },
-          { s: 'Outstanding Institutional Arrears', m: '$12,400', v: '-12.4%', e: 'Review' },
-          { s: 'Staff Payroll Net Outflow', m: '$68,500', v: '+0.4%', e: 'Optimal' }
+          { s: 'Tuition Fee Collection Rate', m: '₹1,42,500', v: '+8.2%', e: 'Optimal' },
+          { s: 'Transport Fleet Subscriptions', m: '₹24,200', v: '-1.5%', e: 'Optimal' },
+          { s: 'Outstanding Institutional Arrears', m: '₹12,400', v: '-12.4%', e: 'Review' },
+          { s: 'Staff Payroll Net Outflow', m: '₹68,500', v: '+0.4%', e: 'Optimal' }
         ],
         chartData: [
           { name: 'Week 1', value: 45000, trend: 40000 },

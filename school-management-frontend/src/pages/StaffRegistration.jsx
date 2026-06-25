@@ -1,14 +1,7 @@
 /* EduPro Elite - StaffRegistration v1.0 */
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  User, Mail, Phone, MapPin, Briefcase, Calendar, 
-  Shield, CreditCard, Upload, ChevronRight, CheckCircle2,
-  FileText, Camera, Building2, UserPlus, Fingerprint,
-  Smartphone, Lock, Heart, Globe, Award, BookOpen,
-  ArrowRight, ShieldCheck, Zap, Sparkles, Clock, Layers, Trash2, Check,
-  AlertCircle, X
-} from 'lucide-react';
+import { User, Mail, Phone, MapPin, Briefcase, Calendar, Shield, CreditCard, Upload, ChevronRight, CheckCircle2, FileText, Camera, Building2, UserPlus, Fingerprint, Smartphone, Lock, Heart, Globe, Award, BookOpen, ArrowRight, ShieldCheck, Zap, Sparkles, Clock, Layers, Trash2, Check, AlertCircle, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const InputField = ({ label, icon: Icon, type = "text", placeholder, value, onChange }) => (
@@ -197,7 +190,7 @@ const StaffRegistration = () => {
       email: formData.email || `${formData.firstName.toLowerCase()}.${formData.lastName.toLowerCase()}@school.edu`,
       phone: formData.phone || '+1 234-567-8900',
       address: formData.address || '742 Evergreen Terrace, NY',
-      salary: formData.salary || '$70,000 / annum',
+      salary: formData.salary || '₹6,00,000 / annum',
       biography: `elite faculty onboarded. Qualifications include: ${qualifications.map(q => `${q.degree} from ${q.institution} (${q.year})`).join(', ')}. Experience includes: ${previousEmployment.map(p => `${p.role} at ${p.company} (${p.duration})`).join(', ')}.`
     };
     
@@ -496,7 +489,7 @@ const StaffRegistration = () => {
                         value={formData.startDate} onChange={(e) => setFormData({...formData, startDate: e.target.value})}
                       />
                       <InputField 
-                        label="Salary Bracket" icon={CreditCard} placeholder="e.g. $85,000 /yr" 
+                        label="Salary Bracket" icon={CreditCard} placeholder="e.g. ₹6,00,000 /yr" 
                         value={formData.salary} onChange={(e) => setFormData({...formData, salary: e.target.value})}
                       />
                     </div>

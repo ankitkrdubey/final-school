@@ -7,11 +7,11 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SEED_VEHICLES = [
-  { id: 1, reg: 'ABC-1234', model: 'Mercedes-Benz Sprinter', capacity: 20, lastService: '2026-04-15', fitnessExp: '2027-04-15', status: 'Optimal', mileage: '45,200 km', health: 98 },
-  { id: 2, reg: 'XYZ-5678', model: 'Volvo 9400 B11R', capacity: 55, lastService: '2026-03-20', fitnessExp: '2027-03-20', status: 'Optimal', mileage: '82,150 km', health: 92 },
-  { id: 3, reg: 'LMN-9012', model: 'Toyota Coaster', capacity: 25, lastService: '2025-12-10', fitnessExp: '2026-06-10', status: 'Due Soon', mileage: '112,400 km', health: 75 },
-  { id: 4, reg: 'PQR-3456', model: 'Tata Marcopolo', capacity: 42, lastService: '2026-05-01', fitnessExp: '2027-05-01', status: 'Maintenance', mileage: '25,600 km', health: 45 },
-  { id: 5, reg: 'GHI-7890', model: 'Eicher Skyline Pro', capacity: 32, lastService: '2026-02-10', fitnessExp: '2027-02-10', status: 'Optimal', mileage: '15,800 km', health: 99 },
+  { id: 1, reg: 'JH-02-B-1101', model: 'Tata Marcopolo Bus', capacity: 20, lastService: '2026-04-15', fitnessExp: '2027-04-15', status: 'Optimal', mileage: '45,200 km', health: 98 },
+  { id: 2, reg: 'JH-02-B-2204', model: 'Mahindra Tourister Bus', capacity: 55, lastService: '2026-03-20', fitnessExp: '2027-03-20', status: 'Optimal', mileage: '82,150 km', health: 92 },
+  { id: 3, reg: 'JH-02-V-4402', model: 'Force Traveller Van', capacity: 25, lastService: '2025-12-10', fitnessExp: '2026-06-10', status: 'Due Soon', mileage: '112,400 km', health: 75 },
+  { id: 4, reg: 'JH-02-B-5509', model: 'Swaraj Mazda Bus', capacity: 42, lastService: '2026-05-01', fitnessExp: '2027-05-01', status: 'Maintenance', mileage: '25,600 km', health: 45 },
+  { id: 5, reg: 'JH-02-B-8812', model: 'Eicher Skyline Pro', capacity: 32, lastService: '2026-02-10', fitnessExp: '2027-02-10', status: 'Optimal', mileage: '15,800 km', health: 99 },
 ];
 
 const VehicleRegistry = () => {

@@ -2,19 +2,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast, ToastRenderer } from '../hooks/useToast';
-import { 
-  User, Mail, Phone, MapPin, 
-  Shield, ArrowLeft, Download, Printer, Edit, 
-  Home, Star, Users, 
-  FileText, Briefcase, BadgeCheck,
-  CircleCheck, CheckCircle2,
-  Clock, Heart, Landmark, Monitor, Smartphone,
-  ShieldAlert, CreditCard,
-  Wallet, Search, FilterX,
-  CreditCard as PaymentIcon, Lock,
-  Globe2,
-  ArrowRight, Copy, X
-} from 'lucide-react';
+import { User, Mail, Phone, MapPin, Shield, ArrowLeft, Download, Printer, Edit, Home, Star, Users, FileText, Briefcase, BadgeCheck, CircleCheck, CheckCircle2, Clock, Heart, Landmark, Monitor, Smartphone, ShieldAlert, CreditCard, Wallet, Search, FilterX, CreditCard as PaymentIcon, Lock, Globe2, ArrowRight, Copy, X } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getParents, updateParent } from '../services/service';
 import { 
@@ -555,7 +543,7 @@ const GuardianDetails = () => {
       `Guardian ID:    ${guardian.id}`,
       `Email:          ${guardian.email}`,
       `Report Date:    ${new Date().toLocaleString()}`,
-      `Total Outstanding Balance: $${outstandingBalance.toLocaleString()}`,
+      `Total Outstanding Balance: ₹${outstandingBalance.toLocaleString()}`,
       '------------------------------------------------',
       'Invoice ID,Month,Type,Amount,Due Date,Status,Progress',
       ...invoicesList.map(inv => 
@@ -639,7 +627,7 @@ const GuardianDetails = () => {
     addLogEntry(
       'Invoice Issued', 
       'Pending', 
-      `Issued ${newInvoice.type} of $${newInvoice.amount.toLocaleString()} for ${studentName}.`, 
+      `Issued ${newInvoice.type} of ₹${newInvoice.amount.toLocaleString()} for ${studentName}.`, 
       '#F59E0B', 
       <FileText size={18} />
     );
@@ -729,12 +717,12 @@ const GuardianDetails = () => {
             <h2>EDUPRO ACADEMY</h2>
             <p>Official Billing Settlement Receipt</p>
           </div>
-          <div class="row"><span>Transaction ID:</span><strong>${txId}</strong></div>
-          <div class="row"><span>Date/Time:</span><span>${mockDate}</span></div>
+          <div class="row"><span>Transaction ID:</span><strong>₹{txId}</strong></div>
+          <div class="row"><span>Date/Time:</span><span>₹{mockDate}</span></div>
           <div class="row"><span>Payment Method:</span><span>Credit Card (Ending in *8901)</span></div>
           <div style="margin: 20px 0 10px; font-weight: bold; font-size: 0.85rem; color: #64748b;">Paid Items:</div>
-          <div class="row"><span>${inv.id} (${inv.type})</span><span>$${inv.amount.toLocaleString()}</span></div>
-          <div class="total"><span>TOTAL CHARGE:</span><span>$${inv.amount.toLocaleString()}</span></div>
+          <div class="row"><span>₹{inv.id} (${inv.type})</span><span>₹${inv.amount.toLocaleString()}</span></div>
+          <div class="total"><span>TOTAL CHARGE:</span><span>₹${inv.amount.toLocaleString()}</span></div>
           <div style="text-align: center; margin-top: 28px; font-size: 0.75rem; color: #94a3b8;">Thank you for your secure educational settlement.</div>
         </div>
         <script>window.onload = function() { window.print(); }</script>
@@ -802,7 +790,7 @@ const GuardianDetails = () => {
         addLogEntry(
           'Secure Payment', 
           'Paid', 
-          `Processed online payment of $${totalPaid.toLocaleString()} for: ${itemNames}. Transaction: ${txId}.`, 
+          `Processed online payment of ₹${totalPaid.toLocaleString()} for: ${itemNames}. Transaction: ${txId}.`, 
           '#10B981', 
           <CreditCard size={18} />
         );
@@ -841,17 +829,17 @@ const GuardianDetails = () => {
     const invoiceRows = invoicesList.map(inv => `
       <tr style="border-bottom:1px solid #e2e8f0;">
         <td style="padding:12px 16px;">
-          <div style="font-weight:800;color:#4880FF;font-size:0.85rem;">${inv.id}</div>
-          <div style="font-size:0.7rem;color:#94a3b8;">${inv.month}</div>
+          <div style="font-weight:800;color:#4880FF;font-size:0.85rem;">₹{inv.id}</div>
+          <div style="font-size:0.7rem;color:#94a3b8;">₹{inv.month}</div>
         </td>
         <td style="padding:12px 16px;">
-          <div style="font-weight:700;font-size:0.85rem;">${inv.type}</div>
+          <div style="font-weight:700;font-size:0.85rem;">₹{inv.type}</div>
           <div style="font-size:0.7rem;color:#94a3b8;">Due: ${inv.dueDate}</div>
         </td>
         <td style="padding:12px 16px;">
-          <span style="padding:4px 10px;border-radius:20px;font-size:0.65rem;font-weight:900;background:${statusColor(inv.status)}18;color:${statusColor(inv.status)};">${inv.status.toUpperCase()}</span>
+          <span style="padding:4px 10px;border-radius:20px;font-size:0.65rem;font-weight:900;background:${statusColor(inv.status)}18;color:${statusColor(inv.status)};">₹{inv.status.toUpperCase()}</span>
         </td>
-        <td style="padding:12px 16px;font-weight:900;font-size:0.95rem;">$${inv.amount.toLocaleString()}</td>
+        <td style="padding:12px 16px;font-weight:900;font-size:0.95rem;">₹${inv.amount.toLocaleString()}</td>
       </tr>
     `).join('');
 
@@ -862,13 +850,13 @@ const GuardianDetails = () => {
             ${stu.name.split(' ').map(n => n[0]).join('')}
           </div>
           <div>
-            <div style="font-weight:900;font-size:1rem;">${stu.name}</div>
+            <div style="font-weight:900;font-size:1rem;">₹{stu.name}</div>
             <div style="font-size:0.75rem;color:#64748b;">ID: ${stu.id} &nbsp;·&nbsp; Grade ${stu.grade}</div>
           </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding-top:12px;border-top:1px solid #e2e8f0;">
-          <div><div style="font-size:0.6rem;font-weight:800;color:#94a3b8;text-transform:uppercase;">Attendance</div><div style="font-size:1rem;font-weight:900;color:#10B981;">${stu.attendance}</div></div>
-          <div style="text-align:right"><div style="font-size:0.6rem;font-weight:800;color:#94a3b8;text-transform:uppercase;">Performance</div><div style="font-size:1rem;font-weight:900;color:#4880FF;">${stu.perf}</div></div>
+          <div><div style="font-size:0.6rem;font-weight:800;color:#94a3b8;text-transform:uppercase;">Attendance</div><div style="font-size:1rem;font-weight:900;color:#10B981;">₹{stu.attendance}</div></div>
+          <div style="text-align:right"><div style="font-size:0.6rem;font-weight:800;color:#94a3b8;text-transform:uppercase;">Performance</div><div style="font-size:1rem;font-weight:900;color:#4880FF;">₹{stu.perf}</div></div>
         </div>
       </div>
     `).join('');
@@ -909,7 +897,7 @@ const GuardianDetails = () => {
             <h1>Guardian Record — ${guardian.name}</h1>
             <p>EduPro Academy &nbsp;·&nbsp; Guardian ID: ${guardian.id} &nbsp;·&nbsp; Printed: ${new Date().toLocaleString()}</p>
           </div>
-          <span class="badge badge-${guardian.status.toLowerCase()}">${guardian.status.toUpperCase()}</span>
+          <span class="badge badge-${guardian.status.toLowerCase()}">₹{guardian.status.toUpperCase()}</span>
         </div>
 
         <!-- Personal & Contact -->
@@ -917,18 +905,18 @@ const GuardianDetails = () => {
           <div class="section-title">Personal &amp; Contact Information</div>
           <div class="info-grid">
             <div>
-              <div class="info-row"><span class="info-label">Full Name</span><span class="info-val">${guardian.name}</span></div>
-              <div class="info-row"><span class="info-label">Relation</span><span class="info-val">${guardian.relation}</span></div>
-              <div class="info-row"><span class="info-label">Date of Birth</span><span class="info-val">${guardian.dob}</span></div>
-              <div class="info-row"><span class="info-label">Gender</span><span class="info-val">${guardian.gender}</span></div>
-              <div class="info-row"><span class="info-label">Joined Institution</span><span class="info-val">${guardian.joiningDate}</span></div>
+              <div class="info-row"><span class="info-label">Full Name</span><span class="info-val">₹{guardian.name}</span></div>
+              <div class="info-row"><span class="info-label">Relation</span><span class="info-val">₹{guardian.relation}</span></div>
+              <div class="info-row"><span class="info-label">Date of Birth</span><span class="info-val">₹{guardian.dob}</span></div>
+              <div class="info-row"><span class="info-label">Gender</span><span class="info-val">₹{guardian.gender}</span></div>
+              <div class="info-row"><span class="info-label">Joined Institution</span><span class="info-val">₹{guardian.joiningDate}</span></div>
             </div>
             <div>
-              <div class="info-row"><span class="info-label">Email</span><span class="info-val">${guardian.email}</span></div>
-              <div class="info-row"><span class="info-label">Phone</span><span class="info-val">${guardian.phone}</span></div>
-              <div class="info-row"><span class="info-label">Address</span><span class="info-val">${guardian.address}</span></div>
-              <div class="info-row"><span class="info-label">Emergency Contact</span><span class="info-val">${guardian.emergencyContact}</span></div>
-              <div class="info-row"><span class="info-label">Account Type</span><span class="info-val">${guardian.accountType}</span></div>
+              <div class="info-row"><span class="info-label">Email</span><span class="info-val">₹{guardian.email}</span></div>
+              <div class="info-row"><span class="info-label">Phone</span><span class="info-val">₹{guardian.phone}</span></div>
+              <div class="info-row"><span class="info-label">Address</span><span class="info-val">₹{guardian.address}</span></div>
+              <div class="info-row"><span class="info-label">Emergency Contact</span><span class="info-val">₹{guardian.emergencyContact}</span></div>
+              <div class="info-row"><span class="info-label">Account Type</span><span class="info-val">₹{guardian.accountType}</span></div>
             </div>
           </div>
         </div>
@@ -938,8 +926,8 @@ const GuardianDetails = () => {
           <div class="section-title">Professional Information</div>
           <div class="info-grid">
             <div>
-              <div class="info-row"><span class="info-label">Occupation</span><span class="info-val">${guardian.occupation}</span></div>
-              <div class="info-row"><span class="info-label">Organization</span><span class="info-val">${guardian.company}</span></div>
+              <div class="info-row"><span class="info-label">Occupation</span><span class="info-val">₹{guardian.occupation}</span></div>
+              <div class="info-row"><span class="info-label">Organization</span><span class="info-val">₹{guardian.company}</span></div>
             </div>
             <div>
               <div class="info-row"><span class="info-label">Work Address</span><span class="info-val">Corporate Hub, Level 12</span></div>
@@ -951,7 +939,7 @@ const GuardianDetails = () => {
         <!-- Linked Students -->
         <div class="section">
           <div class="section-title">Linked Students (${guardian.linkedStudents.length})</div>
-          <div class="student-grid">${studentCards}</div>
+          <div class="student-grid">₹{studentCards}</div>
         </div>
 
         <!-- Billing Ledger -->
@@ -961,7 +949,7 @@ const GuardianDetails = () => {
             <thead>
               <tr><th>Invoice</th><th>Description</th><th>Status</th><th>Amount</th></tr>
             </thead>
-            <tbody>${invoiceRows}</tbody>
+            <tbody>₹{invoiceRows}</tbody>
           </table>
         </div>
 
@@ -974,8 +962,8 @@ const GuardianDetails = () => {
               <div class="info-row"><span class="info-label">Web Portal Access</span><span class="info-val" style="color:#10B981;">ALLOWED</span></div>
             </div>
             <div>
-              <div class="info-row"><span class="info-label">Last Active</span><span class="info-val">${guardian.lastActive}</span></div>
-              <div class="info-row"><span class="info-label">Guardian ID</span><span class="info-val">${guardian.id}</span></div>
+              <div class="info-row"><span class="info-label">Last Active</span><span class="info-val">₹{guardian.lastActive}</span></div>
+              <div class="info-row"><span class="info-label">Guardian ID</span><span class="info-val">₹{guardian.id}</span></div>
             </div>
           </div>
         </div>
@@ -1469,9 +1457,9 @@ const GuardianDetails = () => {
                    </div>
 
                    <div>
-                     <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px' }}>Invoice Amount ($ USD)</label>
+                     <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px' }}>Invoice Amount (₹ INR)</label>
                      <div style={{ position: 'relative' }}>
-                       <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', fontWeight: 900, color: 'var(--text-muted)' }}>$</span>
+                       <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', fontWeight: 900, color: 'var(--text-muted)' }}>₹</span>
                        <input 
                          type="number" 
                          required 
@@ -1549,7 +1537,7 @@ const GuardianDetails = () => {
                            <div style={{ flex: 1 }}>
                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                <span style={{ fontWeight: 900, fontSize: '0.88rem', color: selectedInvoices[inv.id] ? 'var(--primary)' : 'inherit' }}>{inv.id} &nbsp;·&nbsp; <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', fontWeight: 600 }}>{inv.type}</span></span>
-                               <span style={{ fontWeight: 950, fontSize: '0.95rem' }}>${inv.amount.toLocaleString()}</span>
+                               <span style={{ fontWeight: 950, fontSize: '0.95rem' }}>₹{inv.amount.toLocaleString()}</span>
                              </div>
                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600, marginTop: '4px' }}>
                                <span>For: {inv.month}</span>
@@ -1564,7 +1552,7 @@ const GuardianDetails = () => {
                        <div>
                          <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Selected Settlement Total</div>
                          <div style={{ fontSize: '1.4rem', fontWeight: 950, color: 'var(--primary)', marginTop: '2px' }}>
-                           ${invoicesList.filter(inv => selectedInvoices[inv.id]).reduce((sum, inv) => sum + inv.amount, 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                           ₹{invoicesList.filter(inv => selectedInvoices[inv.id]).reduce((sum, inv) => sum + inv.amount, 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                          </div>
                        </div>
                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: '#10B981', fontWeight: 800 }}>
@@ -1766,14 +1754,14 @@ const GuardianDetails = () => {
                        {paymentReceipt.items.map(item => (
                          <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between' }}>
                            <span>{item.id} ({item.type})</span>
-                           <span style={{ fontWeight: 900 }}>${item.amount.toLocaleString()}</span>
+                           <span style={{ fontWeight: 900 }}>₹{item.amount.toLocaleString()}</span>
                          </div>
                        ))}
                      </div>
                      
                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1rem', fontWeight: 950 }}>
                        <span>TOTAL SETTLEMENT</span>
-                       <span style={{ color: 'var(--primary)' }}>${paymentReceipt.total.toLocaleString()}</span>
+                       <span style={{ color: 'var(--primary)' }}>₹{paymentReceipt.total.toLocaleString()}</span>
                      </div>
                    </div>
 
@@ -1805,14 +1793,14 @@ const GuardianDetails = () => {
                                  <h2>EDUPRO ACADEMY</h2>
                                  <p>Official Billing Settlement Receipt</p>
                                </div>
-                               <div class="row"><span>Transaction ID:</span><strong>${paymentReceipt.txId}</strong></div>
-                               <div class="row"><span>Date/Time:</span><span>${paymentReceipt.date}</span></div>
-                               <div class="row"><span>Payment Method:</span><span>${paymentReceipt.method}</span></div>
+                               <div class="row"><span>Transaction ID:</span><strong>₹{paymentReceipt.txId}</strong></div>
+                               <div class="row"><span>Date/Time:</span><span>₹{paymentReceipt.date}</span></div>
+                               <div class="row"><span>Payment Method:</span><span>₹{paymentReceipt.method}</span></div>
                                <div style="margin: 20px 0 10px; font-weight: bold; font-size: 0.85rem; color: #64748b;">Paid Items:</div>
                                ${paymentReceipt.items.map(item => `
-                                 <div class="row"><span>${item.id} (${item.type})</span><span>$${item.amount.toLocaleString()}</span></div>
+                                 <div class="row"><span>₹{item.id} (${item.type})</span><span>₹${item.amount.toLocaleString()}</span></div>
                                `).join('')}
-                               <div class="total"><span>TOTAL CHARGE:</span><span>$${paymentReceipt.total.toLocaleString()}</span></div>
+                               <div class="total"><span>TOTAL CHARGE:</span><span>₹${paymentReceipt.total.toLocaleString()}</span></div>
                                <div style="text-align: center; margin-top: 28px; font-size: 0.75rem; color: #94a3b8;">Thank you for your secure educational settlement.</div>
                              </div>
                              <script>window.onload = function() { window.print(); }</script>
@@ -1839,10 +1827,10 @@ const GuardianDetails = () => {
                            '------------------------------------------------',
                            'Settled Items:',
                            ...paymentReceipt.items.map(item => 
-                             ` - ${item.id}: ${item.type} ($${item.amount.toLocaleString()})`
+                             ` - ${item.id}: ${item.type} (₹${item.amount.toLocaleString()})`
                            ),
                            '------------------------------------------------',
-                           `TOTAL SETTLED:  $${paymentReceipt.total.toLocaleString()}`,
+                           `TOTAL SETTLED:  ₹${paymentReceipt.total.toLocaleString()}`,
                            '================================================',
                            'Thank you for your secure transaction.',
                            '================================================'
@@ -1915,7 +1903,7 @@ const GuardianDetails = () => {
                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, marginTop: '4px' }}>Invoice: {inv.id} &nbsp;·&nbsp; Due: {inv.dueDate}</div>
                        </div>
                        <div style={{ textAlign: 'right' }}>
-                         <div style={{ fontWeight: 950, fontSize: '1rem', color: inv.status === 'Overdue' ? '#EF4444' : 'inherit' }}>${inv.amount.toLocaleString()}</div>
+                         <div style={{ fontWeight: 950, fontSize: '1rem', color: inv.status === 'Overdue' ? '#EF4444' : 'inherit' }}>₹{inv.amount.toLocaleString()}</div>
                          <span style={{ fontSize: '0.65rem', fontWeight: 900, color: inv.status === 'Overdue' ? '#EF4444' : '#F59E0B', padding: '2px 6px', borderRadius: '6px', backgroundColor: inv.status === 'Overdue' ? '#EF444410' : '#F59E0B10', marginTop: '4px', display: 'inline-block' }}>{inv.status.toUpperCase()}</span>
                        </div>
                      </div>
@@ -2004,15 +1992,15 @@ const GuardianDetails = () => {
                      </div>
                      <div style={{ padding: '16px 20px', borderRadius: '16px', backgroundColor: 'var(--bg-body)', border: '1px solid var(--border-color)' }}>
                        <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Total Billed</div>
-                       <div style={{ fontSize: '1.4rem', fontWeight: 950, color: 'var(--text-main)', marginTop: '2px' }}>${totalBilled.toLocaleString()}</div>
+                       <div style={{ fontSize: '1.4rem', fontWeight: 950, color: 'var(--text-main)', marginTop: '2px' }}>₹{totalBilled.toLocaleString()}</div>
                      </div>
                      <div style={{ padding: '16px 20px', borderRadius: '16px', backgroundColor: 'var(--bg-body)', border: '1px solid var(--border-color)' }}>
                        <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Total Collected</div>
-                       <div style={{ fontSize: '1.4rem', fontWeight: 950, color: 'var(--primary)', marginTop: '2px' }}>${totalCollected.toLocaleString()}</div>
+                       <div style={{ fontSize: '1.4rem', fontWeight: 950, color: 'var(--primary)', marginTop: '2px' }}>₹{totalCollected.toLocaleString()}</div>
                      </div>
                      <div style={{ padding: '16px 20px', borderRadius: '16px', backgroundColor: 'var(--bg-body)', border: '1px solid var(--border-color)' }}>
                        <div style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Outstanding Balance</div>
-                       <div style={{ fontSize: '1.4rem', fontWeight: 950, color: '#EF4444', marginTop: '2px' }}>${outstandingBalance.toLocaleString()}</div>
+                       <div style={{ fontSize: '1.4rem', fontWeight: 950, color: '#EF4444', marginTop: '2px' }}>₹{outstandingBalance.toLocaleString()}</div>
                      </div>
                    </div>
 
@@ -2088,12 +2076,12 @@ const GuardianDetails = () => {
                            }
                            const rows = filteredAuditInvoices.map(inv => `
                              <tr style="border-bottom:1px solid #e2e8f0;">
-                               <td style="padding:12px;">${inv.id}</td>
-                               <td style="padding:12px;">${inv.month}</td>
-                               <td style="padding:12px;">${inv.type}</td>
-                               <td style="padding:12px;">${inv.status}</td>
-                               <td style="padding:12px;">$${inv.amount.toLocaleString()}</td>
-                               <td style="padding:12px;">${inv.dueDate}</td>
+                               <td style="padding:12px;">₹{inv.id}</td>
+                               <td style="padding:12px;">₹{inv.month}</td>
+                               <td style="padding:12px;">₹{inv.type}</td>
+                               <td style="padding:12px;">₹{inv.status}</td>
+                               <td style="padding:12px;">₹${inv.amount.toLocaleString()}</td>
+                               <td style="padding:12px;">₹{inv.dueDate}</td>
                              </tr>
                            `).join('');
                            printWindow.document.write(`
@@ -2113,7 +2101,7 @@ const GuardianDetails = () => {
                                  <thead>
                                    <tr><th>Invoice</th><th>Month</th><th>Type</th><th>Status</th><th>Amount</th><th>Due Date</th></tr>
                                  </thead>
-                                 <tbody>${rows}</tbody>
+                                 <tbody>₹{rows}</tbody>
                                </table>
                                <script>window.onload = function() { window.print(); }</script>
                              </body>
@@ -2154,7 +2142,7 @@ const GuardianDetails = () => {
                                    {inv.status.toUpperCase()}
                                  </span>
                                </td>
-                               <td style={{ padding: '14px 20px', fontWeight: 950, fontSize: '0.92rem' }}>${inv.amount.toLocaleString()}</td>
+                               <td style={{ padding: '14px 20px', fontWeight: 950, fontSize: '0.92rem' }}>₹{inv.amount.toLocaleString()}</td>
                                <td style={{ padding: '14px 20px', textAlign: 'right', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>{inv.dueDate}</td>
                              </tr>
                            ))
@@ -2963,7 +2951,7 @@ const GuardianDetails = () => {
                                    <div style={{ padding: '6px 12px', borderRadius: '10px', backgroundColor: '#EF444415', border: '1px solid #EF444430', color: '#EF4444', fontSize: '0.7rem', fontWeight: 900 }}>DUE IMMEDIATELY</div>
                                 </div>
                                 <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#94a3b8', letterSpacing: '0.5px' }}>CURRENT PAYABLE BALANCE</div>
-                                <div style={{ fontSize: '2.8rem', fontWeight: 950, margin: '4px 0 24px' }}>{"$" + outstandingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                                <div style={{ fontSize: '2.8rem', fontWeight: 950, margin: '4px 0 24px' }}>{"₹" + outstandingBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                              </div>
                              <div style={{ display: 'flex', gap: '12px' }}>
                                 <button onClick={openPaymentModal} className="btn btn-primary" style={{ flex: 1, padding: '12px', borderRadius: '14px', fontWeight: 900, backgroundColor: '#38bdf8', color: '#0f172a', border: 'none' }}>PAY SECURELY</button>
@@ -3027,7 +3015,7 @@ const GuardianDetails = () => {
                                         axisLine={false} 
                                         tickLine={false} 
                                         tick={{ fontSize: 10, fontWeight: 700, fill: 'var(--text-muted)' }}
-                                        tickFormatter={(value) => "$" + value}
+                                        tickFormatter={(value) => "₹" + value}
                                       />
                                       <Tooltip 
                                         contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: 'var(--shadow-lg)' }}
@@ -3046,7 +3034,7 @@ const GuardianDetails = () => {
                              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                 {[
                                   { label: 'Merit Award', val: '15%', color: '#10B981', icon: <Star size={14} /> },
-                                  { label: 'Sibling Grant', val: '$200', color: '#10B981', icon: <Users size={14} /> }
+                                  { label: 'Sibling Grant', val: '₹200', color: '#10B981', icon: <Users size={14} /> }
                                 ].map((item, i) => (
                                   <div key={i} style={{ padding: '12px 16px', borderRadius: '16px', backgroundColor: 'var(--bg-body)', border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -3059,7 +3047,7 @@ const GuardianDetails = () => {
                              </div>
                              <div style={{ marginTop: '24px', padding: '16px', borderRadius: '16px', backgroundColor: 'rgba(16, 185, 129, 0.05)', border: '1px dashed #10B98130' }}>
                                 <div style={{ fontSize: '0.65rem', fontWeight: 900, color: '#059669', textTransform: 'uppercase', marginBottom: '4px' }}>YTD SAVINGS</div>
-                                <div style={{ fontSize: '1.4rem', fontWeight: 950, color: '#059669' }}>$1,850.00</div>
+                                <div style={{ fontSize: '1.4rem', fontWeight: 950, color: '#059669' }}>₹1,850.00</div>
                              </div>
                           </div>
                        </div>
@@ -3107,7 +3095,7 @@ const GuardianDetails = () => {
                                            </span>
                                         </div>
                                      </td>
-                                     <td style={{ padding: '16px 24px', fontWeight: 950, fontSize: '0.95rem' }}>{"$" + inv.amount.toLocaleString()}</td>
+                                     <td style={{ padding: '16px 24px', fontWeight: 950, fontSize: '0.95rem' }}>{"₹" + inv.amount.toLocaleString()}</td>
                                      <td style={{ padding: '16px 24px', textAlign: 'right' }}>
                                         <button 
                                            onClick={() => handleViewReceipt(inv)}

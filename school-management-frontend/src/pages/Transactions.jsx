@@ -31,11 +31,11 @@ const Transactions = () => {
       return JSON.parse(stored);
     } else {
       const initial = [
-        { id: 'TRX-9021', title: 'Tuition Fee Collection', category: 'Academic', amount: '$42,500.00', type: 'Income', date: '05 May 2026', method: 'Online' },
-        { id: 'TRX-9020', title: 'Electricity Bill Payment', category: 'Utilities', amount: '$1,250.00', type: 'Expense', date: '05 May 2026', method: 'Bank Transfer' },
-        { id: 'TRX-9019', title: 'Staff Salaries - Admin', category: 'Payroll', amount: '$12,400.00', type: 'Expense', date: '04 May 2026', method: 'Institutional Bank' },
-        { id: 'TRX-9018', title: 'Science Lab Donation', category: 'General', amount: '$5,000.00', type: 'Income', date: '03 May 2026', method: 'Cheque' },
-        { id: 'TRX-9017', title: 'Maintenance Contract', category: 'Repairs', amount: '$2,100.00', type: 'Expense', date: '02 May 2026', method: 'Cash' },
+        { id: 'TRX-9021', title: 'Tuition Fee Collection', category: 'Academic', amount: '₹42,500.00', type: 'Income', date: '05 May 2026', method: 'Online' },
+        { id: 'TRX-9020', title: 'Electricity Bill Payment', category: 'Utilities', amount: '₹1,250.00', type: 'Expense', date: '05 May 2026', method: 'Bank Transfer' },
+        { id: 'TRX-9019', title: 'Staff Salaries - Admin', category: 'Payroll', amount: '₹12,400.00', type: 'Expense', date: '04 May 2026', method: 'Institutional Bank' },
+        { id: 'TRX-9018', title: 'Science Lab Donation', category: 'General', amount: '₹5,000.00', type: 'Income', date: '03 May 2026', method: 'Cheque' },
+        { id: 'TRX-9017', title: 'Maintenance Contract', category: 'Repairs', amount: '₹2,100.00', type: 'Expense', date: '02 May 2026', method: 'Cash' },
       ];
       localStorage.setItem('institutional_transactions', JSON.stringify(initial));
       return initial;
@@ -64,9 +64,9 @@ const Transactions = () => {
       }
     });
     return {
-      inflow: '$' + inflow.toLocaleString('en-US', { minimumFractionDigits: 2 }),
-      outflow: '$' + outflow.toLocaleString('en-US', { minimumFractionDigits: 2 }),
-      net: '$' + (inflow - outflow).toLocaleString('en-US', { minimumFractionDigits: 2 }),
+      inflow: '₹' + inflow.toLocaleString('en-IN', { minimumFractionDigits: 2 }),
+      outflow: '₹' + outflow.toLocaleString('en-IN', { minimumFractionDigits: 2 }),
+      net: '₹' + (inflow - outflow).toLocaleString('en-IN', { minimumFractionDigits: 2 }),
       netRaw: inflow - outflow
     };
   };
@@ -87,7 +87,7 @@ const Transactions = () => {
       return;
     }
 
-    const formattedAmount = '$' + val.toLocaleString('en-US', { minimumFractionDigits: 2 });
+    const formattedAmount = '₹' + val.toLocaleString('en-IN', { minimumFractionDigits: 2 });
     
     // Format Date from YYYY-MM-DD to DD MMM YYYY
     const dateObj = new Date(newTrxForm.date);
@@ -236,7 +236,7 @@ const Transactions = () => {
                <BarChart data={cashFlowData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                   <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--text-muted)' }} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--text-muted)' }} tickFormatter={(v) => `$${v/1000}k`} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--text-muted)' }} tickFormatter={(v) => `₹${v/1000}k`} />
                   <Tooltip cursor={{ fill: 'var(--bg-body)' }} />
                   <Legend iconType="circle" wrapperStyle={{ fontWeight: 800, paddingTop: '20px' }} />
                   <Bar dataKey="income" name="Income" fill="#10B981" radius={[6, 6, 0, 0]} barSize={24} />
@@ -558,9 +558,9 @@ const Transactions = () => {
 
                 {/* Amount */}
                 <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 800, fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Amount (USD $) *</label>
+                  <label style={{ display: 'block', marginBottom: '8px', fontWeight: 800, fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Amount (₹) *</label>
                   <div style={{ position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: '16px', top: '12px', fontWeight: 800, color: 'var(--text-muted)' }}>$</span>
+                    <span style={{ position: 'absolute', left: '16px', top: '12px', fontWeight: 800, color: 'var(--text-muted)' }}>₹</span>
                     <input 
                       type="number" 
                       step="0.01"

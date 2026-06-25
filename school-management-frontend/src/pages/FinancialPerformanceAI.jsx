@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  DollarSign, TrendingUp, TrendingDown, Landmark, 
-  BarChart, PieChart, ShieldCheck, Zap, 
-  FileText, ArrowUpRight, Activity, Calendar, X,
-  CheckCircle2, AlertCircle, RefreshCw, Sparkles, Download, Printer, Users, CreditCard, ChevronRight, HelpCircle
-} from 'lucide-react';
+import { IndianRupee, TrendingUp, TrendingDown, Landmark, BarChart, PieChart, ShieldCheck, Zap, FileText, ArrowUpRight, Activity, Calendar, X, CheckCircle2, AlertCircle, RefreshCw, Sparkles, Download, Printer, Users, CreditCard, ChevronRight, HelpCircle } from 'lucide-react';
 
 const FinancialPerformanceAI = () => {
   // 1. Dynamic Fiscal State
@@ -37,9 +32,9 @@ const FinancialPerformanceAI = () => {
   // 6. Interactive Vendor Contracts
   const [activeVendor, setActiveVendor] = useState('Apex Scientific Inc.');
   const [vendorList, setVendorList] = useState([
-    { name: 'Apex Scientific Inc.', cost: '$18,500', rating: '4.8/5', speed: '2 days', status: 'current' },
-    { name: 'OmniLab Supply Systems', cost: '$16,280', rating: '4.6/5', speed: '3 days', status: 'alternate' },
-    { name: 'Global Academics Procure', cost: '$15,950', rating: '4.4/5', speed: '5 days', status: 'alternate' }
+    { name: 'Apex Scientific Inc.', cost: '₹18,500', rating: '4.8/5', speed: '2 days', status: 'current' },
+    { name: 'OmniLab Supply Systems', cost: '₹16,280', rating: '4.6/5', speed: '3 days', status: 'alternate' },
+    { name: 'Global Academics Procure', cost: '₹15,950', rating: '4.4/5', speed: '5 days', status: 'alternate' }
   ]);
 
   // 7. Interactive Slider Simulation States
@@ -93,7 +88,7 @@ const FinancialPerformanceAI = () => {
       .reduce((sum, acc) => sum + acc.amount, 0);
 
     setFeeForecast(prev => prev + selectedAmount);
-    triggerToast(`AI fee reminders dispatched successfully! Predicted recovery rate: $${selectedAmount}`, "success");
+    triggerToast(`AI fee reminders dispatched successfully! Predicted recovery rate: ₹${selectedAmount}`, "success");
     setActiveModal(null);
   };
 
@@ -106,7 +101,7 @@ const FinancialPerformanceAI = () => {
     
     setBurnRate(prev => prev - monthlySaving);
     setBurnTrend(prev => prev - 1);
-    triggerToast(`Contract switched to ${vendorName}! Saved $${monthlySaving}/mo in operational overhead.`, "success");
+    triggerToast(`Contract switched to ${vendorName}! Saved ₹${monthlySaving}/mo in operational overhead.`, "success");
     setActiveModal(null);
   };
 
@@ -116,12 +111,12 @@ const FinancialPerformanceAI = () => {
 
   // Interactive Chart data
   const monthlyData = [
-    { month: 'JAN', rev: 92, exp: 62, text: 'JAN: Revenue $92k / Expense $62k' },
-    { month: 'FEB', rev: 110, exp: 65, text: 'FEB: Revenue $110k / Expense $65k' },
-    { month: 'MAR', rev: 98, exp: 58, text: 'MAR: Revenue $98k / Expense $58k' },
-    { month: 'APR', rev: 125, exp: 60, text: 'APR: Revenue $125k / Expense $60k' },
-    { month: 'MAY', rev: 130, exp: 62, text: 'MAY: Revenue $130k / Expense $62k' },
-    { month: 'JUN', rev: 145, exp: 64, text: 'JUN: Revenue $145k / Expense $64k' }
+    { month: 'JAN', rev: 92, exp: 62, text: 'JAN: Revenue ₹92k / Expense ₹62k' },
+    { month: 'FEB', rev: 110, exp: 65, text: 'FEB: Revenue ₹110k / Expense ₹65k' },
+    { month: 'MAR', rev: 98, exp: 58, text: 'MAR: Revenue ₹98k / Expense ₹58k' },
+    { month: 'APR', rev: 125, exp: 60, text: 'APR: Revenue ₹125k / Expense ₹60k' },
+    { month: 'MAY', rev: 130, exp: 62, text: 'MAY: Revenue ₹130k / Expense ₹62k' },
+    { month: 'JUN', rev: 145, exp: 64, text: 'JUN: Revenue ₹145k / Expense ₹64k' }
   ];
 
   return (
@@ -257,7 +252,7 @@ const FinancialPerformanceAI = () => {
               <div style={{ padding: '4px 8px', borderRadius: '8px', backgroundColor: '#6366f110', color: '#6366f1', fontSize: '0.7rem', fontWeight: 800 }}>94% CONFIDENCE</div>
            </div>
            <div style={{ fontSize: '2.5rem', fontWeight: 950, color: 'var(--text-main)', marginBottom: '8px' }}>
-             ${feeForecast.toLocaleString()}
+             ₹{feeForecast.toLocaleString()}
            </div>
            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: 0 }}>
              Predicted collection based on historical payment patterns and current arrears. Click for detailed collection rates.
@@ -280,7 +275,7 @@ const FinancialPerformanceAI = () => {
               </div>
            </div>
            <div style={{ fontSize: '2.5rem', fontWeight: 950, color: 'var(--text-main)', marginBottom: '8px' }}>
-             ${burnRate.toLocaleString()}/mo
+             ₹{burnRate.toLocaleString()}/mo
            </div>
            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: 0 }}>
              System-wide utility and staffing costs are currently below projected budget. Click for dynamic burn rate simulator.
@@ -303,7 +298,7 @@ const FinancialPerformanceAI = () => {
               </div>
            </div>
            <div style={{ fontSize: '2.5rem', fontWeight: 950, color: 'var(--text-main)', marginBottom: '8px' }}>
-             ${annualSurplus}M
+             ₹{annualSurplus}M
            </div>
            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: 0 }}>
              AI forecasts year-end liquidity growth due to optimized procurement and collections. Click for revenue vectors.
@@ -333,10 +328,10 @@ const FinancialPerformanceAI = () => {
               
               {/* Y-Axis Labels */}
               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '24px 0', fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-muted)', textAlign: 'right', width: '40px', userSelect: 'none' }}>
-                <span>$150k</span>
-                <span>$100k</span>
-                <span>$50k</span>
-                <span>$0</span>
+                <span>₹150k</span>
+                <span>₹100k</span>
+                <span>₹50k</span>
+                <span>₹0</span>
               </div>
 
               {/* Chart Body */}
@@ -641,7 +636,7 @@ const FinancialPerformanceAI = () => {
                           </div>
                         </div>
                         <div style={{ textAlign: 'right' }}>
-                          <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#10b981' }}>${acc.amount}</div>
+                          <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#10b981' }}>₹{acc.amount}</div>
                           <div style={{ fontSize: '0.65rem', color: '#6366f1', fontWeight: 800 }}>Prob: {acc.prob}</div>
                         </div>
                       </div>
@@ -841,7 +836,7 @@ const FinancialPerformanceAI = () => {
                   <div>
                     <h5 style={{ fontWeight: 800, fontSize: '0.9rem', color: '#0f172a', marginBottom: '8px' }}>I. LIQUIDITY STATEMENT</h5>
                     <p style={{ fontSize: '0.75rem', color: '#334155', lineHeight: 1.6, textAlign: 'justify' }}>
-                      This audit evaluates core predictive fiscal vectors, active ledgers, and operational costs across the institution. The core year-end surplus forecast stands at <strong>${annualSurplus}M</strong> with an operational fee collection forecast of <strong>${feeForecast.toLocaleString()}</strong>. Real-time cost-saving pipelines have lowered utility burn rates to <strong>${burnRate.toLocaleString()}/mo</strong>.
+                      This audit evaluates core predictive fiscal vectors, active ledgers, and operational costs across the institution. The core year-end surplus forecast stands at <strong>₹{annualSurplus}M</strong> with an operational fee collection forecast of <strong>₹{feeForecast.toLocaleString()}</strong>. Real-time cost-saving pipelines have lowered utility burn rates to <strong>₹{burnRate.toLocaleString()}/mo</strong>.
                     </p>
                   </div>
 
@@ -859,17 +854,17 @@ const FinancialPerformanceAI = () => {
                       <tbody>
                         <tr style={{ backgroundColor: 'white' }}>
                           <td style={{ padding: '8px 12px', border: '1px solid #cbd5e1', fontWeight: 700 }}>Fee Recovery Forecast</td>
-                          <td style={{ padding: '8px 12px', border: '1px solid #cbd5e1' }}>${feeForecast.toLocaleString()}</td>
+                          <td style={{ padding: '8px 12px', border: '1px solid #cbd5e1' }}>₹{feeForecast.toLocaleString()}</td>
                           <td style={{ padding: '8px 12px', border: '1px solid #cbd5e1', color: '#10b981', fontWeight: 800 }}>94% Target Confidence</td>
                         </tr>
                         <tr style={{ backgroundColor: '#f1f5f9' }}>
                           <td style={{ padding: '8px 12px', border: '1px solid #cbd5e1', fontWeight: 700 }}>Operational Burn Rate</td>
-                          <td style={{ padding: '8px 12px', border: '1px solid #cbd5e1' }}>${burnRate.toLocaleString()}/mo</td>
+                          <td style={{ padding: '8px 12px', border: '1px solid #cbd5e1' }}>₹{burnRate.toLocaleString()}/mo</td>
                           <td style={{ padding: '8px 12px', border: '1px solid #cbd5e1', color: '#10b981', fontWeight: 800 }}>{burnTrend}% Optimized</td>
                         </tr>
                         <tr style={{ backgroundColor: 'white' }}>
                           <td style={{ padding: '8px 12px', border: '1px solid #cbd5e1', fontWeight: 700 }}>Annual Surplus Target</td>
-                          <td style={{ padding: '8px 12px', border: '1px solid #cbd5e1' }}>${annualSurplus}M</td>
+                          <td style={{ padding: '8px 12px', border: '1px solid #cbd5e1' }}>₹{annualSurplus}M</td>
                           <td style={{ padding: '8px 12px', border: '1px solid #cbd5e1', color: '#6366f1', fontWeight: 800 }}>+{surplusTrend}% Growth</td>
                         </tr>
                       </tbody>
@@ -1076,7 +1071,7 @@ const FinancialPerformanceAI = () => {
                       <div style={{ padding: '16px', borderRadius: '16px', backgroundColor: 'var(--bg-body)', border: '1px solid var(--border-color)', textAlign: 'center' }}>
                         <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-muted)' }}>SIMULATED OPERATIONAL BURN RATE</div>
                         <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#10b981', marginTop: '4px' }}>
-                          ${burnRate.toLocaleString()}/mo
+                          ₹{burnRate.toLocaleString()}/mo
                         </div>
                       </div>
                     </div>

@@ -188,7 +188,7 @@ const Pricing = () => {
               <p style={{ fontSize: '1rem', color: '#94a3b8', marginBottom: '40px', lineHeight: 1.6, height: '50px' }}>{plan.desc}</p>
 
               <div style={{ marginBottom: '40px' }}>
-                <span style={{ fontSize: '4rem', fontWeight: 950 }}>{plan.price !== 'Custom' ? `$${plan.price}` : 'Custom'}</span>
+                <span style={{ fontSize: '4rem', fontWeight: 950 }}>{plan.price !== 'Custom' ? `₹${plan.price}` : 'Custom'}</span>
                 {plan.price !== 'Custom' && <span style={{ fontSize: '1.25rem', color: '#4b5563', fontWeight: 700 }}>/mo</span>}
               </div>
 

@@ -239,26 +239,26 @@ const IDCards = () => {
             </div>
 
             <div class="card-body">
-              <div class="student-name">${selectedStudent.name}</div>
+              <div class="student-name">₹{selectedStudent.name}</div>
               <span class="role-badge">STUDENT</span>
 
               <div class="info-rows">
                 <div class="info-row">
                   <span class="info-label">Student ID</span>
-                  <span class="info-value">${selectedStudent.student_id}</span>
+                  <span class="info-value">₹{selectedStudent.student_id}</span>
                 </div>
                 <div class="info-row">
                   <span class="info-label">Class</span>
-                  <span class="info-value">${selectedStudent.class_id || 'Not Assigned'}</span>
+                  <span class="info-value">₹{selectedStudent.class_id || 'Not Assigned'}</span>
                 </div>
                 <div class="info-row">
                   <span class="info-label">Blood Group</span>
-                  <span class="info-value danger">${selectedStudent.blood_group || 'O+'}</span>
+                  <span class="info-value danger">₹{selectedStudent.blood_group || 'O+'}</span>
                 </div>
                 ${selectedStudent.phone ? `
                 <div class="info-row">
                   <span class="info-label">Contact</span>
-                  <span class="info-value">${selectedStudent.phone}</span>
+                  <span class="info-value">₹{selectedStudent.phone}</span>
                 </div>` : ''}
               </div>
 
@@ -567,18 +567,18 @@ Class/Grade:     Class ${selectedStudent.class_id || 'N/A'}
 --------------------------------------------------
 ITEM DETAILS:
 --------------------------------------------------
-Physical ID Card Base Price:     $${basePrice.toFixed(2)} x ${orderForm.quantity}
-Finish Type:                     ${orderForm.finish.toUpperCase()} ($${finishPrice.toFixed(2)} extra/card)
-Shipping Method:                 ${orderForm.shipping.toUpperCase()} ($${shippingPrice.toFixed(2)})
+Physical ID Card Base Price:     ₹${basePrice.toFixed(2)} x ${orderForm.quantity}
+Finish Type:                     ${orderForm.finish.toUpperCase()} (₹${finishPrice.toFixed(2)} extra/card)
+Shipping Method:                 ${orderForm.shipping.toUpperCase()} (₹${shippingPrice.toFixed(2)})
 Delivery Address:                ${orderForm.address}
 
 --------------------------------------------------
 PRICING BREAKDOWN:
 --------------------------------------------------
-Subtotal (Cards):                $${itemsTotal.toFixed(2)}
-Shipping & Handling:             $${shippingPrice.toFixed(2)}
+Subtotal (Cards):                ₹${itemsTotal.toFixed(2)}
+Shipping & Handling:             ₹${shippingPrice.toFixed(2)}
 --------------------------------------------------
-TOTAL AMOUNT CHARGED:            $${totalAmount.toFixed(2)}
+TOTAL AMOUNT CHARGED:            ₹${totalAmount.toFixed(2)}
 ==================================================
 Payment Status:  PAID (Institutional Pre-Approved)
 Fulfillment Status: IN QUEUE FOR PRINTING
@@ -950,7 +950,7 @@ Thank you for your order. Keep this copy for your records.`;
                               {orderForm.finish === 'glossy' && <Check size={12} color="white" />}
                             </div>
                           </div>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Vibrant high-shine surface finish. +$1.50 / card.</span>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Vibrant high-shine surface finish. +₹1.50 / card.</span>
                         </div>
                       </div>
                     </div>
@@ -975,7 +975,7 @@ Thank you for your order. Keep this copy for your records.`;
                             <Truck size={18} color={orderForm.shipping === 'standard' ? 'var(--primary)' : 'var(--text-muted)'} />
                             <div>
                               <span style={{ fontWeight: 700, fontSize: '0.9rem', display: 'block' }}>Standard Delivery</span>
-                              <small style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Takes 5-7 business days ($3.99)</small>
+                              <small style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Takes 5-7 business days (₹3.99)</small>
                             </div>
                           </div>
                           <div style={{ 
@@ -1002,7 +1002,7 @@ Thank you for your order. Keep this copy for your records.`;
                             <Truck size={18} color={orderForm.shipping === 'express' ? 'var(--primary)' : 'var(--text-muted)'} />
                             <div>
                               <span style={{ fontWeight: 700, fontSize: '0.9rem', display: 'block' }}>Express Dispatch</span>
-                              <small style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Takes 1-2 business days, priority batch ($8.99)</small>
+                              <small style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>Takes 1-2 business days, priority batch (₹8.99)</small>
                             </div>
                           </div>
                           <div style={{ 
@@ -1079,24 +1079,24 @@ Thank you for your order. Keep this copy for your records.`;
                     <div style={{ padding: '20px', borderRadius: '20px', backgroundColor: 'var(--bg-body)', border: '1px dashed var(--border-color)' }}>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.85rem' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <span style={{ color: 'var(--text-muted)' }}>Card Base Fee ($4.99 x {orderForm.quantity}):</span>
-                          <span style={{ fontWeight: 700 }}>${(4.99 * orderForm.quantity).toFixed(2)}</span>
+                          <span style={{ color: 'var(--text-muted)' }}>Card Base Fee (₹4.99 x {orderForm.quantity}):</span>
+                          <span style={{ fontWeight: 700 }}>₹{(4.99 * orderForm.quantity).toFixed(2)}</span>
                         </div>
                         {orderForm.finish === 'glossy' && (
                           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <span style={{ color: 'var(--text-muted)' }}>Glossy finish surcharge ($1.50 x {orderForm.quantity}):</span>
-                            <span style={{ fontWeight: 700, color: 'var(--primary)' }}>+${(1.50 * orderForm.quantity).toFixed(2)}</span>
+                            <span style={{ color: 'var(--text-muted)' }}>Glossy finish surcharge (₹1.50 x {orderForm.quantity}):</span>
+                            <span style={{ fontWeight: 700, color: 'var(--primary)' }}>+₹{(1.50 * orderForm.quantity).toFixed(2)}</span>
                           </div>
                         )}
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                           <span style={{ color: 'var(--text-muted)' }}>Shipping priority fee:</span>
-                          <span style={{ fontWeight: 700 }}>${(orderForm.shipping === 'express' ? 8.99 : 3.99).toFixed(2)}</span>
+                          <span style={{ fontWeight: 700 }}>₹{(orderForm.shipping === 'express' ? 8.99 : 3.99).toFixed(2)}</span>
                         </div>
                         <div style={{ height: '1px', backgroundColor: 'var(--border-color)', margin: '4px 0' }}></div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1rem', fontWeight: 800 }}>
                           <span>Total order price:</span>
                           <span style={{ color: 'var(--primary)' }}>
-                            ${(((4.99 + (orderForm.finish === 'glossy' ? 1.50 : 0.00)) * orderForm.quantity) + (orderForm.shipping === 'express' ? 8.99 : 3.99)).toFixed(2)}
+                            ₹{(((4.99 + (orderForm.finish === 'glossy' ? 1.50 : 0.00)) * orderForm.quantity) + (orderForm.shipping === 'express' ? 8.99 : 3.99)).toFixed(2)}
                           </span>
                         </div>
                       </div>

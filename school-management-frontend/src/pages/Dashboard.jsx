@@ -284,7 +284,7 @@ const Dashboard = () => {
   const eliteCards = [
     { title: 'Total Students', value: stats.totalStudents > 0 ? stats.totalStudents.toLocaleString() : '20,000', icon: <Users size={24} />, color: 'var(--primary)', trend: '+12.5%', isUp: true },
     { title: 'Total Teachers', value: stats.totalTeachers > 0 ? stats.totalTeachers.toLocaleString() : '1,500', icon: <GraduationCap size={24} />, color: '#6366f1', trend: '+3.2%', isUp: true },
-    { title: 'Total Revenue', value: `$${(stats.revenue / 1000).toFixed(1)}k`, icon: <CreditCard size={24} />, color: 'var(--success)', trend: '+18.4%', isUp: true },
+    { title: 'Total Revenue', value: `₹${(stats.revenue / 1000).toFixed(1)}k`, icon: <CreditCard size={24} />, color: 'var(--success)', trend: '+18.4%', isUp: true },
     { title: 'System Alerts', value: '4 Active', icon: <Bell size={24} />, color: 'var(--warning)', trend: 'NORMAL', isUp: true }
   ];
 

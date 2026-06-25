@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Zap, Gem, Award, Check, Sparkles, 
-  ArrowRight, Shield, Globe, Users, 
-  Database, Clock, ChevronRight, 
-  Star, Target, Rocket, Box,
-  X, AlertCircle, CheckCircle
-} from 'lucide-react';
+import { Zap, Gem, Award, Check, Sparkles, ArrowRight, Shield, Globe, Users, Database, Clock, ChevronRight, Star, Target, Rocket, Box, X, AlertCircle, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 // ─── Hook: reads dark-mode from localStorage + syncs with Topbar toggle ──────
@@ -51,7 +45,7 @@ const PremiumUpgrades = () => {
   const tiers = [
     {
       name: 'Starter',
-      price: '$0',
+      price: '₹0',
       period: '/mo',
       desc: 'Foundation for emerging institutions.',
       icon: <Box size={28} />,
@@ -60,7 +54,7 @@ const PremiumUpgrades = () => {
     },
     {
       name: 'Professional',
-      price: '$59',
+      price: '₹5,000',
       period: '/mo',
       desc: 'Advanced digital operating system.',
       icon: <Zap size={28} />,
@@ -69,7 +63,7 @@ const PremiumUpgrades = () => {
     },
     {
       name: 'Enterprise',
-      price: '$499',
+      price: '₹40,000',
       period: '/mo',
       desc: 'Elite institutional intelligence.',
       icon: <Gem size={28} />,

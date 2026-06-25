@@ -47,7 +47,7 @@ const Employees = () => {
         email: 'r.carter@school.edu', 
         phone: '+1 234-567-8901',
         address: '452 Academic Circle, Science District, NY 10001',
-        salary: '$85,000 / annum',
+        salary: '₹85,000 / annum',
         biography: 'Dr. Carter has been a cornerstone of the Mathematics department for over 4 years. He specializes in advanced calculus and linear algebra, contributing significantly to the curriculum development and student mentorship programs.'
       },
       { 
@@ -61,7 +61,7 @@ const Employees = () => {
         email: 's.jenkins@school.edu', 
         phone: '+1 234-567-8902',
         address: '102 Main Administration Block, NY 10002',
-        salary: '$55,000 / annum',
+        salary: '₹55,000 / annum',
         biography: 'Sarah Jenkins coordinates departmental synchronization and schedules.'
       },
       { 
@@ -75,7 +75,7 @@ const Employees = () => {
         email: 'm.obrien@school.edu', 
         phone: '+1 234-567-8903',
         address: 'Room 305, Tech Lab Wing, NY 10001',
-        salary: '$62,000 / annum',
+        salary: '₹62,000 / annum',
         biography: 'Michael ensures campus hardware and network capabilities are functioning.'
       },
       { 
@@ -89,7 +89,7 @@ const Employees = () => {
         email: 'e.gilbert@school.edu', 
         phone: '+1 234-567-8904',
         address: 'Building C, Student Counseling Suite, NY 10003',
-        salary: '$48,000 / annum',
+        salary: '₹48,000 / annum',
         biography: 'Elena works to coordinate student support and mental wellbeing programs.'
       },
       {
@@ -103,7 +103,7 @@ const Employees = () => {
         email: 'r.taylor@school.edu',
         phone: '+1 234-567-8905',
         address: 'Garage & Transport Bay, NY 10004',
-        salary: '$58,000 / annum',
+        salary: '₹58,000 / annum',
         biography: 'Robert coordinates institutional logistics, transport routing, and vehicle registry logs.'
       },
       {
@@ -117,7 +117,7 @@ const Employees = () => {
         email: 'l.anderson@school.edu',
         phone: '+1 234-567-8906',
         address: 'Central Cafeteria Kitchen, NY 10001',
-        salary: '$50,000 / annum',
+        salary: '₹50,000 / annum',
         biography: 'Linda designs culinary menus and directs cafeteria kitchen staff.'
       },
       {
@@ -131,7 +131,7 @@ const Employees = () => {
         email: 'm.brown@school.edu',
         phone: '+1 234-567-8907',
         address: 'Server Room 202, Admin Wing, NY 10001',
-        salary: '$66,000 / annum',
+        salary: '₹66,000 / annum',
         biography: 'Michael maintains institution servers, cloud frameworks, and hardware systems.'
       },
       {
@@ -145,7 +145,7 @@ const Employees = () => {
         email: 'a.white@school.edu',
         phone: '+1 234-567-8908',
         address: 'HR Desk, Administration Building, NY 10002',
-        salary: '$54,000 / annum',
+        salary: '₹54,000 / annum',
         biography: 'Angela coordinates staff recruitments, files, benefits registry, and organizational culture.'
       },
       {
@@ -159,7 +159,7 @@ const Employees = () => {
         email: 't.harris@school.edu',
         phone: '+1 234-567-8909',
         address: 'Facilities & Workshop Area, NY 10005',
-        salary: '$52,000 / annum',
+        salary: '₹52,000 / annum',
         biography: 'Thomas leads maintenance personnel and facilities repair/renovations.'
       }
     ];

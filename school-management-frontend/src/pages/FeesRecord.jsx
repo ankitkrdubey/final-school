@@ -1,11 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { 
-  CreditCard, Search, Filter, Download, Printer, 
-  MoreVertical, CheckCircle2, Clock, AlertCircle,
-  FileText, TrendingUp, DollarSign, Calendar, X,
-  Eye, ChevronDown, Tag, Hash, User, Building2,
-  BadgeCheck, Banknote, ArrowUpRight
-} from 'lucide-react';
+import { CreditCard, Search, Filter, Download, Printer, MoreVertical, CheckCircle2, Clock, AlertCircle, FileText, TrendingUp, IndianRupee, Calendar, X, Eye, ChevronDown, Tag, Hash, User, Building2, BadgeCheck, Banknote, ArrowUpRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 /* ─────────────────────────────────────────
@@ -38,7 +32,7 @@ const SEED_RECORDS = [
    HELPERS
 ───────────────────────────────────────── */
 const fmt = (n) =>
-  '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2 });
+  '₹' + Number(n).toLocaleString('en-IN', { minimumFractionDigits: 2 });
 
 const STATUS_COLOR = {
   Paid:    { bg: 'var(--success-light)', color: 'var(--success)' },
@@ -113,7 +107,7 @@ const FeesRecord = () => {
     const paidChange = otherPaid > 0 ? (((paidAmt - otherPaid) / otherPaid) * 100).toFixed(1) : '0.0';
 
     return [
-      { label: 'Total Collection', value: fmt(paidAmt),    change: `${paidChange >= 0 ? '+' : ''}${paidChange}%`, isPositive: parseFloat(paidChange) >= 0, icon: <DollarSign size={20}/>, color: 'var(--primary)' },
+      {label: 'Total Collection', value: fmt(paidAmt),    change: `${paidChange >= 0 ? '+' : ''}${paidChange}%`, isPositive: parseFloat(paidChange) >= 0, icon: <IndianRupee size={20}/>, color: 'var(--primary)' },
       { label: 'Pending Fees',     value: fmt(pendingAmt), change: pendingAmt > 0 ? '▲ Due' : '✓ Clear',          isPositive: pendingAmt === 0,              icon: <Clock size={20}/>,       color: 'var(--warning)' },
       { label: 'Scholarships',     value: fmt(scholarship),change: '+4.2%',                                        isPositive: true,                           icon: <TrendingUp size={20}/>,  color: 'var(--success)' },
       { label: 'Invoices Issued',  value: String(invoices),change: `${invoices} total`,                            isPositive: true,                           icon: <FileText size={20}/>,    color: '#8b5cf6' },
@@ -207,21 +201,21 @@ Generated On  : ${new Date().toLocaleString()}
         </style>
       </head>
       <body>
-        <div class="watermark">${record.status.toUpperCase()}</div>
+        <div class="watermark">₹{record.status.toUpperCase()}</div>
         <div class="header">
           <div class="logo">🏫 SCHOOL FINANCE</div>
           <div class="sub">Official Fee Invoice Receipt</div>
-          <h1>${record.id}</h1>
-          <span class="badge">${record.status}</span>
+          <h1>₹{record.id}</h1>
+          <span class="badge">₹{record.status}</span>
         </div>
         <table>
-          <tr><td>Student Name</td><td>${record.student}</td></tr>
-          <tr><td>Roll Number</td><td>${record.roll}</td></tr>
-          <tr><td>Fee Category</td><td>${record.type}</td></tr>
-          <tr><td>Date Issued</td><td>${record.date}</td></tr>
-          <tr><td>Session</td><td>${record.session}</td></tr>
-          <tr><td>Payment Method</td><td>${record.method}</td></tr>
-          <tr class="total-row"><td>Amount</td><td>${fmt(record.amount)}</td></tr>
+          <tr><td>Student Name</td><td>₹{record.student}</td></tr>
+          <tr><td>Roll Number</td><td>₹{record.roll}</td></tr>
+          <tr><td>Fee Category</td><td>₹{record.type}</td></tr>
+          <tr><td>Date Issued</td><td>₹{record.date}</td></tr>
+          <tr><td>Session</td><td>₹{record.session}</td></tr>
+          <tr><td>Payment Method</td><td>₹{record.method}</td></tr>
+          <tr class="total-row"><td>Amount</td><td>₹{fmt(record.amount)}</td></tr>
         </table>
         <div class="footer">
           Authorized by School Accounts Dept. &nbsp;|&nbsp; Printed: ${new Date().toLocaleString()}<br/>
@@ -266,7 +260,7 @@ Generated On  : ${new Date().toLocaleString()}
             className="btn btn-primary"
             style={{ padding: '11px 22px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 800 }}
           >
-            <DollarSign size={16} /> Collection Summary
+            <IndianRupee size={16} /> Collection Summary
           </button>
         </div>
       </div>
@@ -586,7 +580,7 @@ Generated On  : ${new Date().toLocaleString()}
                     <div style={{ fontSize: '1.9rem', fontWeight: 900, color: 'var(--primary)', marginTop: '2px' }}>{fmt(activeInvoice.amount)}</div>
                   </div>
                   <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
-                    <DollarSign size={26} />
+                    <IndianRupee size={26} />
                   </div>
                 </div>
 

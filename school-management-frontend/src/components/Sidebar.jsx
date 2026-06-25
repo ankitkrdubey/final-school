@@ -6,7 +6,7 @@ import {
   Home, Send, Calendar, Shield, ShieldCheck, LogOut, Activity, ChevronRight, ChevronDown,
   Building, Briefcase, MonitorPlay, Fingerprint, Key,
   List, UserPlus, UserX, Tags, ClipboardCheck, Wallet, TrendingDown, History, Grid, Edit, Plus,
-  Layout, Trophy, HelpCircle, Archive, Layers, UserCheck, Book, Award, MapPin, Map, MessageSquare, Mail, Smartphone, MessageCircle, TrendingUp, CircleDollarSign, UserCircle, Coins, Settings2, Folder, Bed, Utensils, Coffee, ChefHat, Zap, Gem, Sparkles, LockKeyhole, ShieldAlert, LogIn, Globe, LayoutGrid, Target, Landmark, Package
+  Layout, Trophy, HelpCircle, Archive, Layers, UserCheck, Book, Award, MapPin, Map, MessageSquare, Mail, Smartphone, MessageCircle, TrendingUp, IndianRupee, UserCircle, Coins, Settings2, Folder, Bed, Utensils, Coffee, ChefHat, Zap, Gem, Sparkles, LockKeyhole, ShieldAlert, LogIn, Globe, LayoutGrid, Target, Landmark, Package
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { logout, getStudents, getTeachers, getParents } from '../services/service';
@@ -546,7 +546,7 @@ const Sidebar = ({ collapsed }) => {
         },
         { 
           name: 'Accounts', 
-          icon: <CircleDollarSign size={20} />, 
+          icon: <IndianRupee size={20} />, 
           roles: ['admin'],
           subItems: [
             { path: '/dashboard/income-head', name: 'Income Head', icon: <Grid size={14} /> },

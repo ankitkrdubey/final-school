@@ -1,12 +1,7 @@
 /* EduPro Elite - Ultra-Premium Financial Reports Hub v3.0 */
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Landmark, Download, Filter, Search, 
-  ChevronRight, BarChart3, TrendingUp, DollarSign,
-  PieChart, FileText, Share2, Calculator, X, 
-  Activity, CheckCircle2, ShieldCheck, AlertCircle, Fingerprint, Terminal 
-} from 'lucide-react';
+import { Landmark, Download, Filter, Search, ChevronRight, BarChart3, TrendingUp, IndianRupee, PieChart, FileText, Share2, Calculator, X, Activity, CheckCircle2, ShieldCheck, AlertCircle, Fingerprint, Terminal } from 'lucide-react';
 
 const FinancialReports = () => {
   // --- STATE SYSTEM ---
@@ -259,10 +254,10 @@ const FinancialReports = () => {
     const finalSurplus = newTotal - taxLiability;
 
     return {
-      growthAmount: growthAmount.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }),
-      newTotal: newTotal.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }),
-      taxLiability: taxLiability.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }),
-      finalSurplus: finalSurplus.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
+      growthAmount: growthAmount.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }),
+      newTotal: newTotal.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }),
+      taxLiability: taxLiability.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }),
+      finalSurplus: finalSurplus.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })
     };
   };
 
@@ -412,14 +407,14 @@ const FinancialReports = () => {
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <div style={{ width: '48px', height: '48px', borderRadius: '14px', backgroundColor: '#10b98115', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <DollarSign size={24} />
+              <IndianRupee size={24} />
             </div>
             <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#10b981', display: 'flex', alignItems: 'center', gap: '4px' }}>
               <TrendingUp size={12} /> +8.4% YTD
             </span>
           </div>
           <div style={{ fontSize: '2.5rem', fontWeight: 950, color: 'var(--text-main, #0f172a)', letterSpacing: '-1px' }}>
-            ${(stats.revenueYTD / 1000000).toFixed(2)}M
+            ₹{(stats.revenueYTD / 1000000).toFixed(2)}M
           </div>
           <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-muted, #64748b)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
             Total Revenue YTD
@@ -493,7 +488,7 @@ const FinancialReports = () => {
             </span>
           </div>
           <div style={{ fontSize: '2.5rem', fontWeight: 950, color: 'var(--text-main, #0f172a)', letterSpacing: '-1px' }}>
-            ${(stats.operationalBurn / 1000).toFixed(1)}k
+            ₹{(stats.operationalBurn / 1000).toFixed(1)}k
           </div>
           <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-muted, #64748b)', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
             Operational Burn <span style={{ color: '#f59e0b', fontWeight: 900 }}>• Arrears Warning</span>
@@ -935,7 +930,7 @@ const FinancialReports = () => {
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                         <div style={{ fontSize: '1.15rem', fontWeight: 950, color: 'var(--text-main, #0f172a)' }}>
-                          {item.amount.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })}
+                          {item.amount.toLocaleString('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 })}
                         </div>
                         <button 
                           disabled={item.outreachActive}

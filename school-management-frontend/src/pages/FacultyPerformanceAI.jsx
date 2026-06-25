@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Users, Award, BarChart, TrendingUp, Search, 
-  ChevronRight, Brain, Zap, MessageCircle, Star,
-  ShieldCheck, PieChart, Activity, X, Loader2,
-  Sparkles, Filter, FileText, CheckCircle2, Download,
-  Printer, User, Mail, Calendar, BookOpen, AlertCircle
-} from 'lucide-react';
+import { Users, Award, BarChart, TrendingUp, Search, ChevronRight, Brain, Zap, MessageCircle, Star, ShieldCheck, PieChart, Activity, X, Loader2, Sparkles, Filter, FileText, CheckCircle2, Download, Printer, User, Mail, Calendar, BookOpen, AlertCircle } from 'lucide-react';
 
 import devonAvatar from '../assets/devon_avatar.png';
 import eleanorAvatar from '../assets/eleanor_avatar.png';

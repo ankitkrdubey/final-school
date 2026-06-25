@@ -1,19 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  User, GraduationCap, MapPin, Phone, Mail, Calendar, 
-  Award, BookOpen, Clock, Shield, ArrowLeft, 
-  Download, Printer, Edit, MoreVertical, 
-  Building2, Heart, Landmark, ChevronRight, 
-  Library as LibraryIcon, Home, Activity, Star, Users, 
-  FileText, Briefcase, BadgeCheck, Zap,
-  Globe, MessageCircle, Share2, Link,
-  CircleCheck, CircleX, CalendarDays,
-  CheckCircle2, XCircle, AlertCircle,
-  Wallet, TrendingUp, CreditCard, Receipt,
-  Book, BookMarked, History, Search, Filter,
-  Settings, Save, PieChart, Camera
-} from 'lucide-react';
+import { User, GraduationCap, MapPin, Phone, Mail, Calendar, Award, BookOpen, Clock, Shield, ArrowLeft, Download, Printer, Edit, MoreVertical, Building2, Heart, Landmark, ChevronRight, Library as LibraryIcon, Home, Activity, Star, Users, FileText, Briefcase, BadgeCheck, Zap, Globe, MessageCircle, Share2, Link, CircleCheck, CircleX, CalendarDays, CheckCircle2, XCircle, AlertCircle, Wallet, TrendingUp, CreditCard, Receipt, Book, BookMarked, History, Search, Filter, Settings, Save, PieChart, Camera } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getTeachers, updateTeacher } from '../services/service';
 
@@ -1186,7 +1173,7 @@ const TeacherDetails = () => {
                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', marginBottom: '40px' }}>
                           <div style={{ padding: '32px', borderRadius: '24px', background: `linear-gradient(135deg, ${teacher.color || '#4880FF'} 0%, #6366F1 100%)`, color: 'white' }}>
                              <div style={{ fontSize: '0.9rem', fontWeight: 800, opacity: 0.8, marginBottom: '8px' }}>MONTHLY NET PAYOUT</div>
-                             <div style={{ fontSize: '2.8rem', fontWeight: 950 }}>${teacher.finance.netSalary.toLocaleString()}</div>
+                             <div style={{ fontSize: '2.8rem', fontWeight: 950 }}>₹{teacher.finance.netSalary.toLocaleString('en-IN')}</div>
                              <div style={{ marginTop: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <div style={{ padding: '6px 12px', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: '10px', fontSize: '0.75rem', fontWeight: 900 }}>PAID</div>
                                 <span style={{ fontSize: '0.85rem', opacity: 0.8, fontWeight: 600 }}>Processed dynamically this month</span>
@@ -1227,7 +1214,7 @@ const TeacherDetails = () => {
                                   <tr key={i} style={{ borderBottom: '1px solid var(--border-color)' }}>
                                      <td style={{ padding: '18px 24px', fontWeight: 800, color: 'var(--primary)' }}>{slip.id}</td>
                                      <td style={{ padding: '18px 24px', fontWeight: 700 }}>{slip.month}</td>
-                                     <td style={{ padding: '18px 24px', fontWeight: 950 }}>${slip.amount.toLocaleString()}</td>
+                                     <td style={{ padding: '18px 24px', fontWeight: 950 }}>₹{slip.amount.toLocaleString('en-IN')}</td>
                                      <td style={{ padding: '18px 24px', textAlign: 'right' }}>
                                          <button 
                                            onClick={() => { setSelectedSlip(slip); setShowPaySlipModal(true); }}
@@ -1295,7 +1282,7 @@ const TeacherDetails = () => {
                                 {[
                                   { label: 'Membership ID', val: teacher.library.membershipId },
                                   { label: 'Total Books Read', val: teacher.library.totalBorrowed },
-                                  { label: 'Pending Fines', val: `$${teacher.library.fine}` },
+                                  { label: 'Pending Fines', val: `₹${teacher.library.fine}` },
                                   { label: 'Account Status', val: teacher.library.status }
                                 ].map((stat, i) => (
                                   <div key={i} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '12px' }}>
@@ -1666,15 +1653,15 @@ const TeacherDetails = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', padding: '16px 20px', gap: '12px', fontSize: '0.85rem', borderBottom: '1px solid #E2E8F0' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontWeight: 600, color: '#475569' }}>Basic Salary</span>
-                    <span style={{ fontWeight: 800, color: '#1E293B' }}>${selectedSlip.basicSalary ? selectedSlip.basicSalary.toLocaleString() : '4,500'}</span>
+                    <span style={{ fontWeight: 800, color: '#1E293B' }}>₹{selectedSlip.basicSalary ? selectedSlip.basicSalary.toLocaleString('en-IN') : '4,500'}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontWeight: 600, color: '#475569' }}>House Rent Allowance (HRA)</span>
-                    <span style={{ fontWeight: 800, color: '#1E293B' }}>${selectedSlip.HRA ? selectedSlip.HRA.toLocaleString() : '1,200'}</span>
+                    <span style={{ fontWeight: 800, color: '#1E293B' }}>₹{selectedSlip.HRA ? selectedSlip.HRA.toLocaleString('en-IN') : '1,200'}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontWeight: 600, color: '#475569' }}>Special Institutional Allowance</span>
-                    <span style={{ fontWeight: 800, color: '#1E293B' }}>${selectedSlip.allowance ? selectedSlip.allowance.toLocaleString() : '800'}</span>
+                    <span style={{ fontWeight: 800, color: '#1E293B' }}>₹{selectedSlip.allowance ? selectedSlip.allowance.toLocaleString('en-IN') : '800'}</span>
                   </div>
                 </div>
 
@@ -1686,7 +1673,7 @@ const TeacherDetails = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', padding: '16px 20px', gap: '12px', fontSize: '0.85rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontWeight: 600, color: '#475569' }}>Professional Income Tax</span>
-                    <span style={{ fontWeight: 800, color: '#EF4444' }}>-${selectedSlip.tax ? selectedSlip.tax.toLocaleString() : '450'}</span>
+                    <span style={{ fontWeight: 800, color: '#EF4444' }}>-₹{selectedSlip.tax ? selectedSlip.tax.toLocaleString('en-IN') : '450'}</span>
                   </div>
                 </div>
               </div>
@@ -1695,10 +1682,10 @@ const TeacherDetails = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#EEF2FF', borderRadius: '16px', padding: '20px 24px', marginBottom: '32px' }}>
                 <div>
                   <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase', marginBottom: '2px' }}>Net Salary Disbursed</div>
-                  <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 600 }}>Amount in Words: Six Thousand Fifty Dollars Only</div>
+                  <div style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 600 }}>Amount in Words: Six Thousand Fifty Rupees Only</div>
                 </div>
                 <div style={{ fontSize: '1.8rem', fontWeight: 950, color: 'var(--primary)' }}>
-                   ${selectedSlip.amount ? selectedSlip.amount.toLocaleString() : '6,050'}
+                   ₹{selectedSlip.amount ? selectedSlip.amount.toLocaleString('en-IN') : '6,050'}
                 </div>
               </div>
 

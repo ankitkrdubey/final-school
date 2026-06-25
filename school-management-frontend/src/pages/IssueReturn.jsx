@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  Book, User, Search, RefreshCcw, ArrowRight, ArrowLeft, 
-  Calendar, ShieldCheck, HelpCircle, CheckCircle2, Clock, AlertCircle
-} from 'lucide-react';
+import { Book, User, Search, RefreshCcw, ArrowRight, ArrowLeft, Calendar, ShieldCheck, HelpCircle, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import devonAvatar from '../assets/devon_avatar.png';
 import janeAvatar from '../assets/jane_avatar.png';
@@ -416,7 +413,7 @@ const IssueReturn = () => {
                         <p style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>{mode === 'issue' ? 'Due Date' : 'Fine Calculated'}</p>
                         <div style={{ padding: '16px', backgroundColor: 'var(--bg-body)', borderRadius: '16px', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', gap: '10px' }}>
                            <Clock size={18} className="text-muted" />
-                           <span style={{ fontWeight: 700 }}>{mode === 'issue' ? dueStr : '$0.00'}</span>
+                           <span style={{ fontWeight: 700 }}>{mode === 'issue' ? dueStr : '₹0.00'}</span>
                         </div>
                      </div>
                   </div>

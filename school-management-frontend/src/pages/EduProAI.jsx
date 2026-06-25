@@ -1,15 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Sparkles, Brain, Cpu, BarChart3, 
-  Zap, MessageSquare, Search, Send, 
-  Bot, ShieldCheck, ZapIcon, TrendingUp,
-  Target, Users, BookOpen, Clock, Lock, Copy,
-  Mic, Volume2, ThumbsUp, ThumbsDown, RotateCcw, 
-  Square, Paperclip, Trash2, Edit3, Check, X,
-  ChevronDown, Globe, Menu, PanelLeftClose, PanelLeft,
-  VolumeX
-} from 'lucide-react';
+import { Sparkles, Brain, Cpu, BarChart3, Zap, MessageSquare, Search, Send, Bot, ShieldCheck, ZapIcon, TrendingUp, Target, Users, BookOpen, Clock, Lock, Copy, Mic, Volume2, ThumbsUp, ThumbsDown, RotateCcw, Square, Paperclip, Trash2, Edit3, Check, X, ChevronDown, Globe, Menu, PanelLeftClose, PanelLeft, VolumeX } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { resolveAIIntent } from '../utils/aiIntentRouter';
 import { useToast, ToastRenderer } from '../hooks/useToast';
@@ -174,7 +165,7 @@ const EduProAI = () => {
           { role: 'user', text: 'Analyze Q2 budget outstanding accounts' },
           { 
             role: 'assistant', 
-            text: `**Institutional Financial Consultation complete.** \n\nBased on the latest Q2 fee collection metrics ($1.25M / 94.2% rate), I have identified a $24.5k variance in outstanding accounts.\n\nHere is my recommended optimization action plan:\n- **Billing Reminders**: Activate automated SMS & Email billing alerts under \`Settings\` to speed up payments.\n- **Direct Deposit**: Configure secure direct-deposit links to reduce manual clearing times.\n- **Reconciliation**: Audit the outstanding balance sheet weekly to capture late charges.\n\nBy implementing these, we can accelerate cash flow by 18% over the next 30 days.`,
+            text: `**Institutional Financial Consultation complete.** \n\nBased on the latest Q2 fee collection metrics (₹1.25M / 94.2% rate), I have identified a ₹24.5k variance in outstanding accounts.\n\nHere is my recommended optimization action plan:\n- **Billing Reminders**: Activate automated SMS & Email billing alerts under \`Settings\` to speed up payments.\n- **Direct Deposit**: Configure secure direct-deposit links to reduce manual clearing times.\n- **Reconciliation**: Audit the outstanding balance sheet weekly to capture late charges.\n\nBy implementing these, we can accelerate cash flow by 18% over the next 30 days.`,
             feedback: 'up'
           }
         ]
@@ -549,7 +540,7 @@ const EduProAI = () => {
         if (selectedProfile && profileType === 'student') {
           const name = selectedProfile.name;
           if (queryLower.match(/fee|payment|money|finance|cost|revenue|budget/)) {
-            textResponse = `**Individual Student Financial Audit for ${name} (${selectedProfile.student_id}) complete.**\n\n- **Current Balance**: Outstanding tuition fees billing is listed as $450.\n- **Payment Node Status**: Pending parental clearing.\n- **Recommendation**: Dispatched parent communication to ${selectedProfile.parentName || 'Parent'} at ${selectedProfile.parentPhone || 'guardian contacts'}.`;
+            textResponse = `**Individual Student Financial Audit for ${name} (${selectedProfile.student_id}) complete.**\n\n- **Current Balance**: Outstanding tuition fees billing is listed as ₹450.\n- **Payment Node Status**: Pending parental clearing.\n- **Recommendation**: Dispatched parent communication to ${selectedProfile.parentName || 'Parent'} at ${selectedProfile.parentPhone || 'guardian contacts'}.`;
           } else if (queryLower.match(/attendance|absent|late|leave/)) {
             textResponse = `**Predictive Attendance Audit for student ${name} complete.**\n\n- **Individual Attendance**: Dynamic tracker registers attendance rate at 96%.\n- **Roster Node**: Class Grade ${selectedProfile.class_id || '10'} and Section A.\n- **Warning Vectors**: 0 warnings. Continue monitoring transit delays.`;
           } else if (queryLower.match(/exam|grade|score|performance|result|test|gpa/)) {
@@ -565,7 +556,7 @@ const EduProAI = () => {
         } else if (selectedProfile && profileType === 'parent') {
           const name = selectedProfile.name;
           if (queryLower.match(/fee|payment|money|finance|cost|revenue|budget/)) {
-            textResponse = `**Parental Financial Sync for ${name}.**\n\n- **Linked Student**: ${selectedProfile.student_name || 'N/A'}.\n- **Balance Outstanding**: Pending tuition fees balance of $450.\n- **Action Required**: Process secure payment link through Portal Dashboard.`;
+            textResponse = `**Parental Financial Sync for ${name}.**\n\n- **Linked Student**: ${selectedProfile.student_name || 'N/A'}.\n- **Balance Outstanding**: Pending tuition fees balance of ₹450.\n- **Action Required**: Process secure payment link through Portal Dashboard.`;
           }
         }
 
@@ -573,7 +564,7 @@ const EduProAI = () => {
           if (queryLower === 'hi' || queryLower === 'hello' || queryLower === 'hey' || queryLower === 'greetings' || queryLower === 'howdy' || queryLower === 'hi there' || queryLower === 'hello there') {
             textResponse = `**Hey there! How are you?** How could I assist you today? \n\nI am your **EduPro AI Operational Consultant**, ready to help you analyze institutional performance, predict student outcomes, optimize catering schedules, or audit financial balances. Let's make today highly productive!`;
           } else if (queryLower.match(/fee|payment|money|finance|cost|revenue|budget/)) {
-            textResponse = `**Institutional Financial Consultation complete.** \n\nBased on the latest Q2 fee collection metrics ($1.25M / 94.2% rate), I have identified a $24.5k variance in outstanding accounts.\n\nHere is my recommended optimization action plan:\n- **Billing Reminders**: Activate automated SMS & Email billing alerts under \`Settings\` to speed up payments.\n- **Direct Deposit**: Configure secure direct-deposit links to reduce manual clearing times.\n- **Reconciliation**: Audit the outstanding balance sheet weekly to capture late charges.\n\nBy implementing these, we can accelerate cash flow by 18% over the next 30 days.`;
+            textResponse = `**Institutional Financial Consultation complete.** \n\nBased on the latest Q2 fee collection metrics (₹1.25M / 94.2% rate), I have identified a ₹24.5k variance in outstanding accounts.\n\nHere is my recommended optimization action plan:\n- **Billing Reminders**: Activate automated SMS & Email billing alerts under \`Settings\` to speed up payments.\n- **Direct Deposit**: Configure secure direct-deposit links to reduce manual clearing times.\n- **Reconciliation**: Audit the outstanding balance sheet weekly to capture late charges.\n\nBy implementing these, we can accelerate cash flow by 18% over the next 30 days.`;
           } else if (queryLower.match(/attendance|absent|late|leave/)) {
             textResponse = `**Predictive Attendance Audit complete.**\n\nStandard attendance rates are optimal at 96%, but my regression model indicates early warning vectors in the morning classes.\n\n- **Core Discovery**: Faculty logs confirm morning delays are primarily due to public transit delays on Route 4.\n- **Communication**: I suggest setting up automated attendance SMS alerts in the API configuration to bridge parental communication.\n- **Flexibility**: Consider shifting morning roll-call by 10 minutes to accommodate transit variances.`;
           } else if (queryLower.match(/exam|grade|score|performance|result|test|gpa/)) {
@@ -759,8 +750,8 @@ const EduProAI = () => {
   };
 
   const renderFormattedText = (text) => {
-    // Regex matches bold (**bold**), code pills (`code`), stats (% or $ currency)
-    const regex = /(\*\*.*?\*\*|`.*?`|\$\d+(?:\.\d+)?[M|k]|(?:\d+(?:\.\d+)?%))/g;
+    // Regex matches bold (**bold**), code pills (`code`), stats (% or $ or ₹ currency)
+    const regex = /(\*\*.*?\*\*|`.*?`|[₹$]\d+(?:\.\d+)?[M|k]|(?:\d+(?:\.\d+)?%))/g;
     const parts = text.split(regex);
 
     return parts.map((part, idx) => {
@@ -783,7 +774,7 @@ const EduProAI = () => {
           </code>
         );
       }
-      if (/^\$\d+(?:\.\d+)?[M|k]$/.test(part) || /^\d+(?:\.\d+)?%$/.test(part)) {
+      if (/^[₹$]\d+(?:\.\d+)?[M|k]$/.test(part) || /^\d+(?:\.\d+)?%$/.test(part)) {
         return (
           <span key={idx} style={{
             display: 'inline-flex',

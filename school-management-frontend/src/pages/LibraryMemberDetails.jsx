@@ -318,7 +318,7 @@ const LibraryMemberDetails = () => {
                      </div>
                      <div style={{ padding: '16px', backgroundColor: 'var(--bg-body)', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
                         <p style={{ margin: '0 0 4px 0', fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 800 }}>FINANCIAL OUTSTANDING</p>
-                        <p style={{ margin: 0, fontSize: '1.1rem', fontWeight: 900, color: '#ef4444' }}>$450.00 Outstanding</p>
+                        <p style={{ margin: 0, fontSize: '1.1rem', fontWeight: 900, color: '#ef4444' }}>₹450.00 Outstanding</p>
                      </div>
                   </div>
                )}
@@ -373,7 +373,7 @@ const LibraryMemberDetails = () => {
                      </div>
                      <div style={{ padding: '16px', backgroundColor: 'var(--bg-body)', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
                         <p style={{ margin: '0 0 4px 0', fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 800 }}>FAMILY WALLET</p>
-                        <p style={{ margin: 0, fontSize: '1.1rem', fontWeight: 900, color: '#10b981' }}>$250.00 Active</p>
+                        <p style={{ margin: 0, fontSize: '1.1rem', fontWeight: 900, color: '#10b981' }}>₹250.00 Active</p>
                      </div>
                      <div style={{ padding: '16px', backgroundColor: 'var(--bg-body)', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
                         <p style={{ margin: '0 0 4px 0', fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 800 }}>PARENT NOTIFICATION</p>

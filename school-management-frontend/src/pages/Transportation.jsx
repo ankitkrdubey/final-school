@@ -7,29 +7,29 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 // Seed assignment list
 const SEED_ASSIGNMENTS = [
-  { id: 1, student: 'Harry Potter', grade: '10-A', route: 'North Express', vehicle: 'Bus 01', stop: 'Sector 12 Mall', status: 'Assigned' },
-  { id: 2, student: 'Hermione Granger', grade: '10-A', route: 'North Express', vehicle: 'Bus 01', stop: 'Sector 12 Mall', status: 'Assigned' },
-  { id: 3, student: 'Ron Weasley', grade: '10-A', route: 'Downtown Shuttle', vehicle: 'Bus 02', stop: 'City Center', status: 'Pending' },
-  { id: 4, student: 'Draco Malfoy', grade: '10-B', route: 'Residency Express', vehicle: 'Bus 05', stop: 'Hills Estate', status: 'Assigned' },
-  { id: 5, student: 'Luna Lovegood', grade: '9-C', route: 'North Express', vehicle: 'Bus 01', stop: 'Main Road', status: 'Assigned' },
+  { id: 1, student: 'Aarav Sharma', grade: '10-A', route: 'Canary Hill Express', vehicle: 'Bus JH-02-B-1101', stop: 'Korrah Chowk', status: 'Assigned' },
+  { id: 2, student: 'Ananya Kumari', grade: '10-A', route: 'Canary Hill Express', vehicle: 'Bus JH-02-B-1101', stop: 'Korrah Chowk', status: 'Assigned' },
+  { id: 3, student: 'Rahul Kumar', grade: '10-A', route: 'Matwari Town Shuttle', vehicle: 'Bus JH-02-B-2204', stop: 'Matwari', status: 'Pending' },
+  { id: 4, student: 'Priya Mahato', grade: '10-B', route: 'Babu Gaon residency', vehicle: 'Bus JH-02-B-5509', stop: 'Babu Gaon', status: 'Assigned' },
+  { id: 5, student: 'Aditya Yadav', grade: '9-C', route: 'Canary Hill Express', vehicle: 'Bus JH-02-B-1101', stop: 'Canary Hill Road', status: 'Assigned' },
 ];
 
 // Seed list of available eligible students for assignment
 const AVAILABLE_STUDENTS = [
-  { name: 'Neville Longbottom', grade: '9-A', defaultStop: 'South Gardens' },
-  { name: 'Ginny Weasley', grade: '9-B', defaultStop: 'The Burrow' },
-  { name: 'Cho Chang', grade: '11-A', defaultStop: 'High Street' },
-  { name: 'Cedric Diggory', grade: '12-B', defaultStop: 'Hills Estate' },
-  { name: 'Lavender Brown', grade: '10-C', defaultStop: 'Green Square' },
-  { name: 'Dean Thomas', grade: '10-B', defaultStop: 'City Center' },
+  { name: 'Sneha Soren', grade: '9-A', defaultStop: 'Town Station' },
+  { name: 'Rohan Oraon', grade: '9-B', defaultStop: 'Annada Chowk' },
+  { name: 'Jyoti Prasad', grade: '11-A', defaultStop: 'Hurhuru' },
+  { name: 'Vikram Singh', grade: '12-B', defaultStop: 'Pelawal' },
+  { name: 'Neha Gupta', grade: '10-C', defaultStop: 'Indrapuri' },
+  { name: 'Sandeep Pandey', grade: '10-B', defaultStop: 'Dipugarha' },
 ];
 
 // Seed list of available routes & vehicles
 const ROUTES_DATABASE = [
-  { name: 'North Express', vehicle: 'Bus 01' },
-  { name: 'Downtown Shuttle', vehicle: 'Bus 02' },
-  { name: 'Residency Express', vehicle: 'Bus 05' },
-  { name: 'Staff Loop', vehicle: 'Van 04' },
+  { name: 'Canary Hill Express', vehicle: 'Bus JH-02-B-1101' },
+  { name: 'Matwari Town Shuttle', vehicle: 'Bus JH-02-B-2204' },
+  { name: 'Babu Gaon residency', vehicle: 'Bus JH-02-B-5509' },
+  { name: 'Staff Loop (Town Station)', vehicle: 'Van JH-02-V-4402' },
 ];
 
 const Transportation = () => {

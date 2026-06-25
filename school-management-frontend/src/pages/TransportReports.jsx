@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Bus, Download, Filter, Search, 
-  ChevronRight, BarChart3, TrendingUp, MapPin,
-  Fuel, Settings, ShieldCheck, FileText,
-  Activity, Clock, X, CheckCircle2, AlertCircle, Sparkles,
-  User, Eye, Calendar, HardDrive, Check
-} from 'lucide-react';
+import { Bus, Download, Filter, Search, ChevronRight, BarChart3, TrendingUp, MapPin, Fuel, Settings, ShieldCheck, FileText, Activity, Clock, X, CheckCircle2, AlertCircle, Sparkles, User, Eye, Calendar, HardDrive, Check } from 'lucide-react';
 
 const TransportReports = () => {
   const navigate = useNavigate();
@@ -34,11 +28,11 @@ const TransportReports = () => {
       size: '142 KB',
       hash: 'SHA-256-48EF92BC1A832A',
       rows: [
-        { vehicle: 'BUS-201-A', type: 'Heavy School Bus', efficiency: '12.4 km/l', health: '94%', status: 'Optimal' },
-        { vehicle: 'BUS-202-B', type: 'Heavy School Bus', efficiency: '11.8 km/l', health: '91%', status: 'Optimal' },
-        { vehicle: 'VAN-104-C', type: 'Light Shuttle Van', efficiency: '14.2 km/l', health: '96%', status: 'Optimal' },
-        { vehicle: 'CAR-052-D', type: 'Faculty Patrol Sedan', efficiency: '15.6 km/l', health: '98%', status: 'Optimal' },
-        { vehicle: 'BUS-108-F', type: 'Support Transport', efficiency: '8.5 km/l', health: '72%', status: 'Inspection Required' }
+        { vehicle: 'JH-02-B-1101', type: 'Heavy School Bus', efficiency: '12.4 km/l', health: '94%', status: 'Optimal' },
+        { vehicle: 'JH-02-B-2204', type: 'Heavy School Bus', efficiency: '11.8 km/l', health: '91%', status: 'Optimal' },
+        { vehicle: 'JH-02-V-4402', type: 'Light Shuttle Van', efficiency: '14.2 km/l', health: '96%', status: 'Optimal' },
+        { vehicle: 'JH-02-C-0052', type: 'Faculty Patrol Sedan', efficiency: '15.6 km/l', health: '98%', status: 'Optimal' },
+        { vehicle: 'JH-02-B-8812', type: 'Support Transport', efficiency: '8.5 km/l', health: '72%', status: 'Inspection Required' }
       ]
     },
     { 
@@ -48,10 +42,10 @@ const TransportReports = () => {
       size: '210 KB',
       hash: 'SHA-256-0F928A941BC83B',
       rows: [
-        { route: 'Route North A', activeDriver: 'Alan Miller', schedule: 'Morning Core', avgLatency: '+2 mins', status: 'On Time' },
-        { route: 'Route East B', activeDriver: 'Sarah Jenkins', schedule: 'Morning Core', avgLatency: '+15 mins', status: 'Delayed' },
-        { route: 'Route South-West C', activeDriver: 'David Ray', schedule: 'Afternoon Shuttle', avgLatency: '+0 mins', status: 'On Time' },
-        { route: 'Express Route D', activeDriver: 'Lisa Wong', schedule: 'Faculty Special', avgLatency: '+4 mins', status: 'On Time' }
+        { route: 'Canary Hill Express', activeDriver: 'Rajesh Kumar Mahato', schedule: 'Morning Core', avgLatency: '+2 mins', status: 'On Time' },
+        { route: 'Matwari Town Shuttle', activeDriver: 'Sanjay Oraon', schedule: 'Morning Core', avgLatency: '+15 mins', status: 'Delayed' },
+        { route: 'Babu Gaon residency', activeDriver: 'Sunil Soren', schedule: 'Afternoon Shuttle', avgLatency: '+0 mins', status: 'On Time' },
+        { route: 'Staff Loop (Town Station)', activeDriver: 'Manoj Yadav', schedule: 'Faculty Special', avgLatency: '+4 mins', status: 'On Time' }
       ]
     },
     { 
@@ -61,10 +55,10 @@ const TransportReports = () => {
       size: '95 KB',
       hash: 'SHA-256-77DA102BB9E094',
       rows: [
-        { driver: 'Alan Miller', tenure: '4 Years', score: '98/100', incidents: '0', standing: 'Excellent' },
-        { driver: 'Sarah Jenkins', tenure: '6 Years', score: '99/100', incidents: '0', standing: 'Excellent' },
-        { driver: 'David Ray', tenure: '1 Year', score: '76/100', incidents: '1 (Hard Brake)', standing: 'Review Needed' },
-        { driver: 'Lisa Wong', tenure: '3 Years', score: '95/100', incidents: '0', standing: 'Good' }
+        { driver: 'Rajesh Kumar Mahato', tenure: '4 Years', score: '98/100', incidents: '0', standing: 'Excellent' },
+        { driver: 'Sanjay Oraon', tenure: '6 Years', score: '99/100', incidents: '0', standing: 'Excellent' },
+        { driver: 'Sunil Soren', tenure: '1 Year', score: '76/100', incidents: '1 (Hard Brake)', standing: 'Review Needed' },
+        { driver: 'Manoj Yadav', tenure: '3 Years', score: '95/100', incidents: '0', standing: 'Good' }
       ]
     },
     { 
@@ -74,10 +68,10 @@ const TransportReports = () => {
       size: '340 KB',
       hash: 'SHA-256-32A44B9E09529F',
       rows: [
-        { vehicle: 'BUS-201-A', service: 'Brake Fluid Refresh', mileage: '48,200 km', cost: '$420', status: 'Cleared' },
-        { vehicle: 'BUS-202-B', service: 'Tire Realignment', mileage: '52,100 km', cost: '$280', status: 'Cleared' },
-        { vehicle: 'VAN-104-C', service: 'Full Engine Tuneup', mileage: '12,400 km', cost: '$850', status: 'Cleared' },
-        { vehicle: 'BUS-108-F', service: 'Transmission Check', mileage: '94,500 km', cost: '$1,400', status: 'Pending Approval' }
+        { vehicle: 'JH-02-B-1101', service: 'Brake Fluid Refresh', mileage: '48,200 km', cost: '₹33,600', status: 'Cleared' },
+        { vehicle: 'JH-02-B-2204', service: 'Tire Realignment', mileage: '52,100 km', cost: '₹22,400', status: 'Cleared' },
+        { vehicle: 'JH-02-V-4402', service: 'Full Engine Tuneup', mileage: '12,400 km', cost: '₹68,000', status: 'Cleared' },
+        { vehicle: 'JH-02-B-8812', service: 'Transmission Check', mileage: '94,500 km', cost: '₹1,12,000', status: 'Pending Approval' }
       ]
     },
     { 
@@ -87,9 +81,9 @@ const TransportReports = () => {
       size: '185 KB',
       hash: 'SHA-256-99A102CC54EE9B',
       rows: [
-        { cohort: 'Grade 10 Active', students: '42 Subscribed', billing: 'Monthly Recur', revenue: '$5,040', ledger: 'Synchronized' },
-        { cohort: 'Grade 11 Active', students: '30 Subscribed', billing: 'Term Lump', revenue: '$10,800', ledger: 'Synchronized' },
-        { cohort: 'Grade 12 Active', students: '45 Subscribed', billing: 'Monthly Recur', revenue: '$5,400', ledger: 'Synchronized' }
+        { cohort: 'Grade 10 Active', students: '42 Subscribed', billing: 'Monthly Recur', revenue: '₹4,03,200', ledger: 'Synchronized' },
+        { cohort: 'Grade 11 Active', students: '30 Subscribed', billing: 'Term Lump', revenue: '₹8,64,000', ledger: 'Synchronized' },
+        { cohort: 'Grade 12 Active', students: '45 Subscribed', billing: 'Monthly Recur', revenue: '₹4,32,000', ledger: 'Synchronized' }
       ]
     },
     { 
@@ -99,8 +93,8 @@ const TransportReports = () => {
       size: '64 KB',
       hash: 'SHA-256-11FFCC33BBDD04',
       rows: [
-        { date: 'May 12, 2026', vehicle: 'BUS-202-B', detail: 'Minor fender scrape during parking', resolution: 'Resolved YTD', code: 'LOG-INC-092' },
-        { date: 'April 20, 2026', vehicle: 'VAN-104-C', detail: 'Flat tire swap on Route West', resolution: 'Resolved YTD', code: 'LOG-INC-084' }
+        { date: 'May 12, 2026', vehicle: 'JH-02-B-2204', detail: 'Minor fender scrape during parking', resolution: 'Resolved YTD', code: 'LOG-INC-092' },
+        { date: 'April 20, 2026', vehicle: 'JH-02-V-4402', detail: 'Flat tire swap on Canary Hill Road', resolution: 'Resolved YTD', code: 'LOG-INC-084' }
       ]
     },
   ];
@@ -109,11 +103,11 @@ const TransportReports = () => {
     showToast("Compiling master logistics ledger database...", "info", "Fleet Audit");
     const csvContent = [
       ['Vehicle/Fleet ID', 'Type', 'Average Fuel Efficiency', 'Route On-Time Rate', 'Health Rating'],
-      ['BUS-201-A', 'Heavy School Bus', '12.4 km/l', '96.8%', '94/100'],
-      ['BUS-202-B', 'Heavy School Bus', '11.8 km/l', '95.2%', '91/100'],
-      ['VAN-104-C', 'Light Shuttle Van', '14.2 km/l', '98.1%', '96/100'],
-      ['CAR-052-D', 'Faculty Patrol Sedan', '15.6 km/l', '99.0%', '98/100'],
-      ['BUS-108-F', 'Support Transport', '8.5 km/l', '72.0%', '72/100'],
+      ['JH-02-B-1101', 'Heavy School Bus', '12.4 km/l', '96.8%', '94/100'],
+      ['JH-02-B-2204', 'Heavy School Bus', '11.8 km/l', '95.2%', '91/100'],
+      ['JH-02-V-4402', 'Light Shuttle Van', '14.2 km/l', '98.1%', '96/100'],
+      ['JH-02-C-0052', 'Faculty Patrol Sedan', '15.6 km/l', '99.0%', '98/100'],
+      ['JH-02-B-8812', 'Support Transport', '8.5 km/l', '72.0%', '72/100'],
       ['Audit Timestamp', new Date().toISOString()],
       ['Status', 'Sovereign Integrity Verified']
     ].map(e => e.join(",")).join("\n");

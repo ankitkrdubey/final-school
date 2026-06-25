@@ -7,10 +7,10 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SEED_VEHICLES = [
-  { id: 1, name: 'Bus 01', route: 'North Campus - Sector 12', driver: 'Robert Wilson', status: 'In Transit', fuel: '75%', load: '85%' },
-  { id: 2, name: 'Bus 02', route: 'East Campus - Main Road', driver: 'David Miller', status: 'Idle', fuel: '45%', load: '0%' },
-  { id: 3, name: 'Van 04', route: 'Staff Route - Downtown', driver: 'Sarah Parker', status: 'Maintenance', fuel: '90%', load: '0%' },
-  { id: 4, name: 'Bus 05', route: 'West Campus - Residential', driver: 'Michael Chen', status: 'In Transit', fuel: '60%', load: '95%' },
+  { id: 1, name: 'Bus JH-02-B-1101', route: 'Korrah - Canary Hill Route', driver: 'Rajesh Kumar Mahato', status: 'In Transit', fuel: '75%', load: '85%' },
+  { id: 2, name: 'Bus JH-02-B-2204', route: 'Matwari - Annada Chowk Shuttle', driver: 'Sanjay Oraon', status: 'Idle', fuel: '45%', load: '0%' },
+  { id: 3, name: 'Van JH-02-V-4402', route: 'Staff Route - Town Station', driver: 'Sunil Soren', status: 'Maintenance', fuel: '90%', load: '0%' },
+  { id: 4, name: 'Bus JH-02-B-5509', route: 'Demotand - Babu Gaon Connect', driver: 'Manoj Yadav', status: 'In Transit', fuel: '60%', load: '95%' },
 ];
 
 const Transport = () => {
@@ -325,11 +325,11 @@ const Transport = () => {
               
               <div style={{ padding: '24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                  {[
-                   { date: '2026-05-24', vehicle: 'Bus 01', type: 'Routine Inspection', status: 'Passed', notes: 'Brake pads replaced.' },
-                   { date: '2026-05-20', vehicle: 'Van 04', type: 'Engine Check', status: 'Requires Attention', notes: 'Scheduled for maintenance on Friday.' },
-                   { date: '2026-05-18', vehicle: 'Bus 05', type: 'Emissions Test', status: 'Passed', notes: 'Clear.' },
-                   { date: '2026-05-15', vehicle: 'Bus 02', type: 'Tire Rotation', status: 'Completed', notes: 'All 6 tires rotated and aligned.' },
-                   { date: '2026-05-10', vehicle: 'Bus 01', type: 'Oil Change', status: 'Completed', notes: 'Synthetic oil and new filter.' },
+                   { date: '2026-05-24', vehicle: 'Bus JH-02-B-1101', type: 'Routine Inspection', status: 'Passed', notes: 'Brake pads replaced.' },
+                   { date: '2026-05-20', vehicle: 'Van JH-02-V-4402', type: 'Engine Check', status: 'Requires Attention', notes: 'Scheduled for maintenance on Friday.' },
+                   { date: '2026-05-18', vehicle: 'Bus JH-02-B-5509', type: 'Emissions Test', status: 'Passed', notes: 'Clear.' },
+                   { date: '2026-05-15', vehicle: 'Bus JH-02-B-2204', type: 'Tire Rotation', status: 'Completed', notes: 'All 6 tires rotated and aligned.' },
+                   { date: '2026-05-10', vehicle: 'Bus JH-02-B-1101', type: 'Oil Change', status: 'Completed', notes: 'Synthetic oil and new filter.' },
                  ].map((log, i) => (
                     <div key={i} style={{ padding: '16px', border: '1px solid var(--border-color)', borderRadius: '16px', backgroundColor: 'var(--bg-body)' }}>
                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>

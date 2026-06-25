@@ -1,11 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import {
-  DollarSign, TrendingDown, Search, Filter, Plus,
-  FileText, ArrowUpRight, ArrowDownRight,
-  Building, Wallet, Download, Edit, Trash2, X,
-  Save, Tag, Calendar, User, CheckCircle2, Clock,
-  AlertCircle, BadgeCheck, Hash, ChevronDown, Package
-} from 'lucide-react';
+import { IndianRupee, TrendingDown, Search, Filter, Plus, FileText, ArrowUpRight, ArrowDownRight, Building, Wallet, Download, Edit, Trash2, X, Save, Tag, Calendar, User, CheckCircle2, Clock, AlertCircle, BadgeCheck, Hash, ChevronDown, Package } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, PieChart, Pie, Cell
@@ -53,7 +47,7 @@ const STATUS_STYLE = {
   Pending: { bg: '#EF444415',            color: '#EF4444',         icon: <Clock size={12}/> },
 };
 
-const fmt = (n) => '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2 });
+const fmt = (n) => '₹' + Number(n).toLocaleString('en-IN', { minimumFractionDigits: 2 });
 
 const nextId = (list) => {
   const nums = list.map(e => parseInt(e.id.replace('EXP-', '')) || 0);
@@ -348,7 +342,7 @@ const ExpenseList = () => {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                 <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--text-muted)' }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--text-muted)' }} tickFormatter={v => `$${v/1000}k`} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--text-muted)' }} tickFormatter={v => `₹${v/1000}k`} />
                 <Tooltip formatter={v => [fmt(v), 'Spending']} />
                 <Area type="monotone" dataKey="amount" stroke="#EF4444" strokeWidth={3} fillOpacity={1} fill="url(#colorExpense)" />
               </AreaChart>
@@ -608,7 +602,7 @@ const ExpenseList = () => {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                   <div>
-                    <label style={labelStyle}>Amount ($)</label>
+                    <label style={labelStyle}>Amount (₹)</label>
                     <input type="number" placeholder="0.00" min="0" step="0.01" value={form.amount} onChange={e => setForm(p => ({ ...p, amount: e.target.value }))} style={inputStyle} />
                   </div>
                   <div>
@@ -682,7 +676,7 @@ const ExpenseList = () => {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                   <div>
-                    <label style={labelStyle}>Amount ($)</label>
+                    <label style={labelStyle}>Amount (₹)</label>
                     <input type="number" placeholder="0.00" min="0" step="0.01" value={form.amount} onChange={e => setForm(p => ({ ...p, amount: e.target.value }))} style={inputStyle} />
                   </div>
                   <div>

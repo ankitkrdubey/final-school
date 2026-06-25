@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  DollarSign, CreditCard, Clock, TrendingUp, ArrowUpRight, 
-  ArrowDownRight, PieChart as PieIcon, BarChart3, Wallet,
-  Calendar, Filter, Download, MoreVertical, FileText,
-  Building, Zap, User, ChevronRight, Activity, X
-} from 'lucide-react';
+import { IndianRupee, CreditCard, Clock, TrendingUp, ArrowUpRight, ArrowDownRight, PieChart as PieIcon, BarChart3, Wallet, Calendar, Filter, Download, MoreVertical, FileText, Building, Zap, User, ChevronRight, Activity, X } from 'lucide-react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, 
   ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar,
@@ -24,9 +19,9 @@ const FeesDashboard = () => {
   const handleDownloadAnnualReport = () => {
     const summaryRows = [
       ['Financial Summary Metrics', 'Value'],
-      ['Total Revenue', '$1,250,000'],
+      ['Total Revenue', '₹1,250,000'],
       ['Collection Rate', '94.2%'],
-      ['Pending Amount', '$24,500'],
+      ['Pending Amount', '₹24,500'],
       ['Active Discounts & Scholars', '42'],
       [],
       ['Collection by Category', 'Percentage (%)'],
@@ -43,9 +38,9 @@ const FeesDashboard = () => {
       [],
       ['Recent Transactions Ledger', ''],
       ['Invoice ID', 'Student Name', 'Type', 'Amount', 'Status', 'Date'],
-      ['#INV-2024', 'Alex Johnson', 'Tuition', '$450.00', 'Paid', '05 May'],
-      ['#INV-2023', 'Sarah Williams', 'Transport', '$80.00', 'Paid', '05 May'],
-      ['#INV-2022', 'Michael Brown', 'Tuition', '$450.00', 'Pending', '04 May'],
+      ['#INV-2024', 'Alex Johnson', 'Tuition', '₹450.00', 'Paid', '05 May'],
+      ['#INV-2023', 'Sarah Williams', 'Transport', '₹80.00', 'Paid', '05 May'],
+      ['#INV-2022', 'Michael Brown', 'Tuition', '₹450.00', 'Pending', '04 May'],
     ];
     
     let csvContent = "data:text/csv;charset=utf-8,";
@@ -118,9 +113,9 @@ const FeesDashboard = () => {
   ];
 
   const recentTransactions = [
-    { id: '#INV-2024', student: 'Alex Johnson', type: 'Tuition', amount: '$450.00', status: 'Paid', date: '05 May' },
-    { id: '#INV-2023', student: 'Sarah Williams', type: 'Transport', amount: '$80.00', status: 'Paid', date: '05 May' },
-    { id: '#INV-2022', student: 'Michael Brown', type: 'Tuition', amount: '$450.00', status: 'Pending', date: '04 May' },
+    { id: '#INV-2024', student: 'Alex Johnson', type: 'Tuition', amount: '₹450.00', status: 'Paid', date: '05 May' },
+    { id: '#INV-2023', student: 'Sarah Williams', type: 'Transport', amount: '₹80.00', status: 'Paid', date: '05 May' },
+    { id: '#INV-2022', student: 'Michael Brown', type: 'Tuition', amount: '₹450.00', status: 'Pending', date: '04 May' },
   ];
 
   const highDuesData = [
@@ -171,9 +166,9 @@ const FeesDashboard = () => {
       {/* Summary Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
          {[
-           { label: 'Total Revenue', value: '$1.25M', change: '+12.5%', isPositive: true, icon: <DollarSign size={20} />, color: 'var(--primary)' },
+           { label: 'Total Revenue', value: '₹1.25M', change: '+12.5%', isPositive: true, icon: <IndianRupee size={20} />, color: 'var(--primary)' },
            { label: 'Collection Rate', value: '94.2%', change: '+3.1%', isPositive: true, icon: <Activity size={20} />, color: '#10B981' },
-           { label: 'Pending Amount', value: '$24.5k', change: '-1.2%', isPositive: false, icon: <Clock size={20} />, color: '#EF4444' },
+           { label: 'Pending Amount', value: '₹24.5k', change: '-1.2%', isPositive: false, icon: <Clock size={20} />, color: '#EF4444' },
            { label: 'Active Discounts', value: '42', change: '+5', isPositive: true, icon: <Zap size={20} />, color: '#F59E0B' }
          ].map((stat, i) => (
             <div key={i} className="card" style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '20px' }}>
@@ -220,7 +215,7 @@ const FeesDashboard = () => {
                      </defs>
                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                      <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--text-muted)' }} />
-                     <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--text-muted)' }} tickFormatter={(v) => `$${v/1000}k`} />
+                     <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--text-muted)' }} tickFormatter={(v) => `₹${v/1000}k`} />
                      <Tooltip contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: 'var(--shadow-xl)' }} />
                      <Area type="monotone" dataKey="collection" stroke="var(--primary)" strokeWidth={4} fillOpacity={1} fill="url(#colorRevenue)" />
                      <Area type="monotone" dataKey="target" stroke="#E2E8F0" strokeWidth={2} strokeDasharray="5 5" fill="none" />
@@ -338,7 +333,7 @@ const FeesDashboard = () => {
                <AreaChart data={highDuesData}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                   <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--text-muted)' }} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--text-muted)' }} tickFormatter={(v) => `$${v}`} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--text-muted)' }} tickFormatter={(v) => `₹${v}`} />
                   <Tooltip contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: 'var(--shadow-xl)' }} />
                   <Area type="monotone" dataKey="Alex" stackId="1" stroke="#4880FF" strokeWidth={3} fill="#4880FF" fillOpacity={0.6} />
                   <Area type="monotone" dataKey="Sarah" stackId="1" stroke="#10B981" strokeWidth={3} fill="#10B981" fillOpacity={0.6} />
@@ -423,7 +418,7 @@ const FeesDashboard = () => {
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px' }}>
                         <div>
                           <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Forecasted Revenue</div>
-                          <div style={{ fontWeight: 950, fontSize: '1.4rem', color: 'var(--primary)' }}>${cumulative.toLocaleString()}</div>
+                          <div style={{ fontWeight: 950, fontSize: '1.4rem', color: 'var(--primary)' }}>₹{cumulative.toLocaleString()}</div>
                         </div>
                         <div style={{ textAlign: 'right' }}>
                           <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Target Met Percentage</div>
@@ -444,8 +439,8 @@ const FeesDashboard = () => {
                             {projected.map((p, idx) => (
                               <tr key={idx} style={{ borderBottom: '1px solid var(--border-color)', fontWeight: 700 }}>
                                 <td style={{ padding: '8px 0', color: 'var(--text-main)' }}>{p.month}</td>
-                                <td style={{ padding: '8px 0', textAlign: 'right', color: 'var(--primary)' }}>${p.projectedRevenue.toLocaleString()}</td>
-                                <td style={{ padding: '8px 0', textAlign: 'right', color: 'var(--text-muted)' }}>${p.cumulative.toLocaleString()}</td>
+                                <td style={{ padding: '8px 0', textAlign: 'right', color: 'var(--primary)' }}>₹{p.projectedRevenue.toLocaleString()}</td>
+                                <td style={{ padding: '8px 0', textAlign: 'right', color: 'var(--text-muted)' }}>₹{p.cumulative.toLocaleString()}</td>
                               </tr>
                             ))}
                           </tbody>
@@ -462,7 +457,7 @@ const FeesDashboard = () => {
                   className="btn btn-primary"
                   onClick={() => {
                     const { cumulative } = getForecastedData();
-                    showToast(`Simulated forecast applied! Projected collection target adjusted to $${cumulative.toLocaleString()}.`, 'success', 'Forecast Applied');
+                    showToast(`Simulated forecast applied! Projected collection target adjusted to ₹${cumulative.toLocaleString()}.`, 'success', 'Forecast Applied');
                     setShowForecastModal(false);
                   }}
                   style={{ flex: 1, padding: '14px', borderRadius: '12px', fontWeight: 800, border: 'none', cursor: 'pointer' }}

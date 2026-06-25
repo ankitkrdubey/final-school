@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Building, Users, Settings2, Calculator, Save, FileText, CheckCircle2, ChevronRight, AlertCircle, DollarSign, Download, Play, X } from 'lucide-react';
+import { Calendar, Building, Users, Settings2, Calculator, Save, FileText, CheckCircle2, ChevronRight, AlertCircle, IndianRupee, Download, Play, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast, ToastRenderer } from '../hooks/useToast';
 
@@ -17,10 +17,10 @@ const GeneratePayroll = () => {
       return JSON.parse(stored);
     } else {
       const initial = [
-        { id: 'PAY-2026-05-01', name: 'Dr. Robert Carter', role: 'Professor', salary: '$7,083', status: 'Paid', date: '01 May 2026', method: 'Direct Deposit', dept: 'Mathematics' },
-        { id: 'PAY-2026-05-02', name: 'Sarah Jenkins', role: 'Admin', salary: '$4,500', status: 'Paid', date: '01 May 2026', method: 'Bank Transfer', dept: 'Administration' },
-        { id: 'PAY-2026-05-03', name: "Michael O'Brien", role: 'IT Lead', salary: '$5,200', status: 'Pending', date: '--', method: 'Institutional Bank', dept: 'Technical' },
-        { id: 'PAY-2026-05-04', name: 'Elena Gilbert', role: 'Counselor', salary: '$3,800', status: 'Paid', date: '01 May 2026', method: 'Direct Deposit', dept: 'Student Welfare' },
+        { id: 'PAY-2026-05-01', name: 'Dr. Robert Carter', role: 'Professor', salary: '₹7,083', status: 'Paid', date: '01 May 2026', method: 'Direct Deposit', dept: 'Mathematics' },
+        { id: 'PAY-2026-05-02', name: 'Sarah Jenkins', role: 'Admin', salary: '₹4,500', status: 'Paid', date: '01 May 2026', method: 'Bank Transfer', dept: 'Administration' },
+        { id: 'PAY-2026-05-03', name: "Michael O'Brien", role: 'IT Lead', salary: '₹5,200', status: 'Pending', date: '--', method: 'Institutional Bank', dept: 'Technical' },
+        { id: 'PAY-2026-05-04', name: 'Elena Gilbert', role: 'Counselor', salary: '₹3,800', status: 'Paid', date: '01 May 2026', method: 'Direct Deposit', dept: 'Student Welfare' },
       ];
       localStorage.setItem('staff_payrolls', JSON.stringify(initial));
       return initial;
@@ -101,7 +101,7 @@ const GeneratePayroll = () => {
           ...p,
           status: 'Paid',
           date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
-          salary: `$${preview.net.toLocaleString()}` // Lock in net payout
+          salary: `₹${preview.net.toLocaleString('en-IN')}` // Lock in net payout
         };
       }
       return p;
@@ -241,9 +241,9 @@ const GeneratePayroll = () => {
                                  <div style={{ fontWeight: 800 }}>{emp.name}</div>
                                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>{emp.id} • {emp.role}</div>
                               </td>
-                              <td style={{ padding: '16px 24px', textAlign: 'right', fontWeight: 700 }}>${emp.base.toLocaleString()}</td>
-                              <td style={{ padding: '16px 24px', textAlign: 'right', fontWeight: 700, color: '#EF4444' }}>-${emp.deductions.toLocaleString()}</td>
-                              <td style={{ padding: '16px 24px', textAlign: 'right', fontWeight: 950, color: 'var(--primary)', fontSize: '1.1rem' }}>${emp.net.toLocaleString()}</td>
+                              <td style={{ padding: '16px 24px', textAlign: 'right', fontWeight: 700 }}>₹{emp.base.toLocaleString('en-IN')}</td>
+                              <td style={{ padding: '16px 24px', textAlign: 'right', fontWeight: 700, color: '#EF4444' }}>-₹{emp.deductions.toLocaleString('en-IN')}</td>
+                              <td style={{ padding: '16px 24px', textAlign: 'right', fontWeight: 950, color: 'var(--primary)', fontSize: '1.1rem' }}>₹{emp.net.toLocaleString('en-IN')}</td>
                               <td style={{ padding: '16px 24px', textAlign: 'center' }}>
                                  {emp.status === 'Ready' ? (
                                     <CheckCircle2 size={18} color="#10B981" style={{ margin: '0 auto' }} />
@@ -277,16 +277,16 @@ const GeneratePayroll = () => {
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                      <span style={{ fontSize: '0.85rem', fontWeight: 700, opacity: 0.8 }}>Total Gross Pay</span>
-                     <span style={{ fontSize: '1.1rem', fontWeight: 900 }}>${totalGross.toLocaleString()}</span>
+                     <span style={{ fontSize: '1.1rem', fontWeight: 900 }}>₹{totalGross.toLocaleString('en-IN')}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                      <span style={{ fontSize: '0.85rem', fontWeight: 700, opacity: 0.8 }}>Total Deductions</span>
-                     <span style={{ fontSize: '1.1rem', fontWeight: 900, color: '#FDA4AF' }}>-${totalDeductions.toLocaleString()}</span>
+                     <span style={{ fontSize: '1.1rem', fontWeight: 900, color: '#FDA4AF' }}>-₹{totalDeductions.toLocaleString('en-IN')}</span>
                   </div>
                   <div style={{ height: '1px', backgroundColor: 'rgba(255,255,255,0.2)' }}></div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                      <span style={{ fontSize: '0.9rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px' }}>Net Payout</span>
-                     <span style={{ fontSize: '2rem', fontWeight: 950 }}>${totalNet.toLocaleString()}</span>
+                     <span style={{ fontSize: '2rem', fontWeight: 950 }}>₹{totalNet.toLocaleString('en-IN')}</span>
                   </div>
                </div>
 

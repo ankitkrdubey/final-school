@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ShieldCheck, Gem, Zap, Wallet, Plus, Edit, Trash2, 
-  CheckCircle, ArrowRight, Bed, Users, Info, DollarSign, X,
-  SlidersHorizontal
-} from 'lucide-react';
+import { ShieldCheck, Gem, Zap, Wallet, Plus, Edit, Trash2, CheckCircle, ArrowRight, Bed, Users, Info, X, SlidersHorizontal } from 'lucide-react';
 import { 
   RoomAppearanceModal, getRoomAppearance, applyRoomAppearanceStyles 
 } from '../components/RoomAppearanceModal';

@@ -1,10 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  GraduationCap, Target, Users, Award, ShieldCheck, Heart, Globe, Share2, Mail,
-  Zap, Cpu, Database, Smartphone, BarChart3, Lock, Search, BookOpen, Clock, 
-  MessageSquare, UserCheck, Settings, PieChart, Layout
-} from 'lucide-react';
+import { GraduationCap, Target, Users, Award, ShieldCheck, Heart, Globe, Share2, Mail, Zap, Cpu, Database, Smartphone, BarChart3, Lock, Search, BookOpen, Clock, MessageSquare, UserCheck, Settings, PieChart, Layout } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Footer from '../components/Footer';
 
@@ -181,7 +177,7 @@ const AboutSchool = () => {
                            {[
                              { label: 'Active Students', val: '2,482', change: '+12%', color: '#6366f1' },
                              { label: 'Avg. Attendance', val: '94.2%', change: '+2.4%', color: '#10b981' },
-                             { label: 'Revenue (MTD)', val: '$84,200', change: '+8.1%', color: '#ec4899' }
+                             { label: 'Revenue (MTD)', val: '₹84,200', change: '+8.1%', color: '#ec4899' }
                            ].map((stat, i) => (
                              <div key={i} style={{ padding: '24px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.05)' }}>
                                 <p style={{ fontSize: '0.75rem', fontWeight: 800, color: '#4b5563', textTransform: 'uppercase', marginBottom: '8px' }}>{stat.label}</p>

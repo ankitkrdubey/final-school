@@ -1,17 +1,7 @@
 /* EduPro Elite - AIPerformanceHub v2.0 (Impact Edition) */
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  TrendingUp, TrendingDown, AlertTriangle, Brain, 
-  Target, Users, Zap, ShieldAlert, BarChart3, ChevronRight,
-  Download, Activity, CheckCircle2, Search, Filter, Sparkles,
-  RefreshCw, MousePointer2, ArrowUpRight, ArrowDownRight,
-  FileText, CheckCircle, XCircle, PieChart, Info,
-  LayoutDashboard, Network, Microscope, Layers, Bot,
-  Fingerprint, Clock, ExternalLink, MoreVertical, ScanSearch, Terminal, Scan,
-  Trophy, GraduationCap, Settings2, Sliders, Monitor,
-  Rocket, Lightbulb, Command, X, ShieldCheck, Mail, Calendar, UserCheck, Printer
-} from 'lucide-react';
+import { TrendingUp, TrendingDown, AlertTriangle, Brain, Target, Users, Zap, ShieldAlert, BarChart3, ChevronRight, Download, Activity, CheckCircle2, Search, Filter, Sparkles, RefreshCw, MousePointer2, ArrowUpRight, ArrowDownRight, FileText, CheckCircle, XCircle, PieChart, Info, LayoutDashboard, Network, Microscope, Layers, Bot, Fingerprint, Clock, ExternalLink, MoreVertical, ScanSearch, Terminal, Scan, Trophy, GraduationCap, Settings2, Sliders, Monitor, Rocket, Lightbulb, Command, X, ShieldCheck, Mail, Calendar, UserCheck, Printer } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getStudents } from '../services/service';
 
@@ -277,11 +267,11 @@ const AIPerformanceHub = () => {
 
   // Lock ROI calculator rate
   const handleDeployCostModel = () => {
-    showToast(`Staffing parameters successfully locked at $${staffHourRate}/hr.`, 'success');
+    showToast(`Staffing parameters successfully locked at ₹${staffHourRate}/hr.`, 'success');
     const baseRoi = 75;
     const calculatedRoi = Math.min(98.5, baseRoi + (staffHourRate / 10) * 1.5);
     setRoiPercentage(parseFloat(calculatedRoi.toFixed(1)));
-    addAuditLog('ACCELERATION', `Deployed staffing cost parameters. Rate: $${staffHourRate}/hr. Projected ROI adjusted to ${calculatedRoi.toFixed(1)}%.`);
+    addAuditLog('ACCELERATION', `Deployed staffing cost parameters. Rate: ₹${staffHourRate}/hr. Projected ROI adjusted to ${calculatedRoi.toFixed(1)}%.`);
     setShowROIModal(false);
   };
 
@@ -396,7 +386,7 @@ const AIPerformanceHub = () => {
     content += `1. CORE METRICS OVERVIEW:\n`;
     content += `   - Institutional Health: LMS: ${systemHealths.lms}% | Mess: ${systemHealths.mess}% | Security: ${systemHealths.security}% | Finance: ${systemHealths.finance}%\n`;
     content += `   - AI Predictive Accuracy: ${predictiveAccuracy}%\n`;
-    content += `   - Intervention ROI: ${roiPercentage}% (Staffing Rate: $${staffHourRate}/hr)\n\n`;
+    content += `   - Intervention ROI: ${roiPercentage}% (Staffing Rate: ₹${staffHourRate}/hr)\n\n`;
     
     content += `2. DEPLOYED MODEL PARAMETERS:\n`;
     if (deployedModelInfo) {
@@ -471,9 +461,9 @@ const AIPerformanceHub = () => {
       return;
     }
     setIsNominationSigned(true);
-    showToast(`Nominating ${studentName} for $${scholarshipValue} STEM scholarship...`, 'info');
+    showToast(`Nominating ${studentName} for ₹${scholarshipValue} STEM scholarship...`, 'info');
     setTimeout(() => {
-      addAuditLog('ACCELERATION', `Issued gold-tier Honor Roll scholarship nomination ($${scholarshipValue}) to ${studentName} for: "${scholarshipCitation}"`);
+      addAuditLog('ACCELERATION', `Issued gold-tier Honor Roll scholarship nomination (₹${scholarshipValue}) to ${studentName} for: "${scholarshipCitation}"`);
       showToast(`Scholarship nomination officially registered and signed for ${studentName}!`, 'success');
       setSelectedStudent(null);
       setIsNominationSigned(false);
@@ -1078,7 +1068,7 @@ const AIPerformanceHub = () => {
                        
                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
                          <div>
-                           <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--perf-text-muted)' }}>Nomination Reward Value ($)</label>
+                           <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--perf-text-muted)' }}>Nomination Reward Value (₹)</label>
                            <input 
                              type="number" 
                              value={scholarshipValue} 
@@ -1344,7 +1334,7 @@ const AIPerformanceHub = () => {
               <div style={{ backgroundColor: 'var(--perf-bg-body)', padding: '24px', borderRadius: '20px', border: '1px solid var(--perf-border-color)', marginBottom: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800, fontSize: '0.9rem', marginBottom: '16px' }}>
                   <span style={{ color: 'var(--perf-text-muted)' }}>Staffing Hourly Cost Rate</span>
-                  <span style={{ color: 'var(--perf-warning-text)', fontSize: '1.2rem', fontWeight: 900 }}>${staffHourRate}/hr</span>
+                  <span style={{ color: 'var(--perf-warning-text)', fontSize: '1.2rem', fontWeight: 900 }}>₹{staffHourRate}/hr</span>
                 </div>
                 <input 
                   type="range" 
@@ -1355,9 +1345,9 @@ const AIPerformanceHub = () => {
                   style={{ width: '100%', height: '8px', borderRadius: '4px', background: 'var(--perf-border-color)', outline: 'none', cursor: 'pointer' }}
                 />
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 700, color: 'var(--perf-text-muted)', marginTop: '8px' }}>
-                  <span>$25/hr</span>
-                  <span>$62/hr</span>
-                  <span>$100/hr</span>
+                  <span>₹25/hr</span>
+                  <span>₹62/hr</span>
+                  <span>₹100/hr</span>
                 </div>
               </div>
 
@@ -1368,7 +1358,7 @@ const AIPerformanceHub = () => {
                 </div>
                 <div style={{ padding: '16px', borderRadius: '16px', backgroundColor: 'var(--perf-success-bg)', border: '1px solid var(--perf-success-border)', textAlign: 'center' }}>
                   <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--perf-success-text)', textTransform: 'uppercase' }}>Financial Yield Saved</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 900, marginTop: '4px', color: 'var(--perf-success-text)' }}>${150 * staffHourRate}</div>
+                  <div style={{ fontSize: '1.5rem', fontWeight: 900, marginTop: '4px', color: 'var(--perf-success-text)' }}>₹{150 * staffHourRate}</div>
                 </div>
               </div>
 

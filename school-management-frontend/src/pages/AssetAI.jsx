@@ -281,7 +281,7 @@ const AssetAI = () => {
             { key: 'health', label: 'Overall Asset Health', value: `${overallHealth}%`, icon: Activity, color: '#10b981', tag: 'DIAGNOSTICS', trend: '+2%' },
             { key: 'backlog', label: 'Maintenance Backlog', value: `0${backlogCount}`, icon: Wrench, color: '#f59e0b', tag: 'CALIBRATE', trend: '-1' },
             { key: 'lifecycle', label: 'Resource Lifecycle', value: `${amortizationYears}y`, icon: Clock, color: '#6366f1', tag: 'DEPRECIATION', trend: 'Stable' },
-            { key: 'savings', label: 'Smart Grid Savings', value: `$${smartSavings.toLocaleString()}`, icon: Zap, color: '#10b981', tag: 'ECONOMY', trend: '+12%' },
+            { key: 'savings', label: 'Smart Grid Savings', value: `₹${smartSavings.toLocaleString()}`, icon: Zap, color: '#10b981', tag: 'ECONOMY', trend: '+12%' },
           ].map((stat, i) => (
             <motion.div 
               key={i} 
@@ -353,7 +353,7 @@ const AssetAI = () => {
                         </div>
                         <div>
                            <div style={{ fontWeight: 850, color: 'var(--text-main)' }}>{asset.name}</div>
-                           <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginTop: '2px' }}>Next Service: {asset.nextService} • Valuation: ${asset.cost.toLocaleString()}</div>
+                           <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginTop: '2px' }}>Next Service: {asset.nextService} • Valuation: ₹{asset.cost.toLocaleString()}</div>
                         </div>
                      </div>
                      <div style={{ flex: 1, padding: '0 32px' }}>
@@ -581,7 +581,7 @@ const AssetAI = () => {
 
                     <div>
                       <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-sidebar)', marginBottom: '8px' }}>
-                        VALUATION / COST ($)
+                        VALUATION / COST (₹)
                       </label>
                       <input 
                         type="number"
@@ -671,13 +671,13 @@ const AssetAI = () => {
                     {assets.map((a, i) => (
                       <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', borderBottom: '1px solid #f1f5f9', fontSize: '0.8rem' }}>
                         <span>{a.name}</span>
-                        <strong>Valuation: ${a.cost.toLocaleString()} ({a.health}% Health)</strong>
+                        <strong>Valuation: ₹{a.cost.toLocaleString()} ({a.health}% Health)</strong>
                       </div>
                     ))}
                   </div>
 
                   <p style={{ marginBottom: '16px' }}>
-                    Total capital asset diagnostics show an aggregate health index of <strong>{overallHealth}%</strong>. Smart grid integrations report monthly utility offsets of <strong>${smartSavings}</strong>.
+                    Total capital asset diagnostics show an aggregate health index of <strong>{overallHealth}%</strong>. Smart grid integrations report monthly utility offsets of <strong>₹{smartSavings}</strong>.
                   </p>
 
                   <p style={{ marginBottom: '32px' }}>
@@ -756,7 +756,7 @@ const AssetAI = () => {
                       <div key={i} style={{ padding: '14px', borderRadius: '14px', backgroundColor: 'var(--bg-body)', border: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
                           <div style={{ fontWeight: 800, fontSize: '0.85rem', color: 'var(--text-main)' }}>{a.name}</div>
-                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>Asset Cost: ${a.cost.toLocaleString()}</div>
+                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>Asset Cost: ₹{a.cost.toLocaleString()}</div>
                         </div>
                         <span style={{ fontSize: '0.75rem', fontWeight: 800, color: a.color }}>{a.maintenance.toUpperCase()} ({a.health}%)</span>
                       </div>

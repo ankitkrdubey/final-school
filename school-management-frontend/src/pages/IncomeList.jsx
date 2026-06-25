@@ -1,12 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import {
-  TrendingUp, Plus, Search, Filter, Download,
-  FileText, Wallet, ArrowUpRight, BarChart3,
-  CreditCard, Clock, X, Save, CheckCircle2,
-  AlertCircle, BadgeCheck, Hash, Calendar,
-  Banknote, Tag, Building2, PieChart as PieIcon,
-  ChevronRight, Layers, Eye
-} from 'lucide-react';
+import { TrendingUp, Plus, Search, Filter, Download, FileText, Wallet, ArrowUpRight, BarChart3, CreditCard, Clock, X, Save, CheckCircle2, AlertCircle, BadgeCheck, Hash, Calendar, Banknote, Tag, Building2, PieChart as PieIcon, ChevronRight, Layers, Eye } from 'lucide-react';
 import {
   ResponsiveContainer, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip,
@@ -52,7 +45,7 @@ const HEAD_COLORS = {
 /* ─────────────────────────────────────────
    HELPERS
 ───────────────────────────────────────── */
-const fmt = (n) => '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 2 });
+const fmt = (n) => '₹' + Number(n).toLocaleString('en-IN', { minimumFractionDigits: 2 });
 const nextId  = (list) => {
   const nums = list.map(i => parseInt(i.id.replace('INC-', '')) || 0);
   return 'INC-' + (Math.max(0, ...nums) + 1);
@@ -316,7 +309,7 @@ const IncomeList = () => {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)"/>
                 <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--text-muted)' }}/>
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--text-muted)' }} tickFormatter={v => `$${v/1000}k`}/>
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: 'var(--text-muted)' }} tickFormatter={v => `₹${v/1000}k`}/>
                 <Tooltip formatter={v => [fmt(v), 'Revenue']}/>
                 <Area type="monotone" dataKey="amount" stroke="var(--primary)" strokeWidth={3} fillOpacity={1} fill="url(#colorIncome)"/>
               </AreaChart>
@@ -559,7 +552,7 @@ const IncomeList = () => {
                     </select>
                   </div>
                   <div>
-                    <label style={labelStyle}>Amount ($) *</label>
+                    <label style={labelStyle}>Amount (₹) *</label>
                     <input type="number" min="0" step="0.01" placeholder="0.00" value={form.amount} onChange={e => setForm(p=>({...p,amount:e.target.value}))} style={inputStyle}/>
                   </div>
                 </div>

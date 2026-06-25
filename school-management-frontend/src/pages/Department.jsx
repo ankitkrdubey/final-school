@@ -14,11 +14,11 @@ const Department = () => {
       return JSON.parse(stored);
     } else {
       const initial = [
-        { id: 1, name: 'Mathematics & Science', head: 'Dr. Robert Carter', staff: 24, budget: '$45,000', status: 'Active' },
-        { id: 2, name: 'Languages & Arts', head: 'Sarah Jenkins', staff: 18, budget: '$32,000', status: 'Active' },
-        { id: 3, name: 'Physical Education', head: "Michael O'Brien", staff: 12, budget: '$28,000', status: 'Active' },
-        { id: 4, name: 'Campus Administration', head: 'Elena Gilbert', staff: 15, budget: '$60,000', status: 'Active' },
-        { id: 5, name: 'IT & Infrastructure', head: 'David Miller', staff: 8, budget: '$55,000', status: 'Active' },
+        { id: 1, name: 'Mathematics & Science', head: 'Dr. Robert Carter', staff: 24, budget: '₹45,000', status: 'Active' },
+        { id: 2, name: 'Languages & Arts', head: 'Sarah Jenkins', staff: 18, budget: '₹32,000', status: 'Active' },
+        { id: 3, name: 'Physical Education', head: "Michael O'Brien", staff: 12, budget: '₹28,000', status: 'Active' },
+        { id: 4, name: 'Campus Administration', head: 'Elena Gilbert', staff: 15, budget: '₹60,000', status: 'Active' },
+        { id: 5, name: 'IT & Infrastructure', head: 'David Miller', staff: 8, budget: '₹55,000', status: 'Active' },
       ];
       localStorage.setItem('institutional_departments', JSON.stringify(initial));
       return initial;
@@ -104,7 +104,7 @@ const Department = () => {
     }
 
     const rawBudget = parseFloat(formBudget) || 0;
-    const formattedBudget = '$' + rawBudget.toLocaleString('en-US');
+    const formattedBudget = '₹' + rawBudget.toLocaleString('en-IN');
 
     let updated = [];
     if (editingDept) {
@@ -251,7 +251,7 @@ const Department = () => {
                   </select>
                </div>
                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Annual Budget (USD)</label>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Annual Budget (₹)</label>
                   <input 
                      type="number" 
                      required

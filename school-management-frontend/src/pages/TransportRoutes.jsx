@@ -4,10 +4,10 @@ import { motion } from 'framer-motion';
 
 const TransportRoutes = () => {
   const [routes, setRoutes] = useState([
-    { id: 1, name: 'North Express', stops: 12, distance: '15.4 km', timing: '07:30 AM - 08:30 AM', activeVehicles: 3, passengers: 145 },
-    { id: 2, name: 'Downtown Shuttle', stops: 8, distance: '8.2 km', timing: '08:00 AM - 09:00 AM', activeVehicles: 2, passengers: 85 },
-    { id: 3, name: 'Staff Loop', stops: 5, distance: '12.0 km', timing: '07:00 AM - 08:00 AM', activeVehicles: 1, passengers: 25 },
-    { id: 4, name: 'Evening Exit', stops: 15, distance: '22.5 km', timing: '04:30 PM - 06:00 PM', activeVehicles: 4, passengers: 190 },
+    { id: 1, name: 'Canary Hill Express', stops: 12, distance: '15.4 km', timing: '07:30 AM - 08:30 AM', activeVehicles: 3, passengers: 145 },
+    { id: 2, name: 'Matwari Town Shuttle', stops: 8, distance: '8.2 km', timing: '08:00 AM - 09:00 AM', activeVehicles: 2, passengers: 85 },
+    { id: 3, name: 'Staff Loop (Town Station)', stops: 5, distance: '12.0 km', timing: '07:00 AM - 08:00 AM', activeVehicles: 1, passengers: 25 },
+    { id: 4, name: 'Evening Exit (Babu Gaon)', stops: 15, distance: '22.5 km', timing: '04:30 PM - 06:00 PM', activeVehicles: 4, passengers: 190 },
   ]);
 
   return (

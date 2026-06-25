@@ -1,12 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Users, UserPlus, TrendingUp, Target, 
-  Map, Globe, MessageSquare, PieChart,
-  ChevronRight, ArrowUpRight, Zap, Search, Filter, X, 
-  CheckCircle2, AlertCircle, RefreshCw, Sparkles, MapPin, 
-  DollarSign, LineChart, Send, FileText, Check, Database, Award, ShieldCheck, Printer
-} from 'lucide-react';
+import { Users, UserPlus, TrendingUp, Target, Map, Globe, MessageSquare, PieChart, ChevronRight, ArrowUpRight, Zap, Search, Filter, X, CheckCircle2, AlertCircle, RefreshCw, Sparkles, MapPin, IndianRupee, LineChart, Send, FileText, Check, Database, Award, ShieldCheck, Printer } from 'lucide-react';
 
 const AdmissionsAI = () => {
   // 1. Dynamic Pool States (Local CRM Database)
@@ -443,7 +437,7 @@ const AdmissionsAI = () => {
     setAdWordsSpend(5500);
     setSocialSpend(4500);
     setCostPerAcquisition(980);
-    triggerToast("AI Budget Engine balanced spending! Allocated $5.5k Google / $4.5k Social. CPA Optimized.", "success");
+    triggerToast("AI Budget Engine balanced spending! Allocated ₹5.5k Google / ₹4.5k Social. CPA Optimized.", "success");
   };
 
   // Funnel Detailed lists mapping
@@ -757,7 +751,7 @@ const AdmissionsAI = () => {
               </div>
               <span style={{ fontSize: '0.65rem', padding: '4px 8px', borderRadius: '12px', backgroundColor: '#f59e0b15', color: '#f59e0b', fontWeight: 800 }}>SIMULATOR</span>
             </div>
-            <div style={{ fontSize: '2.5rem', fontWeight: 950, color: 'var(--text-main)', letterSpacing: '-1px' }}>${costPerAcquisition.toLocaleString()}</div>
+            <div style={{ fontSize: '2.5rem', fontWeight: 950, color: 'var(--text-main)', letterSpacing: '-1px' }}>₹{costPerAcquisition.toLocaleString()}</div>
             <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-muted)', marginTop: '4px' }}>COST PER ACQUISITION (CPA)</div>
          </motion.div>
       </div>
@@ -901,7 +895,7 @@ const AdmissionsAI = () => {
                   <div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-sidebar)', marginBottom: '8px' }}>
                       <span>Google AdWords Budget</span>
-                      <span style={{ color: '#6366f1' }}>${adWordsSpend.toLocaleString()}/mo</span>
+                      <span style={{ color: '#6366f1' }}>₹{adWordsSpend.toLocaleString()}/mo</span>
                     </div>
                     <input 
                       type="range"
@@ -921,7 +915,7 @@ const AdmissionsAI = () => {
                   <div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-sidebar)', marginBottom: '8px' }}>
                       <span>Meta & Social Campaigns</span>
-                      <span style={{ color: '#8b5cf6' }}>${socialSpend.toLocaleString()}/mo</span>
+                      <span style={{ color: '#8b5cf6' }}>₹{socialSpend.toLocaleString()}/mo</span>
                     </div>
                     <input 
                       type="range"
@@ -942,13 +936,13 @@ const AdmissionsAI = () => {
                     <div style={{ textAlign: 'center', borderRight: '1px solid var(--border-color)' }}>
                       <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)' }}>TOTAL BUDGET</div>
                       <div style={{ fontSize: '1.35rem', fontWeight: 900, color: 'var(--text-main)', marginTop: '4px' }}>
-                        ${totalMarketingBudget.toLocaleString()}/mo
+                        ₹{totalMarketingBudget.toLocaleString()}/mo
                       </div>
                     </div>
                     <div style={{ textAlign: 'center' }}>
                       <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)' }}>SIMULATED CPA</div>
                       <div style={{ fontSize: '1.35rem', fontWeight: 900, color: '#10b981', marginTop: '4px' }}>
-                        ${currentCPA.toLocaleString()}
+                        ₹{currentCPA.toLocaleString()}
                       </div>
                     </div>
                   </div>
@@ -964,7 +958,7 @@ const AdmissionsAI = () => {
                   <button 
                     onClick={() => {
                       setCostPerAcquisition(currentCPA);
-                      triggerToast(`Simulated acquisition configuration of $${totalMarketingBudget.toLocaleString()} deployed!`, "success");
+                      triggerToast(`Simulated acquisition configuration of ₹${totalMarketingBudget.toLocaleString()} deployed!`, "success");
                       setActiveModal(null);
                     }}
                     style={{ flex: 1.5, padding: '14px', borderRadius: '14px', border: 'none', backgroundColor: '#6366f1', color: 'white', fontWeight: 800, fontSize: '0.85rem', cursor: 'pointer' }}

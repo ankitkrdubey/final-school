@@ -250,7 +250,7 @@ const MessSubscriptions = () => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', marginBottom: '40px', flexWrap: 'wrap' }}>
          {[
            { label: 'Active Subscribers', value: (subscriptions.filter(s => s.status === 'Active').length + 1235).toLocaleString(), icon: <Users size={20} />, color: '#4f46e5' },
-           { label: 'Monthly Revenue', value: `$${((subscriptions.filter(s => s.status === 'Active').length + 1235) * 15 / 1000).toFixed(1)}k`, icon: <CreditCard size={20} />, color: '#10b981' },
+           { label: 'Monthly Revenue', value: `₹${((subscriptions.filter(s => s.status === 'Active').length + 1235) * 15 / 1000).toFixed(1)}k`, icon: <CreditCard size={20} />, color: '#10b981' },
            { label: 'Expiring Plans', value: (subscriptions.filter(s => s.status === 'Expiring Soon').length + 11).toString(), icon: <Clock size={20} />, color: '#f59e0b' },
            { label: 'Catering Capacity', value: '88%', icon: <Utensils size={20} />, color: '#ec4899' }
          ].map((stat, i) => (

@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FileText, Download, Search, Filter, 
-  ArrowLeft, CreditCard, CheckCircle, 
-  Clock, AlertCircle, History, TrendingUp,
-  Receipt, Wallet, Building, Calendar, ShieldCheck,
-  X, Sparkles
-} from 'lucide-react';
+import { FileText, Download, Search, Filter, ArrowLeft, CreditCard, CheckCircle, Clock, AlertCircle, History, TrendingUp, Receipt, Wallet, Building, Calendar, ShieldCheck, X, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 // ─── Hook: reads dark-mode from localStorage + syncs with Topbar toggle ──────
@@ -70,12 +64,12 @@ const BillingHistory = () => {
   };
 
   const invoices = [
-    { id: 'INV-2026-006', date: 'May 10, 2026', plan: 'Enterprise Elite', amount: '$499.00', status: 'Pending', method: 'Visa ending in 4242' },
-    { id: 'INV-2026-005', date: 'May 01, 2026', plan: 'Enterprise Elite', amount: '$499.00', status: 'Paid', method: 'Visa ending in 4242' },
-    { id: 'INV-2026-004', date: 'Apr 01, 2026', plan: 'Enterprise Elite', amount: '$499.00', status: 'Paid', method: 'Visa ending in 4242' },
-    { id: 'INV-2026-003', date: 'Mar 15, 2026', plan: 'Add-on: 500 Students', amount: '$50.00', status: 'Failed', method: 'Mastercard ending in 8888' },
-    { id: 'INV-2026-002', date: 'Mar 01, 2026', plan: 'Enterprise Elite', amount: '$499.00', status: 'Paid', method: 'Mastercard ending in 8888' },
-    { id: 'INV-2026-001', date: 'Feb 01, 2026', plan: 'Professional Tier', amount: '$59.00', status: 'Paid', method: 'Visa ending in 4242' }
+    { id: 'INV-2026-006', date: 'May 10, 2026', plan: 'Enterprise Elite', amount: '₹499.00', status: 'Pending', method: 'Visa ending in 4242' },
+    { id: 'INV-2026-005', date: 'May 01, 2026', plan: 'Enterprise Elite', amount: '₹499.00', status: 'Paid', method: 'Visa ending in 4242' },
+    { id: 'INV-2026-004', date: 'Apr 01, 2026', plan: 'Enterprise Elite', amount: '₹499.00', status: 'Paid', method: 'Visa ending in 4242' },
+    { id: 'INV-2026-003', date: 'Mar 15, 2026', plan: 'Add-on: 500 Students', amount: '₹50.00', status: 'Failed', method: 'Mastercard ending in 8888' },
+    { id: 'INV-2026-002', date: 'Mar 01, 2026', plan: 'Enterprise Elite', amount: '₹499.00', status: 'Paid', method: 'Mastercard ending in 8888' },
+    { id: 'INV-2026-001', date: 'Feb 01, 2026', plan: 'Professional Tier', amount: '₹59.00', status: 'Paid', method: 'Visa ending in 4242' }
   ];
 
   const filteredInvoices = invoices.filter(inv => {
@@ -130,8 +124,8 @@ const BillingHistory = () => {
       {/* Financial Stats */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', marginBottom: '40px' }}>
          {[
-           { label: 'Total Investment', value: '$2,055', icon: <TrendingUp size={20} />, color: '#4f46e5' },
-           { label: 'Next Invoice', value: '$499.00', icon: <Calendar size={20} />, color: '#10b981' },
+           { label: 'Total Investment', value: '₹2,055', icon: <TrendingUp size={20} />, color: '#4f46e5' },
+           { label: 'Next Invoice', value: '₹499.00', icon: <Calendar size={20} />, color: '#10b981' },
            { label: 'Billing Status', value: 'Healthy', icon: <CheckCircle size={20} />, color: '#8b5cf6' },
            { label: 'Active Method', value: 'Visa (4242)', icon: <CreditCard size={20} />, color: '#ec4899' }
          ].map((stat, i) => (

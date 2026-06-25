@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Zap, CheckCircle, CreditCard, History, ArrowUpRight, 
-  Shield, Globe, Users, Database, Clock, Download, Plus,
-  ChevronRight, Sparkles, Gem, BadgeCheck, X, AlertCircle
-} from 'lucide-react';
+import { Zap, CheckCircle, CreditCard, History, ArrowUpRight, Shield, Globe, Users, Database, Clock, Download, Plus, ChevronRight, Sparkles, Gem, BadgeCheck, X, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 // ─── Hook: reads dark-mode from localStorage + syncs with Topbar toggle ──────
@@ -59,7 +55,7 @@ const SubscriptionManagement = () => {
   const currentPlan = {
     name: 'Enterprise Elite',
     status: 'Active',
-    price: '$499',
+    price: '₹40,000',
     billingCycle: 'Monthly',
     nextBilling: 'June 01, 2026',
     usage: [
@@ -70,9 +66,9 @@ const SubscriptionManagement = () => {
   };
 
   const history = [
-    { id: 'INV-2026-004', date: 'May 01, 2026', amount: '$499.00', status: 'Paid' },
-    { id: 'INV-2026-003', date: 'Apr 01, 2026', amount: '$499.00', status: 'Paid' },
-    { id: 'INV-2026-002', date: 'Mar 01, 2026', amount: '$499.00', status: 'Paid' }
+    { id: 'INV-2026-004', date: 'May 01, 2026', amount: '₹40,000.00', status: 'Paid' },
+    { id: 'INV-2026-003', date: 'Apr 01, 2026', amount: '₹40,000.00', status: 'Paid' },
+    { id: 'INV-2026-002', date: 'Mar 01, 2026', amount: '₹40,000.00', status: 'Paid' }
   ];
 
   const T = {

@@ -16,10 +16,10 @@ const Payroll = () => {
       basePayrolls = JSON.parse(stored);
     } else {
       basePayrolls = [
-        { id: 'PAY-2026-05-01', name: 'Dr. Robert Carter', role: 'Professor', salary: '$7,083', status: 'Paid', date: '01 May 2026', method: 'Direct Deposit', dept: 'Mathematics' },
-        { id: 'PAY-2026-05-02', name: 'Sarah Jenkins', role: 'Admin', salary: '$4,500', status: 'Paid', date: '01 May 2026', method: 'Bank Transfer', dept: 'Administration' },
-        { id: 'PAY-2026-05-03', name: "Michael O'Brien", role: 'IT Lead', salary: '$5,200', status: 'Pending', date: '--', method: 'Institutional Bank', dept: 'Technical' },
-        { id: 'PAY-2026-05-04', name: 'Elena Gilbert', role: 'Counselor', salary: '$3,800', status: 'Paid', date: '01 May 2026', method: 'Direct Deposit', dept: 'Student Welfare' },
+        { id: 'PAY-2026-05-01', name: 'Dr. Robert Carter', role: 'Professor', salary: '₹7,083', status: 'Paid', date: '01 May 2026', method: 'Direct Deposit', dept: 'Mathematics' },
+        { id: 'PAY-2026-05-02', name: 'Sarah Jenkins', role: 'Admin', salary: '₹4,500', status: 'Paid', date: '01 May 2026', method: 'Bank Transfer', dept: 'Administration' },
+        { id: 'PAY-2026-05-03', name: "Michael O'Brien", role: 'IT Lead', salary: '₹5,200', status: 'Pending', date: '--', method: 'Institutional Bank', dept: 'Technical' },
+        { id: 'PAY-2026-05-04', name: 'Elena Gilbert', role: 'Counselor', salary: '₹3,800', status: 'Paid', date: '01 May 2026', method: 'Direct Deposit', dept: 'Student Welfare' },
       ];
     }
 
@@ -31,7 +31,7 @@ const Payroll = () => {
         // If employee doesn't have a payroll record yet
         const hasRecord = basePayrolls.some(p => p.name === emp.name || p.id.includes(emp.id));
         if (!hasRecord) {
-          // Parse monthly salary (e.g. "$65,000 / annum" -> $5,416)
+          // Parse monthly salary (e.g. "₹65,000 / annum" -> ₹5,416)
           let numSalary = 5000;
           if (emp.salary) {
             const cleanSalary = emp.salary.replace(/[^0-9]/g, '');
@@ -44,7 +44,7 @@ const Payroll = () => {
             id: `PAY-2026-05-${Math.floor(10 + Math.random() * 89)}`,
             name: emp.name,
             role: emp.role || 'Staff Member',
-            salary: `$${numSalary.toLocaleString()}`,
+            salary: `₹${numSalary.toLocaleString()}`,
             status: 'Pending',
             date: '--',
             method: 'Direct Deposit',
@@ -133,14 +133,14 @@ DISBURSE DATE:   ${pay.date === '--' ? 'Pending Processing Cycle' : pay.date}
 PAYMENT METHOD:  ${pay.method}
 ==================================================
 EARNINGS LEDGER:
-Basic Base Earnings:          $${grossSalary.toLocaleString()}
+Basic Base Earnings:          ₹${grossSalary.toLocaleString()}
 ==================================================
 DEDUCTIONS VAULT:
-Federal Income Tax (11.7%):   -$${taxDeductions.toLocaleString()}
-Health Insurance Premium:    -$${healthDeductions}
-Retirement (401k) Pension:   -$${retirementDeductions.toLocaleString()}
+Federal Income Tax (11.7%):   -₹${taxDeductions.toLocaleString()}
+Health Insurance Premium:    -₹${healthDeductions}
+Retirement (401k) Pension:   -₹${retirementDeductions.toLocaleString()}
 --------------------------------------------------
-TOTAL INSTITUTIONAL NET PAY:  $${netSalary.toLocaleString()}
+TOTAL INSTITUTIONAL NET PAY:  ₹${netSalary.toLocaleString()}
 ==================================================
 SECURE COMPLIANCE:
 Verified by EduPro Elite Automated Treasury Handshake
@@ -203,10 +203,10 @@ All transactions are encrypted under cryptographic compliance.`;
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', marginBottom: '32px' }}>
          {[
-           { label: 'Total Monthly Payout', value: `$${totalPaid.toLocaleString()}`, change: '+2.5% from April', icon: <Wallet size={20} />, color: 'var(--primary)' },
-           { label: 'Benefits Contribution', value: `$${benefitsContribution.toLocaleString()}`, change: 'Fixed Institutional Rate', icon: <HeartPulse size={20} />, color: '#10B981' },
-           { label: 'Outstanding Payments', value: `$${totalPending.toLocaleString()}`, change: `${pendingCount} staff members`, icon: <AlertCircle size={20} />, color: '#F59E0B' },
-           { label: 'Tax Reserves', value: `$${taxReserves.toLocaleString()}`, change: 'Quarterly compliance', icon: <ShieldCheck size={20} />, color: '#6366F1' }
+           { label: 'Total Monthly Payout', value: `₹${totalPaid.toLocaleString()}`, change: '+2.5% from April', icon: <Wallet size={20} />, color: 'var(--primary)' },
+           { label: 'Benefits Contribution', value: `₹${benefitsContribution.toLocaleString()}`, change: 'Fixed Institutional Rate', icon: <HeartPulse size={20} />, color: '#10B981' },
+           { label: 'Outstanding Payments', value: `₹${totalPending.toLocaleString()}`, change: `${pendingCount} staff members`, icon: <AlertCircle size={20} />, color: '#F59E0B' },
+           { label: 'Tax Reserves', value: `₹${taxReserves.toLocaleString()}`, change: 'Quarterly compliance', icon: <ShieldCheck size={20} />, color: '#6366F1' }
          ].map((stat, i) => (
             <div key={i} className="card" style={{ padding: '24px', border: '1px solid var(--border-color)' }}>
                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>

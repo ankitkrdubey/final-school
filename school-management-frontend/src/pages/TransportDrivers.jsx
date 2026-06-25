@@ -9,70 +9,70 @@ import { motion, AnimatePresence } from 'framer-motion';
 const SEED_DRIVERS = [
   { 
     id: 1, 
-    name: 'Robert Wilson', 
-    license: 'DL-2024-5501', 
+    name: 'Rajesh Kumar Mahato', 
+    license: 'JH-02-2024-0012', 
     experience: '12 Years', 
     rating: 4.8, 
     status: 'Active', 
-    phone: '+1 234 567 8901', 
-    email: 'r.wilson@edupro.com', 
-    assignment: 'North Express',
+    phone: '+91 94311 00123', 
+    email: 'rajesh.mahato@edupro.in', 
+    assignment: 'Canary Hill Express',
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop',
     certifications: { cdl: true, medical: true, background: true, defensive: true },
     metrics: { completedTrips: 1250, onTimeRate: '98.5%', satisfaction: '4.8', incidentLog: [] }
   },
   { 
     id: 2, 
-    name: 'David Miller', 
-    license: 'DL-2023-9982', 
+    name: 'Sanjay Oraon', 
+    license: 'JH-02-2023-5591', 
     experience: '8 Years', 
     rating: 4.5, 
     status: 'Active', 
-    phone: '+1 234 567 8902', 
-    email: 'd.miller@edupro.com', 
-    assignment: 'Downtown Shuttle',
+    phone: '+91 94311 00456', 
+    email: 'sanjay.oraon@edupro.in', 
+    assignment: 'Matwari Town Shuttle',
     avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop',
     certifications: { cdl: true, medical: true, background: true, defensive: true },
     metrics: { completedTrips: 840, onTimeRate: '96.2%', satisfaction: '4.6', incidentLog: [] }
   },
   { 
     id: 3, 
-    name: 'Sarah Parker', 
-    license: 'DL-2025-1104', 
+    name: 'Sunil Soren', 
+    license: 'JH-02-2025-8840', 
     experience: '15 Years', 
     rating: 5.0, 
     status: 'On Leave', 
-    phone: '+1 234 567 8903', 
-    email: 's.parker@edupro.com', 
-    assignment: 'Staff Loop',
+    phone: '+91 94311 00789', 
+    email: 'sunil.soren@edupro.in', 
+    assignment: 'Staff Loop (Town Station)',
     avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop',
     certifications: { cdl: true, medical: true, background: true, defensive: true },
     metrics: { completedTrips: 1890, onTimeRate: '99.8%', satisfaction: '5.0', incidentLog: [] }
   },
   { 
     id: 4, 
-    name: 'Michael Chen', 
-    license: 'DL-2022-4433', 
+    name: 'Manoj Yadav', 
+    license: 'JH-02-2022-3321', 
     experience: '6 Years', 
     rating: 4.2, 
     status: 'Active', 
-    phone: '+1 234 567 8904', 
-    email: 'm.chen@edupro.com', 
-    assignment: 'Residency Express',
+    phone: '+91 94311 00234', 
+    email: 'manoj.yadav@edupro.in', 
+    assignment: 'Babu Gaon residency',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop',
     certifications: { cdl: true, medical: true, background: true, defensive: false },
     metrics: { completedTrips: 520, onTimeRate: '94.8%', satisfaction: '4.3', incidentLog: [{ date: '2026-04-12', detail: 'Minor mirror scrape at gate entry.' }] }
   },
   { 
     id: 5, 
-    name: 'James Bond', 
-    license: 'DL-007-GOLD', 
+    name: 'Amit Mahato', 
+    license: 'JH-02-2021-0077', 
     experience: '20 Years', 
     rating: 4.9, 
     status: 'Active', 
-    phone: '+1 234 567 0007', 
-    email: 'j.bond@edupro.com', 
-    assignment: 'South Connect',
+    phone: '+91 94311 00777', 
+    email: 'amit.mahato@edupro.in', 
+    assignment: 'Demotand Connect',
     avatar: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=150&h=150&fit=crop',
     certifications: { cdl: true, medical: true, background: true, defensive: true },
     metrics: { completedTrips: 2450, onTimeRate: '99.1%', satisfaction: '4.9', incidentLog: [] }
@@ -146,24 +146,24 @@ const TransportDrivers = () => {
     } catch (e) {}
     return {
       1: [
-        { sender: 'driver', text: 'Good morning! Performing pre-trip check on Bus 01.', time: '07:30 AM' },
-        { sender: 'admin', text: 'Excellent. Stay safe on the North Express route today.', time: '07:32 AM' }
+        { sender: 'driver', text: 'Good morning! Performing pre-trip check on Bus JH-02-B-1101.', time: '07:30 AM' },
+        { sender: 'admin', text: 'Excellent. Stay safe on the Canary Hill Express route today.', time: '07:32 AM' }
       ],
       2: [
         { sender: 'driver', text: 'Stuck in moderate traffic near East Campus entrance.', time: '08:15 AM' },
         { sender: 'admin', text: 'Understood. Please keep speed within 40km/h and monitor telemetry.', time: '08:16 AM' }
       ],
       3: [
-        { sender: 'driver', text: 'Hello, I am on scheduled leave this week. My replacement James Bond is ready.', time: 'Yesterday' },
-        { sender: 'admin', text: 'Got it Sarah. Rest well!', time: 'Yesterday' }
+        { sender: 'driver', text: 'Hello, I am on scheduled leave this week. My replacement Amit Mahato is ready.', time: 'Yesterday' },
+        { sender: 'admin', text: 'Got it Sunil. Rest well!', time: 'Yesterday' }
       ],
       4: [
-        { sender: 'driver', text: 'Completed the Residency Express student morning shift.', time: '08:45 AM' },
-        { sender: 'admin', text: 'Good job Michael. Remember to update the student passenger count.', time: '08:47 AM' }
+        { sender: 'driver', text: 'Completed the Babu Gaon residency student morning shift.', time: '08:45 AM' },
+        { sender: 'admin', text: 'Good job Manoj. Remember to update the student passenger count.', time: '08:47 AM' }
       ],
       5: [
-        { sender: 'driver', text: 'All systems green for South Connect. Ready to depart.', time: '07:15 AM' },
-        { sender: 'admin', text: 'Copy that, double-O-seven. Safe travels.', time: '07:16 AM' }
+        { sender: 'driver', text: 'All systems green for Demotand Connect. Ready to depart.', time: '07:15 AM' },
+        { sender: 'admin', text: 'Copy that, Amit. Safe travels.', time: '07:16 AM' }
       ]
     };
   });
@@ -311,20 +311,20 @@ const TransportDrivers = () => {
         replyText = `Hi there! I am currently on leave. For any immediate routes, please contact the secondary dispatch crew.`;
       } else {
         switch(showChatDrawer.assignment) {
-          case 'North Express':
-            replyText = "North Express update: Currently passing Sector 12. Traffic is moving fine. All students are seated safely.";
+          case 'Canary Hill Express':
+            replyText = "Canary Hill Express update: Currently passing Babu Gaon. Traffic is moving fine. All students are seated safely.";
             break;
-          case 'Downtown Shuttle':
-            replyText = "Downtown Shuttle is on the return loop now. On track for an on-time arrival.";
+          case 'Matwari Town Shuttle':
+            replyText = "Matwari Town Shuttle is on the return loop now. On track for an on-time arrival.";
             break;
-          case 'Residency Express':
-            replyText = "Residency Express here. We are delayed by roughly 5 minutes near the main bridge due to light work, but safe.";
+          case 'Babu Gaon residency':
+            replyText = "Babu Gaon residency route here. We are delayed by roughly 5 minutes near Korrah Chowk due to traffic, but safe.";
             break;
-          case 'South Connect':
-            replyText = "South Connect completed. Vehicle parked, locks done. Awaiting new dispatch manifest.";
+          case 'Demotand Connect':
+            replyText = "Demotand Connect route completed. Vehicle parked, locks done. Awaiting new dispatch manifest.";
             break;
-          case 'Staff Loop':
-            replyText = "Loop run is complete. Preparing for the evening staff transit runs.";
+          case 'Staff Loop (Town Station)':
+            replyText = "Staff loop run is complete. Preparing for the evening staff transit runs.";
             break;
           default:
             replyText = `Hello! I'm currently driving on the assigned route: ${showChatDrawer.assignment}. Systems are normal.`;

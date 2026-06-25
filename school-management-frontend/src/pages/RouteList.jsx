@@ -3,11 +3,11 @@ import { MapPin, Plus, Search, Filter, MoreVertical, Navigation, Users, Clock, A
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SEED_ROUTES = [
-  { id: 1, name: 'North Express Route', startPoint: 'Sector 12 Mall', endPoint: 'Main Campus', totalStops: 12, vehicle: 'Bus 01', driver: 'Robert Wilson', timing: '07:30 AM', fare: '$45.00', status: 'Active' },
-  { id: 2, name: 'Downtown Shuttle', startPoint: 'City Center', endPoint: 'West Campus', totalStops: 8, vehicle: 'Bus 02', driver: 'David Miller', timing: '08:00 AM', fare: '$30.00', status: 'Active' },
-  { id: 3, name: 'Staff Loop', startPoint: 'East Suburb', endPoint: 'Admin Block', totalStops: 5, vehicle: 'Van 04', driver: 'Sarah Parker', timing: '07:00 AM', fare: '$0.00', status: 'Inactive' },
-  { id: 4, name: 'Residency Express', startPoint: 'Hills Estate', endPoint: 'Main Campus', totalStops: 15, vehicle: 'Bus 05', driver: 'Michael Chen', timing: '07:15 AM', fare: '$55.00', status: 'Active' },
-  { id: 5, name: 'South Connect', startPoint: 'Old Town', endPoint: 'Secondary Block', totalStops: 10, vehicle: 'Bus 08', driver: 'James Bond', timing: '07:45 AM', fare: '$40.00', status: 'Active' },
+  { id: 1, name: 'Canary Hill Express', startPoint: 'Canary Hill', endPoint: 'Main Campus', totalStops: 12, vehicle: 'Bus JH-02-B-1101', driver: 'Rajesh Kumar Mahato', timing: '07:30 AM', fare: '₹45.00', status: 'Active' },
+  { id: 2, name: 'Matwari Town Shuttle', startPoint: 'Matwari', endPoint: 'West Campus', totalStops: 8, vehicle: 'Bus JH-02-B-2204', driver: 'Sanjay Oraon', timing: '08:00 AM', fare: '₹30.00', status: 'Active' },
+  { id: 3, name: 'Staff Loop (Town Station)', startPoint: 'Town Station', endPoint: 'Admin Block', totalStops: 5, vehicle: 'Van JH-02-V-4402', driver: 'Sunil Soren', timing: '07:00 AM', fare: '₹0.00', status: 'Inactive' },
+  { id: 4, name: 'Babu Gaon residency', startPoint: 'Babu Gaon', endPoint: 'Main Campus', totalStops: 15, vehicle: 'Bus JH-02-B-5509', driver: 'Manoj Yadav', timing: '07:15 AM', fare: '₹55.00', status: 'Active' },
+  { id: 5, name: 'Demotand Connect', startPoint: 'Demotand', endPoint: 'Secondary Block', totalStops: 10, vehicle: 'Bus JH-02-B-8812', driver: 'Amit Mahato', timing: '07:45 AM', fare: '₹40.00', status: 'Active' },
 ];
 
 const RouteList = () => {
@@ -52,7 +52,7 @@ const RouteList = () => {
     showToast('success', 'Route deleted successfully.');
   };
 
-  const [form, setForm] = useState({ name: '', startPoint: '', endPoint: '', driver: '', vehicle: '', timing: '', fare: '$0.00', status: 'Active' });
+  const [form, setForm] = useState({ name: '', startPoint: '', endPoint: '', driver: '', vehicle: '', timing: '', fare: '₹0.00', status: 'Active' });
 
   const handleAddSubmit = (e) => {
     e.preventDefault();
@@ -76,7 +76,7 @@ const RouteList = () => {
 
     setShowAddModal(false);
     setEditingId(null);
-    setForm({ name: '', startPoint: '', endPoint: '', driver: '', vehicle: '', timing: '', fare: '$0.00', status: 'Active' });
+    setForm({ name: '', startPoint: '', endPoint: '', driver: '', vehicle: '', timing: '', fare: '₹0.00', status: 'Active' });
   };
 
   return (
@@ -103,7 +103,7 @@ const RouteList = () => {
            <button onClick={() => { setSelectedRouteForMap(null); setShowMapModal(true); }} className="btn" style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', cursor: 'pointer' }}>
               <MapIcon size={20} /> Network Map
            </button>
-           <button onClick={() => { setEditingId(null); setForm({ name: '', startPoint: '', endPoint: '', driver: '', vehicle: '', timing: '', fare: '$0.00', status: 'Active' }); setShowAddModal(true); }} className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 24px', cursor: 'pointer' }}>
+           <button onClick={() => { setEditingId(null); setForm({ name: '', startPoint: '', endPoint: '', driver: '', vehicle: '', timing: '', fare: '₹0.00', status: 'Active' }); setShowAddModal(true); }} className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '12px 24px', cursor: 'pointer' }}>
               <Plus size={20} /> Add New Route
            </button>
         </div>
@@ -241,7 +241,7 @@ const RouteList = () => {
          <div className="card" style={{ padding: '32px', textAlign: 'center', border: '1px solid var(--border-color)', position: 'relative' }}>
             <div style={{ position: 'absolute', top: '12px', right: '12px' }}><Info size={16} className="text-muted" /></div>
             <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', marginBottom: '12px', letterSpacing: '1px' }}>Subscription Yield</p>
-            <h4 style={{ margin: 0, fontSize: '2.25rem', fontWeight: 950 }}>$4,820 <small style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>/ MO</small></h4>
+            <h4 style={{ margin: 0, fontSize: '2.25rem', fontWeight: 950 }}>₹4,82,000 <small style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>/ MO</small></h4>
          </div>
          <div className="card" style={{ padding: '32px', textAlign: 'center', border: '1px solid var(--border-color)', position: 'relative' }}>
             <div style={{ position: 'absolute', top: '12px', right: '12px' }}><Info size={16} className="text-muted" /></div>
@@ -333,7 +333,7 @@ const RouteList = () => {
                   scrolling="no" 
                   marginHeight="0" 
                   marginWidth="0" 
-                  src="https://www.openstreetmap.org/export/embed.html?bbox=-74.025%2C40.700%2C-73.970%2C40.735&amp;layer=mapnik" 
+                  src="https://www.openstreetmap.org/export/embed.html?bbox=85.33%2C23.97%2C85.39%2C24.01&amp;layer=mapnik" 
                   style={{ filter: 'grayscale(0.2) contrast(1.1) opacity(0.9)' }}
                 ></iframe>
                 

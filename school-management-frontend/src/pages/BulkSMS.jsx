@@ -11,9 +11,9 @@ const BulkSMS = () => {
   };
 
   const initialHistory = [
-    { id: 1, date: '2026-05-08', time: '10:30 AM', audience: 'Students', detailLabel: 'Class 10-A', content: 'Reminder: Mathematics Internal Assessment tomorrow.', status: 'Delivered', sent: 45, segments: 1, cost: 0.90 },
-    { id: 2, date: '2026-05-05', time: '02:15 PM', audience: 'Parents', detailLabel: 'Parents (Grade 5)', content: 'Summer camp registration is now open.', status: 'Delivered', sent: 120, segments: 1, cost: 2.40 },
-    { id: 3, date: '2026-05-01', time: '09:00 AM', audience: 'Teachers', detailLabel: 'All Faculty', content: 'Staff meeting at 4 PM in the main hall.', status: 'Failed', sent: 85, segments: 1, cost: 1.70 },
+    { id: 1, date: '2026-05-08', time: '10:30 AM', audience: 'Students', detailLabel: 'Class 10-A', content: 'Reminder: Mathematics Internal Assessment tomorrow.', status: 'Delivered', sent: 45, segments: 1, cost: 4.50 },
+    { id: 2, date: '2026-05-05', time: '02:15 PM', audience: 'Parents', detailLabel: 'Parents (Grade 5)', content: 'Summer camp registration is now open.', status: 'Delivered', sent: 120, segments: 1, cost: 12.00 },
+    { id: 3, date: '2026-05-01', time: '09:00 AM', audience: 'Teachers', detailLabel: 'All Faculty', content: 'Staff meeting at 4 PM in the main hall.', status: 'Failed', sent: 85, segments: 1, cost: 8.50 },
   ];
 
   // States
@@ -64,7 +64,7 @@ const BulkSMS = () => {
   const segments = charsUsed === 0 ? 0 : (charsUsed <= charLimit ? 1 : Math.ceil(charsUsed / 153));
   const recipientsCount = audienceDetails[targetAudience].count;
   const creditsNeeded = recipientsCount * segments;
-  const estimatedCost = (creditsNeeded * 0.02).toFixed(2);
+  const estimatedCost = (creditsNeeded * 0.10).toFixed(2);
 
   const handleSendBroadcast = (e) => {
     e.preventDefault();
@@ -140,9 +140,9 @@ const BulkSMS = () => {
   };
 
   const topUpPackages = [
-    { id: 1, sms: 2000, price: 19.99, title: 'Starter Booster' },
-    { id: 2, sms: 5000, price: 44.99, title: 'Standard Pack', popular: true },
-    { id: 3, sms: 15000, price: 119.99, title: 'Enterprise Bundle' }
+    { id: 1, sms: 2000, price: 199.00, title: 'Starter Booster' },
+    { id: 2, sms: 5000, price: 449.00, title: 'Standard Pack', popular: true },
+    { id: 3, sms: 15000, price: 1199.00, title: 'Enterprise Bundle' }
   ];
 
   return (
@@ -295,7 +295,7 @@ const BulkSMS = () => {
                      {credits < creditsNeeded ? (
                        <span>Estimated cost: <strong>{creditsNeeded.toLocaleString()} Credits</strong>. You do not have enough credits to broadcast.</span>
                      ) : (
-                       <span>Broadcasting to <strong>{recipientsCount}</strong> recipients requires <strong>{creditsNeeded.toLocaleString()} Credits</strong> (Est. Carrier Rate: ${estimatedCost}).</span>
+                       <span>Broadcasting to <strong>{recipientsCount}</strong> recipients requires <strong>{creditsNeeded.toLocaleString()} Credits</strong> (Est. Carrier Rate: ₹{estimatedCost}).</span>
                      )}
                   </div>
                </div>
@@ -478,7 +478,7 @@ const BulkSMS = () => {
                     </div>
                     <div style={{ padding: '12px 16px', backgroundColor: 'var(--bg-body)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
                        <span style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '2px' }}>Broadcast Cost</span>
-                       <span style={{ fontSize: '1rem', fontWeight: 900 }}>${(selectedHistoryItem.cost || 0).toFixed(2)}</span>
+                       <span style={{ fontSize: '1rem', fontWeight: 900 }}>₹{(selectedHistoryItem.cost || 0).toFixed(2)}</span>
                     </div>
                  </div>
 
@@ -555,7 +555,7 @@ const BulkSMS = () => {
                          </div>
                        </div>
                        <div style={{ textAlign: 'right' }}>
-                         <span style={{ fontSize: '1.2rem', fontWeight: 950, color: 'var(--text-main)' }}>${pkg.price}</span>
+                         <span style={{ fontSize: '1.2rem', fontWeight: 950, color: 'var(--text-main)' }}>₹{pkg.price}</span>
                        </div>
                      </div>
                    ))}

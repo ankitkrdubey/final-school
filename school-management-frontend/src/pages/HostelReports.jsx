@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Bed, Download, Filter, Search, 
-  ChevronRight, BarChart3, TrendingUp, Utensils,
-  Coffee, Users, ShieldCheck, FileText,
-  Activity, PieChart, X, AlertCircle, Sparkles, Clock, Check, Eye, Calendar, HardDrive, CheckCircle2
-} from 'lucide-react';
+import { Bed, Download, Filter, Search, ChevronRight, BarChart3, TrendingUp, Utensils, Coffee, Users, ShieldCheck, FileText, Activity, PieChart, X, AlertCircle, Sparkles, Clock, Check, Eye, Calendar, HardDrive, CheckCircle2 } from 'lucide-react';
 
 const HostelReports = () => {
   const navigate = useNavigate();
@@ -96,9 +91,9 @@ const HostelReports = () => {
       size: '156 KB',
       hash: 'SHA-256-77DA102BB9E094',
       rows: [
-        { plan: 'Plan Premium Gold', activeSubs: '142 Active', duration: 'Term Lump', billing: 'Monthly Recur', revenue: '$28,400' },
-        { plan: 'Plan Standard Silver', activeSubs: '250 Active', duration: 'Term Lump', billing: 'Monthly Recur', revenue: '$37,500' },
-        { plan: 'Plan Faculty Dining', activeSubs: '35 Active', duration: 'Monthly Recur', billing: 'Monthly Recur', revenue: '$8,750' }
+        { plan: 'Plan Premium Gold', activeSubs: '142 Active', duration: 'Term Lump', billing: 'Monthly Recur', revenue: '₹28,400' },
+        { plan: 'Plan Standard Silver', activeSubs: '250 Active', duration: 'Term Lump', billing: 'Monthly Recur', revenue: '₹37,500' },
+        { plan: 'Plan Faculty Dining', activeSubs: '35 Active', duration: 'Monthly Recur', billing: 'Monthly Recur', revenue: '₹8,750' }
       ]
     },
     { 
@@ -131,9 +126,9 @@ const HostelReports = () => {
       size: '142 KB',
       hash: 'SHA-256-11FFCC33BBDD04',
       rows: [
-        { asset: 'Block A HVAC/Power', usage: '4,200 kWh', costIndex: 'Normal', charge: '$520', status: 'Optimal' },
-        { asset: 'Block B HVAC/Power', usage: '3,900 kWh', costIndex: 'Normal', charge: '$480', status: 'Optimal' },
-        { asset: 'Dining Hall Kitchen', usage: '8,400 kWh', costIndex: 'High Load', charge: '$1,050', status: 'Cleared' }
+        { asset: 'Block A HVAC/Power', usage: '4,200 kWh', costIndex: 'Normal', charge: '₹520', status: 'Optimal' },
+        { asset: 'Block B HVAC/Power', usage: '3,900 kWh', costIndex: 'Normal', charge: '₹480', status: 'Optimal' },
+        { asset: 'Dining Hall Kitchen', usage: '8,400 kWh', costIndex: 'High Load', charge: '₹1,050', status: 'Cleared' }
       ]
     },
   ];
@@ -142,10 +137,10 @@ const HostelReports = () => {
     showToast("Compiling master residential audit ledger...", "info", "Residential Audit");
     const csvContent = [
       ['Block ID', 'Standard Occupancy', 'Meal Participation', 'Mess Revenue YTD', 'Security Rating'],
-      ['Block A (Boys)', '92%', '94.2%', '$58,400', '98/100'],
-      ['Block B (Girls)', '85%', '93.5%', '$54,200', '99/100'],
-      ['Block C (Premium)', '75%', '91.0%', '$12,400', '99/100'],
-      ['Block D (Guest)', '30%', '82.0%', '$3,600', '95/100'],
+      ['Block A (Boys)', '92%', '94.2%', '₹58,400', '98/100'],
+      ['Block B (Girls)', '85%', '93.5%', '₹54,200', '99/100'],
+      ['Block C (Premium)', '75%', '91.0%', '₹12,400', '99/100'],
+      ['Block D (Guest)', '30%', '82.0%', '₹3,600', '95/100'],
       ['Audit Gen Timestamp', new Date().toISOString()],
       ['Authority Signature', 'EduPro Residential Board']
     ].map(e => e.join(",")).join("\n");
@@ -246,7 +241,7 @@ const HostelReports = () => {
          {[
            { label: 'Avg. Occupancy Rate', value: '88.5%', trend: '+2.4%', icon: Bed, color: 'var(--primary)' },
            { label: 'Meal Participation', value: '94.2%', trend: '+1.1%', icon: Utensils, color: 'var(--success)' },
-           { label: 'Revenue YTD (Mess)', value: '$124k', trend: '+8%', icon: PieChart, color: 'var(--warning)' },
+           { label: 'Revenue YTD (Mess)', value: '₹124k', trend: '+8%', icon: PieChart, color: 'var(--warning)' },
          ].map((stat, i) => (
            <motion.div 
              key={i} 

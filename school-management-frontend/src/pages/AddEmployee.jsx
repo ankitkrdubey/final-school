@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import { useToast, ToastRenderer } from '../hooks/useToast';
-import { 
-  User, Mail, Phone, MapPin, Calendar, Briefcase, Award, 
-  ShieldCheck, Clock, FileText, Save, X, Image as ImageIcon, 
-  Building, ChevronRight, CheckCircle2, Wallet, Plus, History, 
-  Fingerprint, Upload, Folder, Trash2, Check, CloudUpload
-} from 'lucide-react';
+import { User, Mail, Phone, MapPin, Calendar, Briefcase, Award, ShieldCheck, Clock, FileText, Save, X, Image as ImageIcon, Building, ChevronRight, CheckCircle2, Wallet, Plus, History, Fingerprint, Upload, Folder, Trash2, Check, CloudUpload } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
@@ -173,7 +168,7 @@ const AddEmployee = () => {
       email: email || `${name.toLowerCase().replace(/\s+/g, '.')}@school.edu`,
       phone: phone || '+1 234-567-8999',
       address: `${address || 'Academic Circle'}, ${city || 'Science District'}, ${state || 'NY'} ${zip || '10001'}`,
-      salary: salary ? `$${parseFloat(salary).toLocaleString()} / annum` : '$65,000 / annum',
+      salary: salary ? `₹${parseFloat(salary).toLocaleString()} / annum` : '₹65,000 / annum',
       biography: `Joined as a ${designation} in ${dept} department. Specialized in institutional instruction and operations.`,
       avatar: avatar || null,
       education: educationList,
@@ -489,7 +484,7 @@ const AddEmployee = () => {
                   
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
                      <div>
-                        <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Basic Annual Salary ($)</label>
+                        <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>Basic Annual Salary (₹)</label>
                         <input 
                            type="number" 
                            placeholder="e.g. 60000" 
