@@ -7,7 +7,7 @@ Welcome to the **EduPro School Management System**, an elite, high-fidelity ente
 ## 🔗 Live Application & Repository
 
 - **🌐 Live Demo (Firebase Hosting)**: [https://edupro-portal-ankit.web.app](https://edupro-portal-ankit.web.app)
-- **💻 GitHub Repository**: [https://github.com/Sg-2003/school-management-system](https://github.com/Sg-2003/school-management-system)
+- **💻 GitHub Repository**: [https://github.com/ankitkrdubey/final-school](https://github.com/ankitkrdubey/final-school)
 
 ---
 
